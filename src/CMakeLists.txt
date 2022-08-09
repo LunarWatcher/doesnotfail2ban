@@ -1,5 +1,5 @@
 set (SOURCE_FILES
-    dnf2b/sources/Reader.cpp
+    dnf2b/core/Config.cpp
 
 )
 
