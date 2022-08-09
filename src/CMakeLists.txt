@@ -10,6 +10,6 @@ target_include_directories(doesnotfail2ban PUBLIC ./)
 #target_include_directories(doesnotfail2ban PUBLIC ${CONAN_INCLUDE_DIRS})
 
 #target_link_libraries(doesnotfail2ban ${CONAN_LIBS})
-target_link_libraries(doesnotfail2ban dnf2b_src)
+target_link_libraries(doesnotfail2ban dnf2b_src yaml-cpp)
 
 # vim:ft=cmake
