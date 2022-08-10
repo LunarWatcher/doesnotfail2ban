@@ -1,6 +1,5 @@
 set (SOURCE_FILES
-    dnf2b/core/Config.cpp
-
+    dnf2b/core/Context.cpp
 )
 
 add_library(dnf2b_src STATIC ${SOURCE_FILES})
