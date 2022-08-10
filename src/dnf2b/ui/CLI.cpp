@@ -20,6 +20,20 @@ void CLI::parse(int argc, const char* argv[]) {
     std::cout << "Command: " << command << "[ ";
     for (auto& arg : args) std::cout << arg << " ";
     std::cout << "]\n";
+
+    Context c(args);
+
+    if (command == "help") {
+        std::cout << "Help goes here" << std::endl;
+    } else if (command == "health") {
+        c.checkHealth();
+    } else if (command == "daemon") {
+        // TODO
+    } else if (command == "ban") {
+        // TODO
+    } else if (command == "unban") {
+
+    }
 }
 
 }

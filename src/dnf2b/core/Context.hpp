@@ -23,6 +23,8 @@ public:
 
     Context(const std::vector<std::string>& arguments);
 
+    void checkHealth();
+
 };
 
 }

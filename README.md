@@ -1,5 +1,9 @@
 # doesnotfail2ban
 
+## TL;DR:
+
+I need a system that works, because the internet is a dangerous place. Fail2ban failed 2 provide that, forcing me to switch. I switched to CrowdSec, and while I certainly see the advantages of crowd-sourced (and consequently pre-emptive) bans, it failed to provide me with the config and flexibility I need for the type of protection I need.
+
 ## Why?
 
 Because fail2ban is flaky at best, and crowdsec doesn't seem to either provide the coverage or configurability I need to insta-ban offending IPs from my server. Also because it turns out that rolling my own is easier than finding functional and maintained options with easy configuration. Who knew?
