@@ -2,13 +2,17 @@
 
 #include <string>
 
+#include "dnf2b/infrastructure/HealthCheck.hpp"
+
 namespace dnf2b {
 
-class Bouncer {
+class Bouncer : public HealthCheck {
 public:
     Bouncer();
+    virtual ~Bouncer() = default;
 
-    virtual std::string toString() = 0;
+    virtual void unbanIP(const std::string& ip) = 0;
+    virtual void banIP(const std::string& ip) = 0;
 };
 
 }

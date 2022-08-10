@@ -2,6 +2,11 @@
 
 #include <vector>
 #include <string>
+#include <map>
+#include <memory>
+
+#include "dnf2b/bouncers/Bouncer.hpp"
+
 #include <yaml-cpp/yaml.h>
 
 namespace dnf2b {
@@ -9,6 +14,8 @@ namespace dnf2b {
 class Context {
 private:
     YAML::Node config;
+
+
 public:
 
     // Top-level command arguments
