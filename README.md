@@ -13,6 +13,21 @@ Because fail2ban is flaky at best, and crowdsec doesn't seem to either provide t
 * Similar structure to CrowdSec in terms of code structure; there's the core, detectors, parsers, and bouncers. However, the bouncers and parsers have been integrated closer into the code, because I don't feel like defining an entire shared object API to integrate external components. The detector scripts are purely regex and other config, and consequently stored separately.
 * ... but all of that aside, functional. Clear configuration systems, and up-to-date documentation are core goals both CrowdSec and _especially_ fail2ban fail at.
 
+## Differences
+
+Note that this primarily applies when dnf2b starts reaching maturity; prior to that, this table shows what's planned
+
+|  | f2b | CrowdSec | dnf2b |
+| --- | --- | --- | --- |
+| Public cloud-based | ❌ | ✔️ | ❌ -- though a sync protocol is considered, this cannot and will not match CrowdSec because hosting limitations. Distant future regardless |
+| Configurable | ✔️ | ~ | ✔️  |
+| Easily configurable | ~ | ❌ | ✔️ |
+| Reliable | ❌ | ~ | ✔️ |
+| Data-centric | ❌ | ✔️ -- limited data available, pricing plans further reduce data availability | ✔️|
+| Alerts | ❌ | ✔️| ✔️ -- several configuration options available as well |
+| Maintained | ~ -- unlikely | ✔️ | ✔️ -- though not necessarily with continuous development, because I have limited resources. |
+
+
 ## How?
 
 See the docs folder
