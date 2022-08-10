@@ -8,5 +8,5 @@ int main(int argc, const char* argv[]) {
         std::cerr << "Must be root to run the program." << std::endl;
         return -1;
     }
-    dnf2b::CLI::parse(argc, argv)
+    dnf2b::CLI::parse(argc, argv);
 }
