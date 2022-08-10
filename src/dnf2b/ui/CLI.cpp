@@ -1,5 +1,7 @@
 #include "CLI.hpp"
 
+#include <iostream>
+
 namespace dnf2b {
 
 void CLI::parse(int argc, const char* argv[]) {
