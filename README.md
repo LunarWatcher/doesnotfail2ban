@@ -17,16 +17,23 @@ Because fail2ban is flaky at best, and crowdsec doesn't seem to either provide t
 
 Note that this primarily applies when dnf2b starts reaching maturity; prior to that, this table shows what's planned
 
+### Features
 |  | f2b | CrowdSec | dnf2b |
 | --- | --- | --- | --- |
 | Public cloud-based | ❌ | ✔️ | ❌ -- though a sync protocol is considered, this cannot and will not match CrowdSec because hosting limitations. Distant future regardless |
 | Configurable | ✔️ | ~ | ✔️  |
-| Easily configurable | ~ | ❌ | ✔️ |
+| Easily configurable | ~ -- not the most intuitive setup, several config options are out of date with its own documentation | ❌ | ✔️ |
 | Reliable | ❌ | ~ | ✔️ |
-| Data-centric | ❌ | ✔️ -- limited data available, pricing plans further reduce data availability | ✔️|
+| Data-centric | ❌ | ✔️ -- limited data available, pricing plans further reduce data availability | ✔️ -- and fully configurable|
 | Alerts | ❌ | ✔️| ✔️ -- several configuration options available as well |
 | Maintained | ~ -- heavily reduced activity in recent years, PRs and issues piling up | ✔️ | ✔️ -- though not necessarily with continuous development, because I have limited resources. |
+
+### General
+
+|  | f2b | CrowdSec | dnf2b |
+| --- | --- | --- | --- |
 | Source language | Python | Go | C++17 |
+| Config format | `.conf` | YAML | YAML |
 
 
 ## How?

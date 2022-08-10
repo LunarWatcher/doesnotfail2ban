@@ -1,0 +1,16 @@
+[Unit]
+Description=dnf2b runner
+Wants=network-online.target
+After=network.target
+
+[Service]
+Restart=on-failure
+RestartSec=10s
+Type=idle
+WorkingDirectory=/etc/dnf2b/
+ExecStart=dnf2b daemon
+ExecStop=killall dnf2b
+
+[Install]
+WantedBy=multi-user.target
+RestartPreventExitStatus=0 255
