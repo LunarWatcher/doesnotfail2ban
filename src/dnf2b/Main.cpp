@@ -1,11 +1,12 @@
 #include<iostream>
+#include<unistd.h>
 
-#include <unistd.h>
+#include "dnf2b/ui/CLI.hpp" 
 
-int main() {
+int main(int argc, const char* argv[]) {
     if (!getuid()) {
         std::cerr << "Must be root to run the program." << std::endl;
         return -1;
     }
-    std::cout << "Hello, World!" << std::endl;
+    dnf2b::CLI::parse(argc, argv)
 }
