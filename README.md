@@ -28,6 +28,7 @@ Note that this primarily applies when dnf2b starts reaching maturity; prior to t
 | Alerts | ❌ | ✔️| ✔️ -- several configuration options available as well |
 | Maintained | ~ -- heavily reduced activity in recent years, PRs and issues piling up | ✔️ | ✔️ -- though not necessarily with continuous development, because I have limited resources. |
 | Health checks | ? | ❌ | ✔️ |
+| Easily debuggable | ❌ | ❌ | ✔️ |
 
 ### General
 
