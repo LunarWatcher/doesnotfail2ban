@@ -39,7 +39,7 @@ Note that this primarily applies when dnf2b starts reaching maturity; prior to t
 |  | f2b | CrowdSec | dnf2b |
 | --- | --- | --- | --- |
 | Source language | Python | Go | C++17 |
-| Config format | `.conf` | YAML | YAML |
+| Config format | `.conf` | YAML | JSON |
 
 
 ## How?

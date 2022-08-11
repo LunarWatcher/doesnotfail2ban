@@ -7,13 +7,15 @@
 
 #include "dnf2b/bouncers/Bouncer.hpp"
 
-#include <yaml-cpp/yaml.h>
+#include <nlohmann/json.hpp>
 
 namespace dnf2b {
 
 class Context {
 private:
-    YAML::Node config;
+    nlohmann::json config = 
+#include "dnf2b/static/ConfDefault.hpp"
+        ;
 
 
 public:

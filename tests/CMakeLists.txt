@@ -1,6 +1,5 @@
 add_executable(tests src/TestRunner.cpp
     # Tests {{{
-
     # }}}
 )
 

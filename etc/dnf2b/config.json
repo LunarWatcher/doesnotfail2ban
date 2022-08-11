@@ -1,0 +1,29 @@
+{
+    "core": {
+        "control": {
+            "maxAttempts": 3,
+            "searchPeriod": "7d",
+            "banPeriod": "1w"
+        },
+        "stats": {
+            "enabled": true,
+            "banStats": true,
+            "originStats": true,
+            "credentialStats": true,
+            "blockStats": true
+        }
+    },
+    "watchers": {
+        "sshd": {
+            "enabled": true,
+            "file": "/var/log/auth.log",
+            "parser": "sshd",
+            "port": 22,
+            "limit": 3,
+            "filters": ["sshd-bruteforce"]
+        }
+    },
+    "bouncers": [
+        "ufw"
+    ]
+}
