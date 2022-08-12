@@ -6,6 +6,8 @@ After=network.target ufw.service
 [Service]
 Restart=on-failure
 RestartSec=10s
+RestartPreventExitStatus=0 255
+
 Type=idle
 WorkingDirectory=/etc/dnf2b/
 ExecStart=dnf2b daemon
@@ -13,4 +15,3 @@ ExecStop=killall dnf2b
 
 [Install]
 WantedBy=multi-user.target
-RestartPreventExitStatus=0 255

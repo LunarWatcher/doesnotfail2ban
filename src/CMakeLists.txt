@@ -6,15 +6,20 @@ set (SOURCE_FILES
 
 add_library(dnf2b_src STATIC ${SOURCE_FILES})
 
-add_executable(doesnotfail2ban dnf2b/Main.cpp)
+add_executable(dnf2b dnf2b/Main.cpp)
 target_include_directories(dnf2b_src PUBLIC ./)
-#target_include_directories(doesnotfail2ban PUBLIC ${CONAN_INCLUDE_DIRS})
 
+# Source library linking
 target_link_libraries(dnf2b_src PUBLIC nlohmann_json)
 
-#target_link_libraries(doesnotfail2ban ${CONAN_LIBS})
-target_link_libraries(doesnotfail2ban PUBLIC dnf2b_src)
+# Executable linking
+target_link_libraries(dnf2b PUBLIC dnf2b_src)
 
+# Installation {{{
 install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
+
+# Now, the cool thing about CMake is that the destination is relative to --prefix
+install(TARGETS dnf2b DESTINATION bin)
+# }}}
 
 # vim:ft=cmake
