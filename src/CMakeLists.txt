@@ -15,4 +15,6 @@ target_link_libraries(dnf2b_src PUBLIC nlohmann_json)
 #target_link_libraries(doesnotfail2ban ${CONAN_LIBS})
 target_link_libraries(doesnotfail2ban PUBLIC dnf2b_src)
 
+install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
+
 # vim:ft=cmake
