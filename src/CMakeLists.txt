@@ -10,7 +10,7 @@ add_executable(dnf2b dnf2b/Main.cpp)
 target_include_directories(dnf2b_src PUBLIC ./)
 
 # Source library linking
-target_link_libraries(dnf2b_src PUBLIC nlohmann_json)
+target_link_libraries(dnf2b_src PUBLIC nlohmann_json cpr::cpr)
 
 # Executable linking
 target_link_libraries(dnf2b PUBLIC dnf2b_src)
