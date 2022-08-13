@@ -12,32 +12,24 @@ if(USE_LIBCPP)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 endif()
 
-#if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-#  message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-#  file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.16.1/conan.cmake"
-#                "${CMAKE_BINARY_DIR}/conan.cmake"
-#                TLS_VERIFY ON)
-#endif()
-#
-#include(${CMAKE_BINARY_DIR}/conan.cmake)
-#
-#conan_cmake_configure (REQUIRES 
-#                        insert dependencies here
-#                        GENERATORS cmake)
-#conan_cmake_autodetect (settings)
-#conan_cmake_install (PATH_OR_REFERENCE . BUILD missing SETTINGS ${settings})
-#
-#include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-#conan_basic_setup()
+if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+  message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+  file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.16.1/conan.cmake"
+                "${CMAKE_BINARY_DIR}/conan.cmake"
+                TLS_VERIFY ON)
+endif()
 
-# Deps {{{
-add_subdirectory(json)
+include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-include(FetchContent)
-FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/libcpr/cpr.git
-                         GIT_TAG 871ed52d350214a034f6ef8a3b8f51c5ce1bd400) # The commit hash for 1.9.0. Replace with the latest from: https://github.com/libcpr/cpr/releases
-FetchContent_MakeAvailable(cpr)
-# }}}
+conan_cmake_configure (REQUIRES 
+                        cpr/1.9.1
+                        GENERATORS cmake)
+conan_cmake_autodetect (settings)
+conan_cmake_install (PATH_OR_REFERENCE . BUILD missing SETTINGS ${settings})
+
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
 add_subdirectory(src)
 add_subdirectory(tests)
 # vim:ft=cmake

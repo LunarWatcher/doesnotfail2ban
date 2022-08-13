@@ -8,9 +8,11 @@ add_library(dnf2b_src STATIC ${SOURCE_FILES})
 
 add_executable(dnf2b dnf2b/Main.cpp)
 target_include_directories(dnf2b_src PUBLIC ./)
+target_include_directories(dnf2b_src PUBLIC ${CONAN_INCLUDE_DIRS})
 
 # Source library linking
-target_link_libraries(dnf2b_src PUBLIC nlohmann_json cpr::cpr)
+target_link_libraries(dnf2b_src PUBLIC nlohmann_json)
+target_link_libraries(dnf2b_src ${CONAN_LIBS})
 
 # Executable linking
 target_link_libraries(dnf2b PUBLIC dnf2b_src)
