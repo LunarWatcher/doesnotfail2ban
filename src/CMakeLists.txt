@@ -11,8 +11,7 @@ target_include_directories(dnf2b_src PUBLIC ./)
 target_include_directories(dnf2b_src PUBLIC ${CONAN_INCLUDE_DIRS})
 
 # Source library linking
-target_link_libraries(dnf2b_src PUBLIC nlohmann_json)
-target_link_libraries(dnf2b_src ${CONAN_LIBS})
+target_link_libraries(dnf2b_src PUBLIC ${CONAN_LIBS} nlohmann_json)
 
 # Executable linking
 target_link_libraries(dnf2b PUBLIC dnf2b_src)

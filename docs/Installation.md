@@ -6,7 +6,8 @@
     * If you're running this on a Raspberry Pi or another device without proper stdlib support for C++17, and you have no idea how to (safely) upgrade GCC's stdlib when there's nothing in the repos, install Clang and the corresponding version of libc++. Clang installs alongside GCC, and an up-to-date libc++ can be acquired more easily (in my biased experience)
 * CMake 3.10 or newer
 * Linux
-* For firewall blocking: ufw. see the "Setting up the environment" section.
+* Misc. dependencies, if applicable, for bouncers and communicators
+* Python 3 with Conan installed (temporarily; conan is used as a workaround for [cpr#807](https://github.com/libcpr/cpr/issues/807))
 
 ## Installing
 
