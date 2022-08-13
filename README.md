@@ -1,3 +1,7 @@
+# WARNING: Currently incomplete
+
+Log reading and banning has not been hooked up yet. Beyond installing and running dummy commands and debug output, this project isn't yet ready to be deployed on real servers. Come back later!
+
 # doesnotfail2ban
 
 ## TL;DR:
@@ -22,7 +26,7 @@ Because fail2ban is flaky at best, and crowdsec doesn't seem to either provide t
 Note that this primarily applies when dnf2b starts reaching maturity; prior to that, this table shows what's planned
 
 ### Features
-|  | f2b | CrowdSec | dnf2b |
+|  | [f2b](https://github.com/fail2ban/fail2ban) | [CrowdSec](https://github.com/crowdsecurity/crowdsec) | dnf2b |
 | --- | --- | --- | --- |
 | Public cloud-based | ❌ | ✔️ | ❌ -- though a sync protocol is considered, this cannot and will not match CrowdSec because hosting limitations. Distant future regardless |
 | Configurable | ✔️ | ~ | ✔️  |
