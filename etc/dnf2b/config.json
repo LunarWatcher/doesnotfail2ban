@@ -17,7 +17,7 @@
         "sshd": {
             "enabled": true,
             "file": "/var/log/auth.log",
-            "parser": "sshd",
+            "parser": "journald",
             "port": 22,
             "limit": 3,
             "filters": ["sshd-bruteforce"]
