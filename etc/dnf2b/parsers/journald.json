@@ -1,11 +1,14 @@
 {
     "type": "file",
+    "multiprocess": true,
     "pattern": {
-        "full": "^([^ ]+ ){3} &h &p[\d]: (.*)$",
+        "full": "^([^ ]+ ){3} ([^ ]+) ([^ ]+)[\d]: (.*)$",
         "time": "%b %d %H:%M:%S",
         "groups": {
             "time": 0,
-            "message": 1
+            "host": 1,
+            "process": 2,
+            "message": 3
         }
     }
 }

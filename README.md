@@ -2,6 +2,8 @@
 
 Log reading and banning has not been hooked up yet. Beyond installing and running dummy commands and debug output, this project isn't yet ready to be deployed on real servers. Come back later!
 
+If you decide to ignore the warning not to use dnf2b until it's ready and use it anyway, note that everything is unstable, and can and will change without notice until it's release-ready. A release will be published when the project is usable.
+
 # doesnotfail2ban
 
 ## TL;DR:

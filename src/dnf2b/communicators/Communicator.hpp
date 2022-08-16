@@ -4,15 +4,13 @@
 
 namespace dn2fb {
 
+class Context;
 class Communicator : public HealthCheck {
-protected:
-    Context* ctx;
-
 public:
-    Communicator(Context* ctx);
+    Communicator();
 
-    virtual bool shouldAlert() = 0;
-    virtual void doAlert() = 0;
+    virtual bool shouldAlert(Context& ctx) = 0;
+    virtual void doAlert(Context& ctx) = 0;
 
     virtual std::string checkHealth() = 0;
 };

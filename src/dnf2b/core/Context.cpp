@@ -19,6 +19,14 @@ Context::Context(const std::vector<std::string>& arguments) :  arguments(argumen
     config.update(custom, true);
 }
 
+void Context::start() {
+
+}
+
+void Context::poll() {
+
+}
+
 void Context::checkHealth() {
     // TODO
 }

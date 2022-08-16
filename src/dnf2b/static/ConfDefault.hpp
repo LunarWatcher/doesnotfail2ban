@@ -18,4 +18,5 @@ nlohmann::json {
     // to deal with.
     {"watchers", {}},
     {"bouncers", {}},
-}
+    {"communicators", {}}
+};

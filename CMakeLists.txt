@@ -32,6 +32,7 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 add_subdirectory(json)
+add_subdirectory(spdlog)
 add_subdirectory(src)
 add_subdirectory(tests)
 # vim:ft=cmake

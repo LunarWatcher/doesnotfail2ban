@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "dnf2b/core/Daemon.hpp"
+
 namespace dnf2b {
 
 void CLI::parse(int argc, const char* argv[]) {
@@ -28,7 +30,7 @@ void CLI::parse(int argc, const char* argv[]) {
     } else if (command == "health") {
         c.checkHealth();
     } else if (command == "daemon") {
-        // TODO
+        Daemon{c}.run();
     } else if (command == "ban") {
         // TODO
     } else if (command == "unban") {

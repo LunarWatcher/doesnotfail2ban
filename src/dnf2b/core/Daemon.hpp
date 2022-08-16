@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Context.hpp"
+
 namespace dnf2b {
 
 class Daemon {
