@@ -7,7 +7,7 @@
 namespace dnf2b {
 
 // TODO: test
-std::vector<Message> FileParser::poll(Context& ctx, const nlohmann::json& config) {
+std::vector<Message> FileParser::poll() {
     std::vector<Message> messages;
 
     const std::string& resourceName = config.at("file").get<std::string>();

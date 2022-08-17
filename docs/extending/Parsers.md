@@ -70,4 +70,4 @@ Simply put, this is solved with the `groups` parameter. This map contains two su
 
 In many cases, time's value is less than that of the message value, which is all down to how time, in the vast majority of cases, is printed prior to the message. In many cases where trivial matching is possible, there's also no need for more than two groups, and consequently using this exact pattern. So unlses you have additional groups, or a message that comes before the time, `groups` is typically defined as shown above.
 
-`host` and `process` are optional, but these disable `&h` and `&p` for filters.
+`host` and `process` are optional, but these disable `&h` and `&p` for filters. Note that `process` is only optional if `multiprocess` is false. This is for process identification reasons.

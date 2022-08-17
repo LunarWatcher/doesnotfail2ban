@@ -16,6 +16,10 @@ namespace dnf2b {
 typedef struct {
     const std::chrono::system_clock::time_point entryDate;
     const std::string process;
+    /**
+     * Not entirely sure if this has any practical use.
+     */
+    const std::string host;
     const std::string message;
 } Message;
 
@@ -35,18 +39,30 @@ class Context;
  */
 class Parser : public HealthCheck {
 public:
+    nlohmann::json config;
     /**
      * The name of the parser. The type is not explicitly stored in code, as this is handled
      * via inheritance.
      */
     const std::string parserName;
 
+
     Parser(const std::string& parserName);
+
+    /**
+     * Reloads the config. 
+     *
+     * Can be overridden to add additional post-clearing code, such as validating all open resources, and closing if necessary.
+     */
+    virtual void reload(Context& ctx);
+    
 
     /**
      * Polls a given resource, and runs it through the parser if applicable.
      */
-    virtual std::vector<Message> poll(Context& ctx, const nlohmann::json& config) = 0;
+    virtual std::vector<Message> poll() = 0;
+
+    virtual std::optional<Message> parse(const std::string& line);
 
     /**
      * Closes a resource, if applicable.

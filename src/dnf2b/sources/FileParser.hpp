@@ -19,7 +19,7 @@ private:
 public:
     FileParser(const std::string& parserName) : Parser(parserName) {}
 
-    std::vector<Message> poll(Context& ctx, const nlohmann::json& config) override;
+    std::vector<Message> poll() override;
     //std::optional<Message> parse(Context& ctx, const std::string& line) override;
     
     void close(const std::string& resourceName) override;

@@ -2,7 +2,7 @@
     "type": "file",
     "multiprocess": true,
     "pattern": {
-        "full": "^([^ ]+ ){3} ([^ ]+) ([^ ]+)[\d]: (.*)$",
+        "full": "^((?:[^ ]+ ){3})([^ ]+) ([^ ]+)\\[\\d+\\]: (.*)$",
         "time": "%b %d %H:%M:%S",
         "groups": {
             "time": 0,
