@@ -30,8 +30,6 @@ TEST_CASE("Make sure trivial parsing works", "[parser]") {
     REQUIRE(tmStruct->tm_min == 17);
     REQUIRE(tmStruct->tm_sec == 44);
 
-    REQUIRE(raw == 1660767464ll);
-
     REQUIRE(message->host == "sinon");
     REQUIRE(message->process == "sshd");
     REQUIRE(message->message == "Failed password for invalid user admin from 123.45.67.89 port 57792 ssh2");
@@ -66,8 +64,7 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
     REQUIRE(message);
     
     std::time_t raw = std::chrono::system_clock::to_time_t(message->entryDate);
-    // Short process, let's just make sure the UNIX timestamp matches.
-    REQUIRE(raw == 1660764143ll);
+
     REQUIRE(message->message == "message");
 
     REQUIRE(message->host == "");
