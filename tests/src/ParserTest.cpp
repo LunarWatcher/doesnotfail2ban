@@ -1,6 +1,7 @@
 #include "catch2/catch_test_macros.hpp"
 
 #include "dnf2b/sources/FileParser.hpp"
+#include <iostream>
 
 #include <time.h>
 
@@ -20,11 +21,15 @@ TEST_CASE("Make sure trivial testing works", "[parser]") {
     auto tmStruct = std::localtime(&raw);
     INFO(raw);
 
+    INFO(std::put_time(tmStruct, "%b %d %T, %Y"));
+
     REQUIRE(tmStruct->tm_mon == 7);
     REQUIRE(tmStruct->tm_mday == 17);
     REQUIRE(tmStruct->tm_hour == 22);
     REQUIRE(tmStruct->tm_min == 17);
     REQUIRE(tmStruct->tm_sec == 44);
+
+    REQUIRE(raw == 1660767464ll);
 
     REQUIRE(message->host == "sinon");
     REQUIRE(message->process == "sshd");

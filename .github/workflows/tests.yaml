@@ -1,0 +1,34 @@
+name: Tests
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  test-ubuntu-debug:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: LunarWatcher/install-conan@master
+      - name: Run tests
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Debug
+          # Not entirely sure how much the GitHub runners support
+          make
+          ./bin/tests
+  test-ubuntu-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: LunarWatcher/install-conan@master
+      - name: Run tests
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          # Not entirely sure how much the GitHub runners support
+          make
+          ./bin/tests
+
