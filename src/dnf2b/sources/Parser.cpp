@@ -5,6 +5,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <iostream>
 #include <regex>
 
 namespace dnf2b {

@@ -3,7 +3,7 @@
     "multiprocess": true,
     "pattern": {
         "full": "^((?:[^ ]+ ){3})([^ ]+) ([^ ]+)\\[\\d+\\]: (.*)$",
-        "time": "%b %d %H:%M:%S",
+        "time": "%b %d %T",
         "groups": {
             "time": 0,
             "host": 1,

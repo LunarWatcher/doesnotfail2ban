@@ -36,6 +36,8 @@ class Context;
  *
  * It's the runner's job to determine whether or not to close a resource. Parsers with closeable resources
  * only need to worry about providing a method for sane closure.
+ *
+ * It's also up to each parser to sort out caching.
  */
 class Parser : public HealthCheck {
 public:
