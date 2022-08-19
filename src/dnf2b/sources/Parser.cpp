@@ -39,6 +39,8 @@ std::optional<Message> Parser::parse(const std::string& line) {
         throw except::GenericException("Required field \"time\" missing from " + parserName, 255);
     } else if (!groups.contains("message")) {
         throw except::GenericException("Required field \"message\" missing from " + parserName, 255);
+    } else if (!config.contains("multiprocess")) {
+        throw except::GenericException("Required field \"multiprocess\" missing from " + parserName, 255);
     } else if (config["multiprocess"].get<bool>() && !groups.contains("process")) {
         throw except::GenericException("Required field \"process\" in multiprocess parser missing from " + parserName, 255);
     }
@@ -58,10 +60,8 @@ std::optional<Message> Parser::parse(const std::string& line) {
         //     std::tm tm = {};
         // And it isn't easily populated, and because I'm not particularly steady in the
         // C API, emergency solution time
-        auto now = std::chrono::system_clock::now();
         // This ensures we get the current time.
-        // We now convert it to a time_t
-        std::time_t currTimeMillis = std::chrono::system_clock::to_time_t(now);
+        std::time_t currTimeMillis = std::time(nullptr);
         // Which we dump into a localtime struct, because
         // we have 0 contextual info
         //
