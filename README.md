@@ -39,6 +39,7 @@ Note that this primarily applies when dnf2b starts reaching maturity; prior to t
 | Maintained | ~ -- heavily reduced activity in recent years, PRs and issues piling up | ✔️ | ✔️ -- though not necessarily with continuous development, because I have limited resources. |
 | Health checks | ? | ❌ | ✔️ |
 | Easily debuggable | ❌ | ❌ | ✔️ |
+| Doesn't rely on a deprecated Python tool to be runnable on Python 3 | ❌ | ✔️ |  ✔️ | 
 
 ### General
 
