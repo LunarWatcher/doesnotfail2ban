@@ -15,7 +15,7 @@ namespace dnf2b {
 class Context;
 class FileParser : public Parser {
 private:
-    std::map<std::string, std::pair<std::shared_ptr<std::ifstream>, size_t>> streams;
+    std::map<std::string, size_t> lastAccessedByte;
 public:
     FileParser(const std::string& parserName) : Parser(parserName) {}
 

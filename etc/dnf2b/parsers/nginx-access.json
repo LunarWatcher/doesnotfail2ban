@@ -1,0 +1,13 @@
+{
+    "type": "file",
+    "multiprocess": false,
+    "pattern": {
+        "full": "([^ ]+) - [^ ]+ \\[([^\\]]+) +\\d+\\] (.*)",
+        "time": "%d/%b/%Y:%T",
+        "groups": {
+            "host": 0,
+            "time": 1,
+            "message": 2
+        }
+    }
+}

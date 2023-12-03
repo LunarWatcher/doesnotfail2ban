@@ -13,7 +13,7 @@ namespace CLI {
 
 extern std::map<std::string, std::function<void(Context&)>> commands;
 
-extern void parse(int argc, const char* argv[]);
+extern int parse(int argc, const char* argv[]);
 
 }
 

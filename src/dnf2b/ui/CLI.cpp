@@ -3,10 +3,13 @@
 #include <iostream>
 
 #include "dnf2b/core/Daemon.hpp"
+#include <stc/Fmt.hpp>
+
+#include <unistd.h>
 
 namespace dnf2b {
 
-void CLI::parse(int argc, const char* argv[]) {
+int CLI::parse(int argc, const char* argv[]) {
     std::vector<std::string> args;
 
     for (int i = 1; i < argc; ++i) {
@@ -19,23 +22,50 @@ void CLI::parse(int argc, const char* argv[]) {
         args.erase(args.begin());
     }
 
-    std::cout << "Command: " << command << "[ ";
-    for (auto& arg : args) std::cout << arg << " ";
-    std::cout << "]\n";
+    //std::cout << "Command: " << command << "[ ";
+    //for (auto& arg : args) std::cout << arg << " ";
+    //std::cout << "]\n";
+
+
+    auto format = [](const std::string& command, const std::string& description) {
+        return fmt::format("\t{:<16} {}\n", command, description);
+    };
+
+    if (command == "help") {
+        std::cout << "Commands:" << std::endl;
+        std::cout << "General:" << std::endl;
+        std::cout 
+            << format("help", "Shows this helpful message")
+            << format("health", "Runs a health check on the server")
+            << format("daemon", "Starts the dnf2b daemon");
+        std::cout << "Manual management:" << std::endl;
+        std::cout
+            << format("ban", "Manually ban one or more IPs")
+            << format("unban", "Manually unban one or more IPs");
+
+        return 0;
+    } 
+
+    if (getuid() != 0) {
+        std::cerr << "Must be root to run other non-help commands." << std::endl;
+        return -1;
+    }
 
     Context c(args);
 
-    if (command == "help") {
-        std::cout << "Help goes here" << std::endl;
-    } else if (command == "health") {
+    if (command == "health") {
         c.checkHealth();
     } else if (command == "daemon") {
+        // TODO: need to figure out how to make sure only one daemon can run.
+        // Maybe a filelock?
         Daemon{c}.run();
     } else if (command == "ban") {
         // TODO
     } else if (command == "unban") {
 
     }
+
+    return 0;
 }
 
 }

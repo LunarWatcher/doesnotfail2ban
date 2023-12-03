@@ -1,4 +1,4 @@
-// This file is meant to be included in a different file to provide defaults.
+// Wtf?, why did I do this?
 nlohmann::json {
     {"core", {
         {"control", {

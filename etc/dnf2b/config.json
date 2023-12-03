@@ -1,5 +1,5 @@
 {
-    "comment": "This is a dummy field to work around the lack of comments in JSON. Both the watcher and bouncer fields will eventually be cleared. Do not rely on the defaults to never change",
+    "_comment": "This is a dummy field to work around the lack of comments in JSON. Both the watcher and bouncer fields will eventually be cleared. Do not rely on the defaults to never change",
     "core": {
         "control": {
             "maxAttempts": 3,
@@ -27,5 +27,7 @@
     ],
     "bouncers": [
         "ufw"
-    ]
+    ],
+    "communicators": {
+    }
 }

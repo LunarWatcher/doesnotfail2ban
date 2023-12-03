@@ -5,6 +5,7 @@
 namespace dnf2b {
 
 class Daemon {
+private:
 public:
     Context ctx;
 

@@ -13,7 +13,7 @@ namespace dnf2b {
 
 class Context {
 private:
-    nlohmann::json config =
+    nlohmann::json config = 
 #include "dnf2b/static/ConfDefault.hpp"
 
 public:
