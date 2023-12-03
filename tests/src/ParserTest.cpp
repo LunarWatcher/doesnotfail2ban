@@ -102,11 +102,16 @@ TEST_CASE("File changes", "[parser]") {
     REQUIRE(res.size() == 0);
 
     f << "[12:34:56]: I like trains" << std::endl;
-    std::cout << "Cleared" << std::endl;
 
     res = parser.poll();
     REQUIRE(res.size() == 1);
     REQUIRE(res.at(0).message == "I like trains");
+
+    f << "[12:34:56]: No, _I_ like trains" << std::endl;
+
+    res = parser.poll();
+    REQUIRE(res.size() == 1);
+    REQUIRE(res.at(0).message == "No, _I_ like trains");
 
 
 }
