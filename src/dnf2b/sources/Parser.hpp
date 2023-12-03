@@ -68,7 +68,7 @@ public:
     /**
      * Polls a given resource, and runs it through the parser if applicable.
      */
-    virtual std::vector<Message> poll(const std::string& resourceName) = 0;
+    virtual std::vector<Message> poll() = 0;
 
     virtual std::optional<Message> parse(const std::string& line);
 

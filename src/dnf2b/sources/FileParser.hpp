@@ -15,11 +15,13 @@ namespace dnf2b {
 class Context;
 class FileParser : public Parser {
 private:
-    std::map<std::string, size_t> lastAccessedByte;
-public:
-    FileParser(const std::string& parserName) : Parser(parserName) {}
+    size_t lastAccessedByte;
+    std::string resourceName;
 
-    std::vector<Message> poll(const std::string& resourceName) override;
+public:
+    FileParser(const std::string& parserName, const std::string& fileName) : Parser(parserName), resourceName(fileName), lastAccessedByte(0) {}
+
+    std::vector<Message> poll() override;
     //std::optional<Message> parse(Context& ctx, const std::string& line) override;
     
     void close(const std::string& resourceName) override;

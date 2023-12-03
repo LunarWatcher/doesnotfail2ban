@@ -7,7 +7,13 @@ using namespace std::literals;
 namespace dnf2b {
 
 
-Daemon::Daemon(const Context& ctx) : ctx(ctx) {}
+Daemon::Daemon(const Context& ctx) : ctx(ctx) {
+    reload();
+}
+
+void Daemon::reload() {
+
+}
 
 void Daemon::run() {
 
@@ -17,6 +23,5 @@ void Daemon::run() {
         std::this_thread::sleep_for(30s);
     }
 }
-
 
 }

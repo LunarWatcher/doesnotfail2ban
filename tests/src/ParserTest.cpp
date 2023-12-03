@@ -2,12 +2,14 @@
 
 #include "dnf2b/sources/FileParser.hpp"
 #include <chrono>
+#include <filesystem>
 #include <iostream>
 
 #include <time.h>
 
 TEST_CASE("Make sure trivial parsing works", "[parser]") {
-    dnf2b::FileParser p("journald");
+    // TODO: This test really should do loading from a file
+    dnf2b::FileParser p("journald", "unused");
     std::ifstream x("../etc/dnf2b/parsers/journald.json");
     INFO("If x.is_open() fails, this is a _solid_ indicator you're in the wrong cwd. cd into the build directory and try again");
     REQUIRE(x.is_open());
@@ -38,7 +40,7 @@ TEST_CASE("Make sure trivial parsing works", "[parser]") {
 }
 
 TEST_CASE("Non-multiprocess parsing", "[parser]") {
-    dnf2b::FileParser p("yourmom");
+    dnf2b::FileParser p("yourmom", "unused");
     // For this example, we use a non-multiprocess system
     // that uses this log format:
     //    [subsystem, not unique, and not constant] Month Day Time: message
@@ -74,14 +76,14 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
 }
 
 TEST_CASE("File changes", "[parser]") {
-    dnf2b::FileParser parser("test");
+    dnf2b::FileParser parser("test", "./file-parser-test.txt");
     // Format: [time] message
     // TODO: standardize test format
     parser.config = {
         {"type", "file"},
         {"multiprocess", false},
         {"pattern", {
-            {"full", "^\\[([^\\]])\\]: (.*)$"},
+            {"full", "^\\[([^\\]]+)\\]: (.*)$"},
             {"time", "%T"},
             {"groups", {
                 {"time", 0},
@@ -89,5 +91,22 @@ TEST_CASE("File changes", "[parser]") {
             }}
         }}
     };
+
+    std::filesystem::remove("./file-parser-test.txt");
+
+    std::ofstream f("./file-parser-test.txt");
+    REQUIRE(f.is_open());
+    REQUIRE(std::filesystem::exists("./file-parser-test.txt"));
+
+    auto res = parser.poll();
+    REQUIRE(res.size() == 0);
+
+    f << "[12:34:56]: I like trains" << std::endl;
+    std::cout << "Cleared" << std::endl;
+
+    res = parser.poll();
+    REQUIRE(res.size() == 1);
+    REQUIRE(res.at(0).message == "I like trains");
+
 
 }
