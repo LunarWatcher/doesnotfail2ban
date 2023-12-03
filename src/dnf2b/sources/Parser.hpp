@@ -13,7 +13,7 @@ namespace dnf2b {
 /**
  * Barebones message data, as parsed from a given resource.
  */
-typedef struct {
+struct Message {
     const std::chrono::system_clock::time_point entryDate;
     const std::string process;
     /**
@@ -21,7 +21,13 @@ typedef struct {
      */
     const std::string host;
     const std::string message;
-} Message;
+
+    /**
+     * Contains the IP. Note that this is not guaranteed to be populated, and is only
+     * populated if the IP is not part of the message.
+     */
+    const std::string ip;
+};
 
 class Context;
 
@@ -62,7 +68,7 @@ public:
     /**
      * Polls a given resource, and runs it through the parser if applicable.
      */
-    virtual std::vector<Message> poll() = 0;
+    virtual std::vector<Message> poll(const std::string& resourceName) = 0;
 
     virtual std::optional<Message> parse(const std::string& line);
 

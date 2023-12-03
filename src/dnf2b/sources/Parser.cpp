@@ -95,6 +95,8 @@ std::optional<Message> Parser::parse(const std::string& line) {
         //
         // Fuck knows what's in the chrono timepoint though. Looking forward to getting back to
         // my debugger and poking around the internals of chrono.
+        //
+        // TODO: deserialize the config, so lookups aren't necessary
         return Message {
             // entryDate
             std::chrono::system_clock::from_time_t(std::mktime(tm)),
@@ -103,7 +105,9 @@ std::optional<Message> Parser::parse(const std::string& line) {
             // host
             groups.contains("host") ? match[groups["host"].get<int>() + 1].str() : "",
             // message
-            match[groups["message"].get<int>() + 1].str()
+            match[groups["message"].get<int>() + 1].str(),
+            // IP
+            groups.contains("ip") ? match[groups["ip"].get<int>() + 1].str() : ""
         };
 
     }

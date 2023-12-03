@@ -71,5 +71,23 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
 
     REQUIRE(message->host == "");
     REQUIRE(message->process == "");
+}
+
+TEST_CASE("File changes", "[parser]") {
+    dnf2b::FileParser parser("test");
+    // Format: [time] message
+    // TODO: standardize test format
+    parser.config = {
+        {"type", "file"},
+        {"multiprocess", false},
+        {"pattern", {
+            {"full", "^\\[([^\\]])\\]: (.*)$"},
+            {"time", "%T"},
+            {"groups", {
+                {"time", 0},
+                {"message", 1}
+            }}
+        }}
+    };
 
 }

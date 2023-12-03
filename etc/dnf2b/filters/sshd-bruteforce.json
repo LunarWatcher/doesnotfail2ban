@@ -2,6 +2,5 @@
     "danger": 5,
     "filters": [
         "^Did not receive identification string from ${dnf2b.ip}"
-    ],
-    "for": "sshd"
+    ]
 }

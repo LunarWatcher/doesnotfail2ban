@@ -5,7 +5,6 @@
 
 namespace dnf2b {
 
-// TODO: figure out how yaml-cpp error handles LoadFile()
 Context::Context(const std::vector<std::string>& arguments) :  arguments(arguments) {
     std::ifstream stream("/etc/dnf2b/config.local.json");
     if (!stream) {
@@ -17,14 +16,6 @@ Context::Context(const std::vector<std::string>& arguments) :  arguments(argumen
     stream >> custom;
 
     config.update(custom, true);
-}
-
-void Context::start() {
-
-}
-
-void Context::poll() {
-
 }
 
 void Context::checkHealth() {

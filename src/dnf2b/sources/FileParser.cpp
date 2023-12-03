@@ -7,12 +7,8 @@
 
 namespace dnf2b {
 
-// TODO: test
-std::vector<Message> FileParser::poll() {
+std::vector<Message> FileParser::poll(const std::string& resourceName) {
     std::vector<Message> messages;
-
-    const std::string& resourceName = config.at("file").get<std::string>();
-
 
 
     auto size = lastAccessedByte.contains(resourceName) ? lastAccessedByte.at(resourceName) : 0;
@@ -42,9 +38,7 @@ std::vector<Message> FileParser::poll() {
 }
 
 
-void FileParser::close(const std::string& resourceName) {
-    // TODO
-}
+void FileParser::close(const std::string&) {}
 
 std::string FileParser::checkHealth() {
     std::string health = "FileParser[" + parserName + "]\n";
