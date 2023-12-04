@@ -15,6 +15,8 @@ int main(int argc, const char* argv[]) {
         return -1;
     }
 
+    spdlog::set_level(spdlog::level::debug);
+
     {
         std::ofstream f(dnf2b::Constants::DNF2B_ROOT / "filters/dummy-filter.json");
         f << R"(

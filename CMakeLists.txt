@@ -12,6 +12,11 @@ if(USE_LIBCPP)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++ -lc++abi")
 endif()
 
+# Control varaible used to control excessively verbose messages. Logging wrapped in a
+# #ifdef for this variable need to be excessively verbose, and not useful outside
+# development debugging.
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDNF2B_VERY_VERBOSE")
+
 set(SPDLOG_FMT_EXTERNAL ON CACHE STRING "" FORCE)
 set(CURL_ZLIB ON CACHE STRING "" FORCE)
 

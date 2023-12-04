@@ -3,6 +3,7 @@
 #include "spdlog/spdlog.h"
 
 #include <arpa/inet.h>
+#include <iostream>
 
 namespace dnf2b {
 
@@ -30,7 +31,7 @@ std::map<std::string, int> Watcher::process(const std::vector<Message>& messages
                 } else if (isValid == -1) {
                     spdlog::error("Programmer error: Domain isn't valid (found {}, must be AF_INET or AF_INET6)", domain);
                 } else {
-                    spdlog::info("{} failed and will be logged.");
+                    spdlog::info("{} failed and will be logged.", res->ip);
                     resultIps[res->ip] += 1;
                 }
             }

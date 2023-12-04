@@ -3,12 +3,22 @@
 
 #include <dnf2b/static/Constants.hpp>
 #include <regex>
+#include <fstream>
 
 namespace dnf2b {
 
 Filter::Filter(const std::string& filterName) : filterName(filterName) {
-    nlohmann::json conf;
+    auto path = Constants::DNF2B_ROOT / "filters" / (filterName + ".json");
+    std::ifstream in(path);
+    if (!in) {
+        spdlog::error("Failed to load filter {} ({})", filterName, path.string());
+        throw std::runtime_error("Config error");
+    }
+    nlohmann::json config;
+    in >> config;
 
+    config.at("danger").get_to(this->danger);
+    config.at("patterns").get_to(this->patterns);
 }
 
 std::optional<MatchResult> Filter::checkMessage(const Message& message) {
@@ -35,6 +45,9 @@ std::optional<MatchResult> Filter::checkMessage(const Message& message) {
 
         std::smatch m;
         if (!std::regex_search(message.message, m, compiledPattern)) {
+#ifdef DNF2B_VERY_VERBOSE
+            spdlog::debug("No match for {} against {}", message.message, pattern);
+#endif
             // No match found.
             continue;
         }
