@@ -6,6 +6,10 @@ set (SOURCE_FILES
     dnf2b/sources/FileParser.cpp
     dnf2b/sources/ParserLoader.cpp
 
+    dnf2b/watcher/Watcher.cpp
+
+    dnf2b/filters/Filter.cpp
+
     dnf2b/ui/CLI.cpp
 )
 

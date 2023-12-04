@@ -16,13 +16,15 @@
     },
     "watchers": [
         {
+            "id": "sshd",
             "process": "sshd",
             "enabled": true,
             "file": "/var/log/auth.log",
             "parser": "journald",
             "port": 22,
             "limit": 3,
-            "filters": ["sshd-bruteforce"]
+            "filters": ["sshd-bruteforce"],
+            "banGroup": "global"
         }
     ],
     "bouncers": [

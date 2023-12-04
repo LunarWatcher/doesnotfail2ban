@@ -38,6 +38,8 @@ void Daemon::reload() {
         auto limit = watcher.value("limit", ctx.getMaxAttempts());
         auto jsonFilters = watcher.at("filters").get<std::vector<std::string>>();
 
+        auto group = watcher.value("banGroup", "global");
+
         std::vector<Filter> filters;
 
         std::transform(
@@ -60,6 +62,9 @@ void Daemon::run() {
             auto messages = parser->poll();
 
             if (messages.size() != 0) {
+                for (auto& watcher : watchers) {
+
+                }
 
             } else {
                 spdlog::debug("{} has nothing new", _file);

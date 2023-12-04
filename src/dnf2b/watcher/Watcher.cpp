@@ -6,8 +6,8 @@
 
 namespace dnf2b {
 
-Watcher::Watcher(std::optional<std::string> multiProcessID, uint16_t port, int limit, const std::vector<Filter>& filters)
-    : multiProcessID(multiProcessID), port(port), limit(limit), filters(filters) {
+Watcher::Watcher(const std::string& id, std::optional<std::string> multiProcessID, uint16_t port, int limit, const std::vector<Filter>& filters, const std::string& groupId)
+    : id(id), multiProcessID(multiProcessID), port(port), limit(limit), filters(filters), groupId(groupId) {
 
 }
 

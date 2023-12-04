@@ -20,6 +20,7 @@ std::optional<Message> Parser::parse(const std::string& line) {
     // TODO: sort out flags
     // TODO: figure out what the fuck past me meant by flags in this context
     auto regex = std::regex{pattern["full"].get<std::string>()};
+
     auto timePattern = pattern["time"].get<std::string>();
 
     auto& groups = pattern["groups"];

@@ -72,21 +72,8 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
 }
 
 TEST_CASE("Validate file update tracking", "[parser]") {
-    nlohmann::json config = {
-        {"type", "file"},
-        {"multiprocess", false},
-        {"pattern", {
-            {"full", "^\\[([^\\]]+)\\]: (.*)$"},
-            {"time", "%T"},
-            {"groups", {
-                {"time", 0},
-                {"message", 1}
-            }}
-        }}
-    };
-    dnf2b::FileParser parser("test", config, "./file-parser-test.txt");
-    // Format: [time] message
-    // TODO: standardize test format
+    auto rawParser = dnf2b::ParserLoader::loadParser("dummy-parser", "./file-parser-test.txt");
+    dnf2b::FileParser& parser = *std::static_pointer_cast<dnf2b::FileParser>(rawParser);
 
     std::filesystem::remove("./file-parser-test.txt");
 
