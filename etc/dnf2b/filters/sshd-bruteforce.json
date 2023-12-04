@@ -1,6 +1,6 @@
 {
     "danger": 5,
-    "filters": [
-        "^Did not receive identification string from ${dnf2b.ip}"
+    "patterns": [
+        "^Did not receive identification string from ${dnf2b.ip}$"
     ]
 }

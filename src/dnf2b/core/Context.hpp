@@ -27,6 +27,7 @@ public:
     Context(const std::vector<std::string>& arguments);
 
     const nlohmann::json& getConfig() { return config; }
+    int getMaxAttempts();
 
     /**
      * Entry point for this class' health check, as well as all classes contained by it.

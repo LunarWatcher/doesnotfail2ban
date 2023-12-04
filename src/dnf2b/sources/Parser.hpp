@@ -53,17 +53,10 @@ public:
      * via inheritance.
      */
     const std::string parserName;
+    const std::string resourceName;
 
 
-    Parser(const std::string& parserName);
-
-    /**
-     * Reloads the config. 
-     *
-     * Can be overridden to add additional post-clearing code, such as validating all open resources, and closing if necessary.
-     */
-    virtual void reload(Context& ctx);
-    
+    Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName);
 
     /**
      * Polls a given resource, and runs it through the parser if applicable.
@@ -71,6 +64,7 @@ public:
     virtual std::vector<Message> poll() = 0;
 
     virtual std::optional<Message> parse(const std::string& line);
+    std::vector<Message> filterMessages(const std::string& serviceName, const std::vector<Message>& messages);
 
     /**
      * Closes a resource, if applicable.

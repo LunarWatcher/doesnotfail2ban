@@ -2,6 +2,7 @@
 
 #include "dnf2b/core/Context.hpp"
 #include "dnf2b/except/Exceptions.hpp"
+#include "dnf2b/static/Constants.hpp"
 
 #include <sstream>
 #include <fstream>
@@ -10,26 +11,14 @@
 
 namespace dnf2b {
 
-Parser::Parser(const std::string& parserName) : parserName(parserName) {}
-
-void Parser::reload(Context& ctx) {
-    std::ifstream in(std::filesystem::path("/etc/dnf2b/parsers/") / (parserName + ".json"));
-    if (!in) {
-        throw except::GenericException("Failed to load " + parserName + ": file not found.", 255);
-    }
-
-    in >> config;
-    // TODO: validate config? Should also be merged into parse to relieve the validation done there. Would also allow more extensive validation.
-    // Is there a built-in validation system?
-    // As an aside, a dedicated validation function would also enable a validation command for parsers. Extending that to filters
-    // and communicators is actually a stonks idea
-}
+Parser::Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName) : parserName(parserName), config(config), resourceName(resourceName) {}
 
 std::optional<Message> Parser::parse(const std::string& line) {
     std::smatch match;
     auto& pattern = config.at("pattern");
 
     // TODO: sort out flags
+    // TODO: figure out what the fuck past me meant by flags in this context
     auto regex = std::regex{pattern["full"].get<std::string>()};
     auto timePattern = pattern["time"].get<std::string>();
 
@@ -113,6 +102,23 @@ std::optional<Message> Parser::parse(const std::string& line) {
     }
 
     return std::nullopt;
+}
+
+std::vector<Message> Parser::filterMessages(const std::string& serviceName, const std::vector<Message>& messages) {
+    // If the input isn't multiprocess, it's guaranteed correct
+    // Note that some inputs are multiprocess, but aren't declared multiprocess. 
+    //
+    // Nginx is one good example of this. It does some logging of the services, users, and return codes, but not which port stuff
+    // is forwarded to. This means further filtering isn't appropriate before it's passed to the watcher.
+    // 
+    if (!this->config.at("multiprocess").get<bool>()) {
+        return messages;
+    }
+    std::vector<Message> out;
+
+    
+
+    return out;
 }
 
 }

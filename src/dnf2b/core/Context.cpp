@@ -1,4 +1,5 @@
 #include "Context.hpp"
+#include "dnf2b/static/Constants.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -6,7 +7,7 @@
 namespace dnf2b {
 
 Context::Context(const std::vector<std::string>& arguments) :  arguments(arguments) {
-    std::ifstream stream("/etc/dnf2b/config.local.json");
+    std::ifstream stream(Constants::DNF2B_ROOT / "config.local.json");
     if (!stream) {
         std::cerr << "Failed to find config.local.json" << std::endl;
         throw 255;
@@ -18,8 +19,13 @@ Context::Context(const std::vector<std::string>& arguments) :  arguments(argumen
     config.update(custom, true);
 }
 
+// WTF is this even for? Most things cannot be health checked
 void Context::checkHealth() {
     // TODO
+}
+
+int Context::getMaxAttempts() {
+    return config.at("core").at("control").at("maxAttempts").get<int>();
 }
 
 }

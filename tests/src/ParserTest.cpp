@@ -1,6 +1,7 @@
 #include "catch2/catch_test_macros.hpp"
 
 #include "dnf2b/sources/FileParser.hpp"
+#include "dnf2b/sources/ParserLoader.hpp"
 #include <chrono>
 #include <filesystem>
 #include <iostream>
@@ -8,19 +9,14 @@
 #include <time.h>
 
 TEST_CASE("Make sure trivial parsing works", "[parser]") {
-    // TODO: This test really should do loading from a file
-    dnf2b::FileParser p("journald", "unused");
-    std::ifstream x("../etc/dnf2b/parsers/journald.json");
-    INFO("If x.is_open() fails, this is a _solid_ indicator you're in the wrong cwd. cd into the build directory and try again");
-    REQUIRE(x.is_open());
-
-    x >> p.config;
-    INFO(p.config.dump());
+    // TODO: this should really be refactored
+    auto parser = dnf2b::ParserLoader::loadParser("journald", "unused");
+    dnf2b::FileParser& p = *std::static_pointer_cast<dnf2b::FileParser>(parser);
 
     auto message = p.parse("Aug 17 22:17:44 sinon sshd[20094]: Failed password for invalid user admin from 123.45.67.89 port 57792 ssh2");
 
     REQUIRE(message);
-    
+
 
     std::time_t raw = std::chrono::system_clock::to_time_t(message->entryDate);
     auto tmStruct = std::localtime(&raw);
@@ -40,13 +36,7 @@ TEST_CASE("Make sure trivial parsing works", "[parser]") {
 }
 
 TEST_CASE("Non-multiprocess parsing", "[parser]") {
-    dnf2b::FileParser p("yourmom", "unused");
-    // For this example, we use a non-multiprocess system
-    // that uses this log format:
-    //    [subsystem, not unique, and not constant] Month Day Time: message
-    //
-    // The date format is identical to the systemd example, because I'm lazy. Fight me.
-    p.config = {
+    nlohmann::json config = {
         {"type", "file"},
         {"multiprocess", false},
         {"pattern",
@@ -62,11 +52,17 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
             }
         }
     };
+    dnf2b::FileParser p("yourmom", config, "unused");
+    // For this example, we use a non-multiprocess system
+    // that uses this log format:
+    //    [subsystem, not unique, and not constant] Month Day Time: message
+    //
+    // The date format is identical to the systemd example, because I'm lazy. Fight me.
 
     auto message = p.parse("[core] Aug 17 21:22:23: message");
 
     REQUIRE(message);
-    
+
     std::time_t raw = std::chrono::system_clock::to_time_t(message->entryDate);
 
     REQUIRE(message->message == "message");
@@ -75,11 +71,8 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
     REQUIRE(message->process == "");
 }
 
-TEST_CASE("File changes", "[parser]") {
-    dnf2b::FileParser parser("test", "./file-parser-test.txt");
-    // Format: [time] message
-    // TODO: standardize test format
-    parser.config = {
+TEST_CASE("Validate file update tracking", "[parser]") {
+    nlohmann::json config = {
         {"type", "file"},
         {"multiprocess", false},
         {"pattern", {
@@ -91,6 +84,9 @@ TEST_CASE("File changes", "[parser]") {
             }}
         }}
     };
+    dnf2b::FileParser parser("test", config, "./file-parser-test.txt");
+    // Format: [time] message
+    // TODO: standardize test format
 
     std::filesystem::remove("./file-parser-test.txt");
 

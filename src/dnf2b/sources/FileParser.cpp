@@ -10,8 +10,14 @@ namespace dnf2b {
 
 std::vector<Message> FileParser::poll() {
     std::vector<Message> messages;
-
-
+    // TODO: This has a bug with file recreation.
+    // If, by pure chance, the file is recreated, and is larger than it was
+    // prior to the last iteration, this will fail.
+    // Should probably cross-compare with some other timestamp for good measure,
+    // but this likely means diving into log parsing or maybe some low-level linux
+    // stuff for identifiers
+    //
+    // Problem for future me, though. This is an edge-case, not a blocker
 
     std::ifstream stream(resourceName);
 

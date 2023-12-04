@@ -1,6 +1,7 @@
 add_executable(tests src/TestRunner.cpp
     # Tests {{{
     src/ParserTest.cpp
+    src/WatcherTests.cpp
     # }}}
 )
 
@@ -16,5 +17,13 @@ FetchContent_MakeAvailable(Catch2)
 
 target_link_libraries(tests Catch2::Catch2)
 # }}}
+
+add_custom_target(test_resources
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/test-files
+
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/etc ${CMAKE_BINARY_DIR}/test-files
+)
+
+add_dependencies(tests test_resources)
 
 target_link_libraries(tests dnf2b_src)

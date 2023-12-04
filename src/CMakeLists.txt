@@ -4,6 +4,7 @@ set (SOURCE_FILES
 
     dnf2b/sources/Parser.cpp
     dnf2b/sources/FileParser.cpp
+    dnf2b/sources/ParserLoader.cpp
 
     dnf2b/ui/CLI.cpp
 )

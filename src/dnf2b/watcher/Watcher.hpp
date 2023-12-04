@@ -1,30 +1,27 @@
 #pragma once
 
+#include "dnf2b/filters/Filter.hpp"
 #include "dnf2b/infrastructure/HealthCheck.hpp"
 #include "dnf2b/sources/Parser.hpp"
+#include <cstdint>
 #include <string>
 #include <optional>
 
 namespace dnf2b {
 
-class Watcher : public HealthCheck {
+class Watcher {
 private:
-    std::optional<std::string> process;
+    std::optional<std::string> multiProcessID;
 
-    bool enabled;
-    std::string resource;
-
-    int port;
+    uint16_t port;
     int limit;
 
-    long long bans;
+    std::vector<Filter> filters;
 
 public:
-    Watcher(const nlohmann::json& conf);
+    Watcher(std::optional<std::string> multiProcessID, uint16_t port, int limit, const std::vector<Filter>& filters);
 
-    virtual void process(const std::vector<Message>& filteredMessages);
-
-    virtual std::string checkHealth() override;
+    virtual std::map<std::string, int> process(const std::vector<Message>& filteredMessages);
 
 };
 

@@ -1,6 +1,9 @@
 #include <iostream>
 
-#include "dnf2b/ui/CLI.hpp" 
+#include "dnf2b/static/Constants.hpp"
+#include "dnf2b/ui/CLI.hpp"
+
+std::filesystem::path dnf2b::Constants::DNF2B_ROOT = "/etc/dnf2b";
 
 int main(int argc, const char* argv[]) {
     try {

@@ -1,0 +1,8 @@
+{
+    "danger": 10,
+    "patterns": [
+        "^\"GET /[^/]+/auth [^\"]+\" 401",
+        "^\"POST /[^/]+ [^\"]+\" 403"
+    ],
+    "comment": "I'm not sure if this is portable to non-nginx ntfy as well. NTFY does have built-in logs, but IIRC, they suck and don't include IPs"
+}
