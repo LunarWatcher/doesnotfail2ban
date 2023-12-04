@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <optional>
 
 #include "dnf2b/infrastructure/HealthCheck.hpp"
 
@@ -11,8 +12,9 @@ public:
     Bouncer();
     virtual ~Bouncer() = default;
 
-    virtual void unbanIP(const std::string& ip) = 0;
-    virtual void banIP(const std::string& ip) = 0;
+
+    virtual void unban(const std::string& ip, std::optional<uint16_t> port) = 0;
+    virtual void ban(const std::string& ip, std::optional<uint16_t> port) = 0;
 };
 
 }

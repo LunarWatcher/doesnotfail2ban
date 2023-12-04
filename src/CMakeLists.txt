@@ -20,7 +20,17 @@ target_include_directories(dnf2b_src PUBLIC ./)
 
 # TODO: conditionally link fmt (probably)
 # Source library linking
-target_link_libraries(dnf2b_src PUBLIC stc fmt::fmt nlohmann_json spdlog cpr::cpr)
+target_link_libraries(dnf2b_src PUBLIC
+    stc
+    fmt::fmt
+    nlohmann_json
+    spdlog
+    cpr::cpr
+    SQLiteCpp
+    sqlite3
+    pthread
+    dl
+)
 
 # Executable linking
 target_link_libraries(dnf2b PUBLIC dnf2b_src)

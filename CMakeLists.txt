@@ -35,7 +35,11 @@ FetchContent_Declare(cpr
     GIT_TAG 1.10.0)
 FetchContent_Declare(stc
     GIT_REPOSITORY https://github.com/LunarWatcher/stc)
+FetchContent_Declare(sql
+    GIT_REPOSITORY https://github.com/SRombauts/SQLiteCpp
+    GIT_TAG 3.3.1)
 
+FetchContent_MakeAvailable(sql)
 FetchContent_MakeAvailable(cpr)
 FetchContent_MakeAvailable(fmt)
 FetchContent_MakeAvailable(spdlog)
