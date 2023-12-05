@@ -2,6 +2,8 @@ set (SOURCE_FILES
     dnf2b/core/Context.cpp
     dnf2b/core/Daemon.cpp
 
+    dnf2b/data/BanManager.cpp
+
     dnf2b/sources/Parser.cpp
     dnf2b/sources/FileParser.cpp
     dnf2b/sources/ParserLoader.cpp
@@ -30,6 +32,8 @@ target_link_libraries(dnf2b_src PUBLIC
     sqlite3
     pthread
     dl
+
+    asio::asio
 )
 
 # Executable linking

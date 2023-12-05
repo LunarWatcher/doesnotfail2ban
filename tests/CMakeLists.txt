@@ -1,7 +1,10 @@
 add_executable(tests src/TestRunner.cpp
+
+    src/util/MockHelper.cpp
     # Tests {{{
     src/ParserTest.cpp
     src/WatcherTests.cpp
+    src/BanManagerTests.cpp
     # }}}
 )
 

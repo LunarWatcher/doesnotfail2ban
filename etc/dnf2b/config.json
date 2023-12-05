@@ -10,8 +10,7 @@
             "enabled": true,
             "banStats": true,
             "originStats": true,
-            "credentialStats": true,
-            "blockStats": true
+            "credentialStats": true
         }
     },
     "watchers": [
@@ -27,9 +26,12 @@
             "banGroup": "global"
         }
     ],
-    "bouncers": [
-        "ufw"
-    ],
+    "bouncers": {
+        "iptables": {
+            "strategy": "DROP",
+            "banAll": true
+        }
+    },
     "communicators": {
     }
 }
