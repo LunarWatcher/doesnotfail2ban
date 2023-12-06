@@ -39,12 +39,21 @@ FetchContent_Declare(sql
     GIT_REPOSITORY https://github.com/SRombauts/SQLiteCpp
     GIT_TAG 3.3.1)
 
-FetchContent_MakeAvailable(sql)
-FetchContent_MakeAvailable(cpr)
+
 FetchContent_MakeAvailable(fmt)
 FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(nlohmann)
 FetchContent_MakeAvailable(stc)
+FetchContent_GetProperties(sql)
+if (NOT sql_POPULATED)
+    FetchContent_Populate(sql)
+    add_subdirectory(${sql_SOURCE_DIR} ${sql_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+FetchContent_GetProperties(cpr)
+if (NOT cpr_POPULATED)
+    FetchContent_Populate(cpr)
+    add_subdirectory(${cpr_SOURCE_DIR} ${cpr_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 option(ASIO_USE_CPM "Download Asio with CPM instead of FetchContent" OFF)
 option(
