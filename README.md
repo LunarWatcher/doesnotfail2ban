@@ -1,6 +1,6 @@
 # Dnf2b
 
-Because f2b doesn't always do its job.
+Because fail2ban does often fail to ban.
 
 ## Requirements
 
