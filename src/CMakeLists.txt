@@ -17,6 +17,7 @@ set (SOURCE_FILES
 
     dnf2b/ui/CLI.cpp
 )
+list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 
 add_library(dnf2b_src STATIC ${SOURCE_FILES})
 
@@ -43,10 +44,10 @@ target_link_libraries(dnf2b_src PUBLIC
 target_link_libraries(dnf2b PUBLIC dnf2b_src)
 
 # Installation {{{
-# TODO: Fix this crap
 install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
 
 install(TARGETS dnf2b DESTINATION bin)
+INSTALL(DIRECTORY ${CMKE_BINARY_DIR}/lib DESTINATION .)
 # }}}
 
 # vim:ft=cmake
