@@ -47,7 +47,7 @@ target_link_libraries(dnf2b PUBLIC dnf2b_src)
 install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
 
 install(TARGETS dnf2b DESTINATION bin)
-INSTALL(DIRECTORY ${CMKE_BINARY_DIR}/lib DESTINATION .)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/lib DESTINATION .)
 # }}}
 
 # vim:ft=cmake
