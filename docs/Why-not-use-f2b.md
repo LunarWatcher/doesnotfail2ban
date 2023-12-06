@@ -13,6 +13,12 @@ Another thing I had happen once was fail2ban quietly dying because I fucked arou
 
 This is one of the more ironic points, but fail2ban often lives up to its name in the wrong way. 
 
-A significant number of log entries slipped past f2b, because the apt version is _grossly_ out of date. Admittedly, this is more the fault of the debian philosophy than f2b. However at the time I used it, its use of Python 2 also made updating it manually a massive pain in the ass.
+Certain things cannot be fully blamed on fail2ban; out-of-date filters and changes to systems resulting in different log formats happens to all systems. Particularly the apt version is exposed to this, as it's heavily out of date. Dnf2b is no exception to this. However, even seemingly with the right filters enabled, it occasionally blatantly ignored matches for reasons I'm not going to pretend to understand.
 
-Certain things cannot be fully blamed on fail2ban; out-of-date filters and changes to systems resulting in different log formats happens to all systems. Dnf2b is no exception to this. However, even seemingly with the right filters enabled, it occasionally blatantly ignored matches for reasons I'm not going to pretend to understand.
+## Permabans aren't permabans
+
+Granted, there's configuration for this, but due to f2b's [storage machanics](https://serverfault.com/a/604236/569995), permabans risk not persisting by default.
+
+## Final words
+
+From what I've seen on the internet, I'm not the only one who has had problems with f2b. An alternative already exists ([CrowdSec](https://www.crowdsec.net)), but it follows a very different system to fail2ban and by extension, dnf2b. Again, if f2b works for you, use it. If it ain't broke, etc.
