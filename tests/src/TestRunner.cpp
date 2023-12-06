@@ -21,7 +21,6 @@ int main(int argc, const char* argv[]) {
         std::ofstream f(dnf2b::Constants::DNF2B_ROOT / "filters/dummy-filter.json");
         f << R"(
         {
-            "danger": 10,
             "patterns": [
                 "^Never gonna give you up",
                 "^Foxes <3$"

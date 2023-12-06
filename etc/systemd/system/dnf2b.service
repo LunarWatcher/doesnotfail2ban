@@ -10,7 +10,7 @@ RestartPreventExitStatus=0 255
 
 Type=idle
 WorkingDirectory=/etc/dnf2b/
-ExecStart=dnf2b daemon
+ExecStart=/opt/dnf2b/bin/dnf2b daemon
 ExecStop=killall dnf2b
 
 [Install]

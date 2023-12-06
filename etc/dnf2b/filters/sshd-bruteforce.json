@@ -1,5 +1,4 @@
 {
-    "danger": 5,
     "patterns": [
         "^Did not receive identification string from ${dnf2b.ip}$"
     ]

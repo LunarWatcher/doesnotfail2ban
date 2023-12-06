@@ -24,7 +24,9 @@ When you've read the file (as one always should with random scripts on the inter
 curl -L https://raw.githubusercontent.com/LunarWatcher/doesnotfail2ban/master/scripts/install.sh | bash
 ```
 
-To automatically download and run the script.
+To automatically download and run the script. This will download the source, compile it, and install it to /opt/dnf2b, along with copying the etc folder into /etc (along with a systemd service for your convenience).
+
+Note that before the service can be started, `config.local.json` needs to be created. This is documented in docs/Config.md.
 
 ## License?
 

@@ -34,6 +34,6 @@ jobs:
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.variant }}
           # Not entirely sure how much the GitHub runners support
-          make
-          ./bin/tests
+          make -j $(nproc) test
+
 

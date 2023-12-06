@@ -17,8 +17,8 @@ Filter::Filter(const std::string& filterName) : filterName(filterName) {
     nlohmann::json config;
     in >> config;
 
-    config.at("danger").get_to(this->danger);
     config.at("patterns").get_to(this->patterns);
+    insensitive = config.value("insensitive", false);
 }
 
 std::optional<MatchResult> Filter::checkMessage(const Message& message) {
@@ -41,7 +41,12 @@ std::optional<MatchResult> Filter::checkMessage(const Message& message) {
             hasInlineIP = true;
         }
 
-        std::regex compiledPattern(pattern);
+        auto opts = std::regex_constants::ECMAScript;
+        if (insensitive) {
+            opts |= std::regex_constants::icase;
+        }
+
+        std::regex compiledPattern(pattern, opts);
 
         std::smatch m;
         if (!std::regex_search(message.message, m, compiledPattern)) {
@@ -55,7 +60,6 @@ std::optional<MatchResult> Filter::checkMessage(const Message& message) {
         std::string ip = hasInlineIP ? m[1].str() : message.ip;
 
         return MatchResult {
-            .badness = this->danger,
             .ip = ip
         };
     }
