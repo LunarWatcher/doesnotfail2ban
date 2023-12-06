@@ -1,0 +1,42 @@
+name: Report a bug
+description: File a bug report
+labels: ["bug"]
+body:
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: dnf2b version
+      placeholder: Git hash, v1.2.3, ...
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: OS distribution
+      placeholder: Ubuntu Server 21.04, ...
+      description: Remember: dnf2b is only compatible with Linux-based servers. If you're running Windows, do not file dnf2b not compiling or not working as a bug
+  - type: textarea
+    validations:
+      required: false
+    attributes:
+      label: dnf2b config (if applicable)
+      description: You can anonymise anything sensitive if required, but if you remove entire fields, make sure this doesn't affect the bug report.
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Describe the bug
+      description: Describe the bug here
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Steps to reproduce
+      description: Describe what you did to trigger the bug, and the steps required to reproduce it. 
+  - type: textarea
+    validations:
+      required: false
+    attributes:
+      label: Other information
+      description: Anything else important not covered by the other fields can go here.
+

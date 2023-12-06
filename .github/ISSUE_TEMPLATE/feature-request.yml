@@ -1,0 +1,14 @@
+name: Request a feature
+description: Got a new feature in mind?
+labels: ["feature request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A more useful template for feature requests will appear here in the future. For now, you just get a textfield. Please be descriptive, and make sure the feature hasn't already been requested.
+  - type: textarea
+    validations:
+      required: false
+    attributes:
+      label: Description
+

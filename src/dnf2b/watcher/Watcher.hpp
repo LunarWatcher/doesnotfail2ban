@@ -18,30 +18,30 @@ private:
      * This is, in certain ways, a glorified comment field.
      */
     std::string id;
-    /**
-     * Group IDs define where to look for occurrences before throwing an IP in jail. By default,
-     * this is set to "global" to recommend one
-     */
-    std::string groupId;
     std::optional<std::string> multiProcessID;
 
-    uint16_t port;
+    std::optional<uint16_t> port;
     int limit;
 
     std::vector<Filter> filters;
+    std::string bouncer;
 
 public:
     Watcher(
         const std::string& id,
         std::optional<std::string> multiProcessID,
-        uint16_t port,
+        std::optional<uint16_t> port,
         int limit,
         const std::vector<Filter>& filters,
-        const std::string& groupId
+        const std::string& bouncer
     );
 
     virtual std::map<std::string, int> process(const std::vector<Message>& filteredMessages);
 
+    const std::string& getId() { return id; }
+    const std::string& getBouncerName() { return bouncer; }
+    int getFailThreshold() { return limit; }
+    decltype(port) getPort() { return port; }
 };
 
 }

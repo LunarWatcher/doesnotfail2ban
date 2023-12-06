@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Structs.hpp"
+
 #include "dnf2b/bouncers/Bouncer.hpp"
 #include "dnf2b/core/Context.hpp"
 #include <variant>
@@ -18,23 +20,17 @@
 
 namespace dnf2b {
 
-struct IPInfo {
-    std::string ip;
-    std::vector<long long> fails;
-
-};
-
 /**
  *
  */
 class BanManager {
 private:
     std::map<std::string /* bouncer name */, std::shared_ptr<Bouncer>> bouncers;
-    std::map<std::string /* group */, std::string /* bouncer */> groupBouncerMap;
 
     std::map<std::string, IPInfo> ipMap;
 
     std::vector<std::variant<asio::ip::network_v4, asio::ip::network_v6, asio::ip::address_v4, asio::ip::address_v6>> whitelist;
+    double forgiveAfter;
 
 public:
     BanManager(const nlohmann::json& config);

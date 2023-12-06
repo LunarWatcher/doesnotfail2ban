@@ -13,6 +13,9 @@ TEST_CASE("Verify whitelist logic", "[BanManager]")  {
         "12.34.56.78/16",
         "12.35.56.78"
     };
+    conf["bouncers"]["noop"] = {
+        {"stfu", ""},
+    };
 
     dnf2b::BanManager man(conf);
 

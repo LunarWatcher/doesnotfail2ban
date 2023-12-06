@@ -5,6 +5,11 @@ Because f2b doesn't always do its job.
 ## Requirements
 
 * A C++20 compiler
+* A Linux server
+
+## Current status
+
+At this time, dnf2b is considered barely deployable, and barely functional. It has the bare minimum features required to function, but lacks many important features, and has a very thin ruleset. See also the Caveats section, which will be true even when features catch up and dnf2b becomes stable, and this notice disappears.
 
 ## Caveats
 

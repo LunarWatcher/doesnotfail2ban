@@ -8,6 +8,9 @@ set (SOURCE_FILES
     dnf2b/sources/FileParser.cpp
     dnf2b/sources/ParserLoader.cpp
 
+    dnf2b/bouncers/BouncerLoader.cpp
+    dnf2b/bouncers/IPTableBouncer.cpp
+
     dnf2b/watcher/Watcher.cpp
 
     dnf2b/filters/Filter.cpp

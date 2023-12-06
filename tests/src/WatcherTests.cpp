@@ -13,7 +13,8 @@ TEST_CASE("Validate processing logic", "[Watcher]") {
         {
             dnf2b::Filter("dummy-filter")
         },
-        "global");
+        ""
+    );
 
     std::vector<dnf2b::Message> messages = {
         {

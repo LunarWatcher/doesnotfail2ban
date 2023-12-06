@@ -3,8 +3,9 @@
     "core": {
         "control": {
             "maxAttempts": 3,
-            "searchPeriod": "7d",
-            "banPeriod": "1w"
+            "banPeriod": "1w",
+            "inc": 2,
+            "forgetAfter": "2w"
         },
         "stats": {
             "enabled": true,
@@ -20,16 +21,13 @@
             "enabled": true,
             "file": "/var/log/auth.log",
             "parser": "journald",
-            "port": 22,
-            "limit": 3,
             "filters": ["sshd-bruteforce"],
-            "banGroup": "global"
+            "banaction": "iptables"
         }
     ],
     "bouncers": {
         "iptables": {
-            "strategy": "DROP",
-            "banAll": true
+            "strategy": "DROP"
         }
     },
     "communicators": {

@@ -1,0 +1,32 @@
+name: Request filter additions/changes
+description: Use this template for uncaught stuff you believe should be in a filter, or for stuff that is caught but shouldn't be.
+labels: ["filters"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for contributing to improving dnf2b's detections. Before continuing, make sure your request isn't covered by an existing issue. If you feel comfortable doing so, you can also outright skip making an issue, and make a pull request instead.
+
+        Also, please make sure you check the newest filters before opening an issue if you aren't running the newest version already - the filter you want could've been added already.
+  - type: input
+    validations:
+      required: true
+    attributes:
+      label: Source
+      placeholder: sshd, nginx, ...
+
+  - type: textarea
+    validations:
+      required: true
+    attributes:
+      label: Examples
+      placeholder: 2023-11-25T12:39:28.397713+01:00 nova sshd[98004]: banner exchange: Connection from 192.168.0.1 port 65262: invalid format
+      description: |
+        To better identify the pattern, please provide some examples of relevant log entries. Please make sure you redact IPs, usernames, or any other sensitive information, and replace it with placeholders (for example, IPs can be replaced with `192.168.0.1`, usernames can be replaced with `example`, etc.)
+
+        Don't forget to wrap the logs in a code block.
+  - type: textarea
+    validations:
+      required: false
+    attributes:
+      label: Additional information
