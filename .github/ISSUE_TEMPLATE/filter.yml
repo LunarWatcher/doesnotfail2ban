@@ -20,7 +20,7 @@ body:
       required: true
     attributes:
       label: Examples
-      placeholder: 2023-11-25T12:39:28.397713+01:00 nova sshd[98004]: banner exchange: Connection from 192.168.0.1 port 65262: invalid format
+      placeholder: "2023-11-25T12:39:28.397713+01:00 nova sshd[98004]: banner exchange: Connection from 192.168.0.1 port 65262: invalid format"
       description: |
         To better identify the pattern, please provide some examples of relevant log entries. Please make sure you redact IPs, usernames, or any other sensitive information, and replace it with placeholders (for example, IPs can be replaced with `192.168.0.1`, usernames can be replaced with `example`, etc.)
 

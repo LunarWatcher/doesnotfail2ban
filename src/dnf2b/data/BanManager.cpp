@@ -65,6 +65,9 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
             auto bouncer = bouncers.at(source->getBouncerName());
 
             bouncer->ban(ip, source->getPort());
+
+            info.currFails.clear();
+            info.banStarted = currTime;
         }
     }
 }

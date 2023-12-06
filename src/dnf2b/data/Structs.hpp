@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -9,7 +10,7 @@ struct IPInfo {
     std::string ip;
     std::vector<double> currFails;
     int banCount;
-    double banStarted;
+    std::optional<double> banStarted;
 };
 
 

@@ -14,7 +14,7 @@ body:
     attributes:
       label: OS distribution
       placeholder: Ubuntu Server 21.04, ...
-      description: Remember: dnf2b is only compatible with Linux-based servers. If you're running Windows, do not file dnf2b not compiling or not working as a bug
+      description: "Remember: dnf2b is only compatible with Linux-based servers. If you're running Windows, do not file dnf2b not compiling or not working as a bug"
   - type: textarea
     validations:
       required: false

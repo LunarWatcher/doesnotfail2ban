@@ -36,9 +36,9 @@ public:
     BanManager(const nlohmann::json& config);
 
     void log(Watcher* source, std::map<std::string, int> ipFailMap);
-
+    void checkUnbansAndCleanup();
+     
     bool isWhitelisted(const std::string& ip);
-
 };
 
 }
