@@ -15,6 +15,7 @@
  * Maybe one day, but not in the near nor distant foreseeable future.
  */
 #include <asio.hpp>
+#include "dnf2b/data/BanDB.hpp"
 #include "dnf2b/watcher/Watcher.hpp"
 #include "nlohmann/json.hpp"
 
@@ -27,10 +28,21 @@ class BanManager {
 private:
     std::map<std::string /* bouncer name */, std::shared_ptr<Bouncer>> bouncers;
 
-    std::map<std::string, IPInfo> ipMap;
-
     std::vector<std::variant<asio::ip::network_v4, asio::ip::network_v6, asio::ip::address_v4, asio::ip::address_v6>> whitelist;
     double forgiveAfter;
+
+    BanDB db;
+    long long banDuration, banIncrement;
+
+    std::map<std::string, IPInfo> failCache;
+
+    IPInfo getIpInfo(const std::string& ip) {
+        if (failCache.contains(ip)) {
+            return failCache.at(ip);
+        }
+        return db.loadIp(ip);
+    } 
+    void loadBouncerRules();
 
 public:
     BanManager(const nlohmann::json& config);

@@ -3,6 +3,7 @@ set (SOURCE_FILES
     dnf2b/core/Daemon.cpp
 
     dnf2b/data/BanManager.cpp
+    dnf2b/data/BanDB.cpp
 
     dnf2b/sources/Parser.cpp
     dnf2b/sources/FileParser.cpp

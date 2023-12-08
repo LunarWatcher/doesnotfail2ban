@@ -2,14 +2,16 @@
 #include "asio/ip/address_v4.hpp"
 #include "asio/ip/network_v4.hpp"
 #include "asio/ip/network_v6.hpp"
+#include "dnf2b/static/Constants.hpp"
 #include "spdlog/spdlog.h"
 #include <chrono>
+#include <limits>
 #include <variant>
 #include "dnf2b/bouncers/BouncerLoader.hpp"
 
 namespace dnf2b {
 
-BanManager::BanManager(const nlohmann::json& ctx) {
+BanManager::BanManager(const nlohmann::json& ctx) : db(Constants::DNF2B_ROOT / "db.sqlite3"){
     auto rawWhitelist = ctx.at("core").value("whitelist", std::vector<std::string>{});
     auto forgiveRaw = ctx.at("core").value("foregiveAfter", "never");
 
@@ -56,8 +58,8 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
         auto currTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
         std::vector<double> fails(timesCaught, currTime);
 
-        auto& info = ipMap[ip];
-        info.ip = ip;
+        // This is probably shit for performance.
+        auto info = getIpInfo(ip);
         info.currFails.insert(info.currFails.end(), fails.begin(), fails.end());
 
         if (info.currFails.size() >= source->getFailThreshold()) {
@@ -67,9 +69,32 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
             bouncer->ban(ip, source->getPort());
 
             info.currFails.clear();
-            info.banStarted = currTime;
+            if (info.currBans.contains(source->getBouncerName())) {
+                spdlog::warn("{} has already been banned in {}. Skipping re-ban; race condition?", ip, source->getBouncerName());
+            } else {
+                int64_t duration = banDuration < 0 ? -1 : banDuration * static_cast<int64_t>(std::pow(banIncrement, info.banCount));
+                if (duration < 0) {
+                    // overflow, cap to max
+                    duration = -1;
+                }
+                info.currBans[source->getBouncerName()] = {
+                    currTime,
+                    duration
+                };
+            }
+
+            // When banned, get rid of any stored fails
+            db.wipeFailsFor(info.ip);
+        } else {
+            // Failed, but not immediately banned, IPs are stored in a cache.
+            failCache[ip] = info;
         }
+        db.updateIp(info);
     }
+}
+
+void BanManager::checkUnbansAndCleanup() {
+
 }
 
 bool BanManager::isWhitelisted(const std::string& ip) {

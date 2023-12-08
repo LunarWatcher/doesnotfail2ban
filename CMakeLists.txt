@@ -70,6 +70,21 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(asiocmake)
 
+# Set up versioning {{{
+find_program(GIT git)
+if (GIT)
+    execute_process(COMMAND ${GIT} describe --tags --always
+        OUTPUT_VARIABLE DNF2B_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Detected version: ${DNF2B_VERSION}")
+else()
+    message(WARNING "Git not found. Defaulting to unknown version. This will not have an effect on the program beyond a missing version")
+    set(DNF2B_VERSION "UNKNOWN")
+endif()
+add_definitions(-DDNF2B_VERSION="${DNF2B_VERSION}")
+# }}}
+
 add_subdirectory(src)
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 

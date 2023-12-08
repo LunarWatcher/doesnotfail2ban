@@ -23,7 +23,8 @@ int main(int argc, const char* argv[]) {
         {
             "patterns": [
                 "^Never gonna give you up",
-                "^Foxes <3$"
+                "^Foxes <3$",
+                "^Snacc attacc"
             ]
         }
         )" << std::endl;

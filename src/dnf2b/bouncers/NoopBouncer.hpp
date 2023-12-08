@@ -18,6 +18,8 @@ public:
 
     void unban(const std::string& ip, std::optional<uint16_t> port) override {}
     void ban(const std::string& ip, std::optional<uint16_t> port) override {}
+
+    bool persistentBans() override { return false; }
 };
 
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dnf2b/bouncers/Bouncer.hpp"
+#include "dnf2b/data/Structs.hpp"
 
 #include <nlohmann/json.hpp>
 
@@ -16,6 +17,7 @@ namespace dnf2b {
 class IPTableBouncer : public Bouncer {
 private:
     std::string strategy;
+    bool useIpset;
 
     /**
      * Utility function that returns either "iptables" or "ip6tables",
@@ -26,11 +28,14 @@ private:
      */
     std::string getCommand(const std::string& ip);
     std::string getRule(const std::string& ip);
+    std::string getIpsetCommand(const std::string& ip, bool remove);
 public:
     IPTableBouncer(const nlohmann::json& config);
 
     void ban(const std::string& ip, std::optional<uint16_t> port) override;
     void unban(const std::string& ip, std::optional<uint16_t> port) override;
+
+    bool persistentBans() override { return false; }
 
 };
 

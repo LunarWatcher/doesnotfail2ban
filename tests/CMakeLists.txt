@@ -5,6 +5,7 @@ add_executable(tests src/TestRunner.cpp
     src/ParserTest.cpp
     src/WatcherTests.cpp
     src/BanManagerTests.cpp
+    src/DatabaseTests.cpp
     # }}}
 )
 
