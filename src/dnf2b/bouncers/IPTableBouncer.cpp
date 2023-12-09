@@ -57,12 +57,12 @@ IPTableBouncer::IPTableBouncer(const nlohmann::json& config) {
             throw std::runtime_error("Failed to create ipset");
         }
 
-        auto code = std::system(fmt::format("iptables -A dnf2b -m set --match-set dnf2b-v4-blacklist -j {}", strategy).c_str());
+        auto code = std::system(fmt::format("iptables -A dnf2b -m set --match-set dnf2b-v4-blacklist src -j {}", strategy).c_str());
         if (code != 0) {
             spdlog::error("iptables failed to set up ipset rule");
             throw std::runtime_error("Ipset rule fail");
         }
-        code = std::system(fmt::format("ip6tables -A dnf2b -m set --match-set dnf2b-v6-blacklist -j {}", strategy).c_str());
+        code = std::system(fmt::format("ip6tables -A dnf2b -m set --match-set dnf2b-v6-blacklist src -j {}", strategy).c_str());
         if (code != 0) {
             spdlog::error("iptables failed to set up ipset rule");
             throw std::runtime_error("Ipset rule fail");
