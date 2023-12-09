@@ -38,7 +38,7 @@ IPTableBouncer::IPTableBouncer(const nlohmann::json& config) {
     }
 
     if (useIpset) {
-        if (std::system("ipset create dnf2b-v4-blacklist hash:ip hashsize 4096 family inet4") != 0) {
+        if (std::system("ipset create dnf2b-v4-blacklist hash:ip hashsize 4096 family inet") != 0) {
             spdlog::error("ipset failed");
             throw std::runtime_error("Failed to create ipset");
         }
