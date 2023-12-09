@@ -40,7 +40,7 @@ IPTableBouncer::IPTableBouncer(const nlohmann::json& config) {
     if (useIpset) {
         auto createIPTable = [](std::string name, std::string family) {
 
-            auto message = stc::syscommand(fmt::format("ipset create {} hash:ip hashsize 4096 family {}", name, family));
+            auto message = stc::syscommand(fmt::format("ipset create {} hash:ip hashsize 4096 family {} 2>&1", name, family));
             if (message.find("set with the same name already exists") != std::string::npos) {
                 spdlog::info("{} already exists. Flushing set...", name);
                 std::system(fmt::format("ipset flush {}", name).c_str());
