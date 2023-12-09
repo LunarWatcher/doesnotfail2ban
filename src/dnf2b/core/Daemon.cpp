@@ -76,7 +76,7 @@ void Daemon::run() {
                 for (auto& watcher : watchers) {
                     auto result = watcher->process(messages);
                     if (result.size() > 0) {
-                        
+                        man.log(watcher.get(), result);
                     }
                 }
 
