@@ -38,12 +38,22 @@ IPTableBouncer::IPTableBouncer(const nlohmann::json& config) {
     }
 
     if (useIpset) {
-        if (std::system("ipset create dnf2b-v4-blacklist hash:ip hashsize 4096 family inet") != 0) {
-            spdlog::error("ipset failed");
+        auto createIPTable = [](std::string name, std::string family) {
+
+            auto message = stc::syscommand(fmt::format("ipset create {} hash:ip hashsize 4096 family {}", name, family));
+            if (message.find("set with the same name already exists") != std::string::npos) {
+                spdlog::info("{} already exists. Flushing set...", name);
+                std::system(fmt::format("ipset flush {}", name).c_str());
+                return true;
+            }
+            spdlog::error("ipset failed: {}", message);
+            return false;
+        };
+
+        if (!createIPTable("dnf2b-v4-blacklist", "inet")) {
             throw std::runtime_error("Failed to create ipset");
         }
-        if (std::system("ipset create dnf2b-v6-blacklist hash:ip hashsize 4096 family inet6") != 0) {
-            spdlog::error("ipset failed");
+        if (!createIPTable("dnf2b-v6-blacklist", "inet6")) {
             throw std::runtime_error("Failed to create ipset");
         }
 
