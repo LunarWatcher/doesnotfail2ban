@@ -76,7 +76,10 @@ BanManager::BanManager(const nlohmann::json& ctx) : db(Constants::DNF2B_ROOT / "
 void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
     for (auto& [ip, timesCaught] : ipFailMap) {
         if (isWhitelisted(ip)) {
-            spdlog::info("{} was caught, but is whitelisted. Skipping...");
+            spdlog::info(
+                "{} was caught, but is whitelisted. Skipping...",
+                ip
+            );
             continue;
         }
         auto currTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
