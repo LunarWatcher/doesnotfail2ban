@@ -11,7 +11,7 @@
 namespace dnf2b {
 
 struct MessagePipeline {
-    std::shared_ptr<FileParser> parser;
+    std::shared_ptr<Parser> parser;
     std::vector<std::shared_ptr<Watcher>> watchers;
 
 };

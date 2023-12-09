@@ -1,5 +1,6 @@
 #include "Daemon.hpp"
 #include "dnf2b/filters/Filter.hpp"
+#include "dnf2b/sources/ParserLoader.hpp"
 #include "spdlog/spdlog.h"
 
 #include <algorithm>
@@ -25,20 +26,27 @@ void Daemon::reload() {
             spdlog::debug("Skipping watcher for file {}: Disabled", file);
             continue;
         }
+        auto id = watcher.at("id");
 
-        auto pipeline = messagePipelines[file];
+        auto& pipeline = messagePipelines[file];
+        auto parserName = watcher.at("parser").get<std::string>();
 
         if (pipeline.parser == nullptr) {
             spdlog::info("Parser not found for {}; initialising...", file);
+
+            pipeline.parser = ParserLoader::loadParser(parserName, file);
+        } else if (pipeline.parser->parserName != parserName) {
+            spdlog::error("Error: file {} used by watcher ID {} was attempted loaded with parser {}, while it already uses the {} parser");
+            throw std::runtime_error("Config error");
         }
 
         auto logParser = watcher.at("parser");
 
         auto port = watcher.contains("port") ? std::optional(watcher.at("port").get<uint16_t>()) : std::nullopt;
+        auto multiProcessId = watcher.contains("process") ? std::optional(watcher.at("process").get<std::string>()) : std::nullopt;
         auto limit = watcher.value("limit", ctx.getMaxAttempts());
         auto jsonFilters = watcher.at("filters").get<std::vector<std::string>>();
-
-        auto group = watcher.value("banGroup", "global");
+        auto bouncerName = watcher.at("banaction");
 
         std::vector<Filter> filters;
 
@@ -50,6 +58,17 @@ void Daemon::reload() {
                 return Filter{filterPath};
             }
         );
+
+        auto ptrWatcher = std::make_shared<Watcher>(
+            id,
+            multiProcessId,
+            port,
+            limit,
+            filters,
+            bouncerName
+        );
+
+        pipeline.watchers.push_back(ptrWatcher);
     }
 }
 
