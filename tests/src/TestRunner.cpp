@@ -1,7 +1,8 @@
+#define CATCH_CONFIG_RUNNER
+
 #include "spdlog/spdlog.h"
 #include <filesystem>
 #include <stdexcept>
-#define CATCH_CONFIG_RUNNER
 #include "catch2/catch_session.hpp"
 #include "dnf2b/static/Constants.hpp"
 
@@ -47,5 +48,6 @@ int main(int argc, const char* argv[]) {
         )" << std::endl;
     }
 
-    return Catch::Session().run(argc, argv);
+    return Catch::Session()
+        .run(argc, argv);
 }

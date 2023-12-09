@@ -13,7 +13,7 @@ At this time, dnf2b is considered barely deployable, and barely functional. It h
 
 * [x] Core setup
 * [x] Data storage
-* [ ] Unbanning
+* [x] Unbanning
 * [ ] Fully usable CLI
 * [ ] External rule repositories
 * [ ] Proper documentation

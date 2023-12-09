@@ -12,7 +12,7 @@ using namespace std::literals;
 namespace dnf2b {
 
 
-Daemon::Daemon(const Context& ctx) : ctx(ctx) {
+Daemon::Daemon(const Context& ctx) : ctx(ctx), man(ctx.getConfig()) {
     reload();
 }
 
@@ -53,7 +53,18 @@ void Daemon::reload() {
     }
 }
 
+
+void Daemon::startUnbanMonitoring() {
+    while (true) {
+        man.checkUnbansAndCleanup();
+
+        // Heavily rate limited, because it doesn't need to run faster
+        std::this_thread::sleep_for(std::chrono::minutes(10));
+    }
+}
+
 void Daemon::run() {
+    unban = std::thread(&Daemon::startUnbanMonitoring, this);
 
     while (true) {
         for (auto& [_file, pipeline] : messagePipelines) {
@@ -63,7 +74,10 @@ void Daemon::run() {
 
             if (messages.size() != 0) {
                 for (auto& watcher : watchers) {
-
+                    auto result = watcher->process(messages);
+                    if (result.size() > 0) {
+                        
+                    }
                 }
 
             } else {

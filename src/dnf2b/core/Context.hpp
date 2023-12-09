@@ -27,6 +27,7 @@ public:
     Context(const std::vector<std::string>& arguments);
 
     const nlohmann::json& getConfig() { return config; }
+    const nlohmann::json& getConfig() const { return config; }
     int getMaxAttempts();
 
     /**

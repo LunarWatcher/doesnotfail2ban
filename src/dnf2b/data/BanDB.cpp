@@ -29,6 +29,7 @@ BanDB::BanDB(std::filesystem::path dbLoc) : db(dbLoc, SQLite::OPEN_READWRITE | S
         Bouncer TEXT NOT NULL,
         BanStarted NUMBER NOT NULL,
         BanDuration NUMBER,
+        Port NUMBER,
         UNIQUE(IP, Bouncer)
     );
     )");
@@ -92,12 +93,13 @@ IPInfo BanDB::loadIp(const std::string& ip) {
     }
 
     // Load bans
-    SQLite::Statement bq(db, "SELECT Bouncer, BanStarted, BanDuration FROM BanRegistry WHERE IP = ?");
+    SQLite::Statement bq(db, "SELECT Bouncer, BanStarted, BanDuration, Port FROM BanRegistry WHERE IP = ?");
     bq.bind(1, ip);
     while (bq.executeStep()) {
         info.currBans[bq.getColumn(0)] = {
             bq.getColumn(1).getInt64(),
-            bq.getColumn(2).getInt64()
+            bq.getColumn(2).getInt64(),
+            bq.getColumn(3).isNull() ? std::nullopt : std::optional<uint16_t>(static_cast<uint16_t>(bq.getColumn(3).getInt()))
         };
     }
 
@@ -126,20 +128,24 @@ void BanDB::updateIp(const IPInfo& source) {
 
     for (auto& [bouncer, banInfo] : source.currBans) {
         SQLite::Statement s(db, R"(
-        INSERT OR REPLACE INTO BanRegistry (IP, Bouncer, BanStarted, BanDuration) VALUES (?, ?, ?, ?);
+        INSERT OR REPLACE INTO BanRegistry (IP, Bouncer, BanStarted, BanDuration, Port) VALUES (?, ?, ?, ?, ?);
         )");
         s.bind(1, source.ip);
         s.bind(2, bouncer);
         s.bind(3, banInfo.banStarted);
-        s.bind(4, banInfo.banDuration < 0 ? SQLite::Null : banInfo.banDuration);
+        banInfo.banDuration > 0 ? s.bind(4, banInfo.banDuration) : s.bind(4);
+        banInfo.port.has_value() ? s.bind(5, *banInfo.port) : s.bind(5);
+
         s.exec();
     }
 
     t.commit();
 }
 
-void BanDB::unban(const std::string& ip, const std::string& bouncer) {
-    std::lock_guard g(lock);
+void BanDB::unban(const std::string& ip, const std::string& bouncer, bool subprocess) {
+    if (!subprocess) {
+        std::lock_guard g(lock);
+    }
     SQLite::Statement s(db, R"(
     DELETE FROM BanRegistry WHERE IP = ? AND Bouncer = ?
     )");
@@ -148,12 +154,24 @@ void BanDB::unban(const std::string& ip, const std::string& bouncer) {
     s.exec();
 }
 
+void BanDB::unbanAll(const std::vector<UnbanInfo>& items) {
+    std::lock_guard g(lock);
+
+    // A transaction is necessary to improve performance. Without it, this risks writing
+    // items.size() times, which comes with significant overhead. Writing once is more speed
+    SQLite::Transaction t(db);
+    for (auto& info : items) {
+        this->unban(info.ip, info.bouncer, true);
+    }
+    t.commit();
+}
+
 std::vector<UnbanInfo> BanDB::getPendingUnbans() {
     std::lock_guard g(lock);
 
     auto currTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
     SQLite::Statement s(db, R"(
-    SELECT IP, Bouncer, BanStarted, BanDuration, (BanStarted + BanDuration)
+    SELECT IP, Bouncer, Port, BanStarted, BanDuration, (BanStarted + BanDuration)
     FROM BanRegistry
     WHERE
         BanDuration >= 0
@@ -166,7 +184,8 @@ std::vector<UnbanInfo> BanDB::getPendingUnbans() {
     while (s.executeStep()) {
         out.push_back({
             .ip = s.getColumn(0),
-            .bouncer = s.getColumn(2)
+            .bouncer = s.getColumn(1),
+            .port = s.getColumn(2).isNull() ? std::nullopt : std::optional(s.getColumn(2))
         });
     }
     

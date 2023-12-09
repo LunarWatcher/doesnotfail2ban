@@ -3,6 +3,8 @@
 #include <iostream>
 
 #include "dnf2b/core/Daemon.hpp"
+#include "spdlog/spdlog.h"
+#include "stc/FileLock.hpp"
 #include <stc/Fmt.hpp>
 
 #include <unistd.h>
@@ -56,8 +58,14 @@ int CLI::parse(int argc, const char* argv[]) {
     if (command == "health") {
         c.checkHealth();
     } else if (command == "daemon") {
-        // TODO: need to figure out how to make sure only one daemon can run.
-        // Maybe a filelock?
+        std::shared_ptr<stc::FileLock> lock;
+        try {
+            lock = std::make_shared<stc::FileLock>("/var/run/lock/dnf2b.daemon.lock");
+        } catch (stc::FileLock::Errors e) {
+            spdlog::error("Failed to acquire daemon lock. Is dnf2b running already?");
+            return -2;
+        } 
+        
         Daemon{c}.run();
     } else if (command == "ban") {
         // TODO

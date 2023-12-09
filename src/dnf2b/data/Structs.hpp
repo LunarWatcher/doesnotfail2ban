@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <map>
 #include <optional>
 #include <string>
@@ -11,6 +12,7 @@ namespace dnf2b {
 struct BanInfo {
     int64_t banStarted;
     int64_t banDuration;
+    std::optional<uint16_t> port;
 };
 
 struct IPInfo {

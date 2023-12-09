@@ -51,6 +51,7 @@ public:
     void checkUnbansAndCleanup();
      
     bool isWhitelisted(const std::string& ip);
+    friend class Daemon;
 };
 
 }

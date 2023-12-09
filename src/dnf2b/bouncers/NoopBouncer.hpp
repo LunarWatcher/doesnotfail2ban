@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dnf2b/bouncers/Bouncer.hpp"
+#include <functional>
 namespace dnf2b {
 
 /**
@@ -14,10 +15,21 @@ namespace dnf2b {
  */
 class NoopBouncer : public Bouncer {
 public:
+    using FuncProxy = std::function<void(const std::string&, std::optional<uint16_t>)>;
+    static inline FuncProxy _ban = nullptr, _unban = nullptr;
     NoopBouncer() = default;
+    ~NoopBouncer() {
+        // reset the ban and unban proxies so tests don't die
+        _ban = nullptr;
+        _unban = nullptr;
+    }
 
-    void unban(const std::string& ip, std::optional<uint16_t> port) override {}
-    void ban(const std::string& ip, std::optional<uint16_t> port) override {}
+    void unban(const std::string& ip, std::optional<uint16_t> port) override {
+        if (_unban) _unban(ip, port);
+    }
+    void ban(const std::string& ip, std::optional<uint16_t> port) override {
+        if (_ban) _ban(ip, port);
+    }
 
     bool persistentBans() override { return false; }
 };

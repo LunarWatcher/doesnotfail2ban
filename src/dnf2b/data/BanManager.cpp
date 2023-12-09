@@ -95,6 +95,20 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
 
 void BanManager::checkUnbansAndCleanup() {
 
+    auto pending = db.getPendingUnbans();
+    if (pending.size() != 0) {
+        for (auto& unban : pending) {
+            if (!this->bouncers.contains(unban.bouncer)) {
+                spdlog::warn("{} was banned by {}, which is no longer loaded", unban.ip, unban.bouncer);
+                continue;
+            }
+
+            auto bouncer = this->bouncers.at(unban.bouncer);
+            bouncer->unban(unban.ip, unban.port);
+        }
+
+        db.unbanAll(pending);
+    }
 }
 
 bool BanManager::isWhitelisted(const std::string& ip) {
