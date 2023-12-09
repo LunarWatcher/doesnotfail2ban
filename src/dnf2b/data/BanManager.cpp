@@ -60,6 +60,17 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
 
         // This is probably shit for performance.
         auto info = getIpInfo(ip);
+
+        if (info.currBans.contains(source->getBouncerName())) {
+            spdlog::warn("{} is already banned banned by {}, but appears in the logs after the ban. Possible race condition (wontfix), or"
+                         " reban failure (pretty big fucking problem). If this happened shortly after the ban (logs are not read in real-time), or shortly after startup,"
+                         " it's probably fine. A reban will be issued for good measure", ip, source->getBouncerName());
+
+            auto bouncer = bouncers.at(source->getBouncerName());
+            bouncer->ban(ip, source->getPort());
+            continue;
+        }
+
         info.currFails.insert(info.currFails.end(), fails.begin(), fails.end());
 
         if (info.currFails.size() >= source->getFailThreshold()) {
@@ -93,13 +104,29 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
     }
 }
 
+void BanManager::loadRebans() {
+    auto pending = db.getBannedMinusPendingUnbans();
+
+    for (auto& ban : pending) {
+        if (!this->bouncers.contains(ban.bouncer)) {
+            spdlog::warn("{} was banned by {}, which is no longer loaded, and cannot be rebanned", ban.ip, ban.bouncer);
+            continue;
+        }
+
+        auto bouncer = this->bouncers.at(ban.bouncer);
+        bouncer->unban(ban.ip, ban.port);
+    }
+
+    hasReloadedBans = true;
+}
+
 void BanManager::checkUnbansAndCleanup() {
 
     auto pending = db.getPendingUnbans();
     if (pending.size() != 0) {
         for (auto& unban : pending) {
             if (!this->bouncers.contains(unban.bouncer)) {
-                spdlog::warn("{} was banned by {}, which is no longer loaded", unban.ip, unban.bouncer);
+                spdlog::warn("{} was banned by {}, which is no longer loaded, and cannot be unbanned", unban.ip, unban.bouncer);
                 continue;
             }
 

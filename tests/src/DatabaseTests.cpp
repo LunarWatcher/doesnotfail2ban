@@ -90,6 +90,47 @@ TEST_CASE("It should handle ban logic", "[Database]") {
 
 }
 
+TEST_CASE("Re-ban core logic should work") {
+    auto now = std::chrono::system_clock::now();
+    auto currTime = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+
+    tests::util::DBWrapper db;
+
+    dnf2b::IPInfo stayingBanned {
+        .ip = "192.168.0.69",
+        .banCount = 1,
+        .currBans = {
+            {"noop", {
+                .banStarted = currTime,
+                .banDuration = 6969
+            }}
+        }
+    };
+
+    dnf2b::IPInfo awaitingUnban {
+        .ip = "192.168.0.70",
+        .banCount = 1,
+        .currBans = {
+            {"noop", {
+                .banStarted = currTime - 69,
+                .banDuration = 42
+            }}
+        }
+    };
+
+    db->updateIp(stayingBanned);
+    db->updateIp(awaitingUnban);
+
+    auto unbanQueue = db->getPendingUnbans();
+    auto rebanQueue = db->getBannedMinusPendingUnbans();
+
+    REQUIRE(unbanQueue.size() == 1);
+    REQUIRE(rebanQueue.size() == 1);
+    REQUIRE(unbanQueue.at(0).ip == "192.168.0.70");
+    REQUIRE(rebanQueue.at(0).ip == "192.168.0.69");
+
+}
+
 TEST_CASE("BanDB should integrate with BanManager", "[Database][BanManager]") {
     tests::util::DBWrapper db;
     auto conf = 

@@ -55,6 +55,9 @@ void Daemon::reload() {
 
 
 void Daemon::startUnbanMonitoring() {
+    // Loading rebans is offloaded to another service
+    man.loadRebans();
+
     while (true) {
         man.checkUnbansAndCleanup();
 

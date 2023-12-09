@@ -30,6 +30,7 @@ private:
 
     std::vector<std::variant<asio::ip::network_v4, asio::ip::network_v6, asio::ip::address_v4, asio::ip::address_v6>> whitelist;
     double forgiveAfter;
+    bool hasReloadedBans = false;
 
     BanDB db;
     long long banDuration, banIncrement;
@@ -43,6 +44,7 @@ private:
         return db.loadIp(ip);
     } 
     void loadBouncerRules();
+    void loadRebans();
 
 public:
     BanManager(const nlohmann::json& config);

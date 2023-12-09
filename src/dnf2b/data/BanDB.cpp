@@ -154,7 +154,7 @@ void BanDB::unban(const std::string& ip, const std::string& bouncer, bool subpro
     s.exec();
 }
 
-void BanDB::unbanAll(const std::vector<UnbanInfo>& items) {
+void BanDB::unbanAll(const std::vector<BanLocationInfo>& items) {
     std::lock_guard g(lock);
 
     // A transaction is necessary to improve performance. Without it, this risks writing
@@ -166,7 +166,7 @@ void BanDB::unbanAll(const std::vector<UnbanInfo>& items) {
     t.commit();
 }
 
-std::vector<UnbanInfo> BanDB::getPendingUnbans() {
+std::vector<BanLocationInfo> BanDB::getPendingUnbans() {
     std::lock_guard g(lock);
 
     auto currTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -180,7 +180,33 @@ std::vector<UnbanInfo> BanDB::getPendingUnbans() {
     )");
     s.bind(1, currTime);
 
-    std::vector<UnbanInfo> out;
+    std::vector<BanLocationInfo> out;
+    while (s.executeStep()) {
+        out.push_back({
+            .ip = s.getColumn(0),
+            .bouncer = s.getColumn(1),
+            .port = s.getColumn(2).isNull() ? std::nullopt : std::optional(s.getColumn(2))
+        });
+    }
+    
+    return out;
+}
+std::vector<BanLocationInfo> BanDB::getBannedMinusPendingUnbans() {
+
+    std::lock_guard g(lock);
+
+    auto currTime = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    SQLite::Statement s(db, R"(
+    SELECT IP, Bouncer, Port, BanStarted, BanDuration, (BanStarted + BanDuration)
+    FROM BanRegistry
+    WHERE
+        BanDuration >= 0
+    AND
+        (BanStarted + BanDuration) > ?
+    )");
+    s.bind(1, currTime);
+
+    std::vector<BanLocationInfo> out;
     while (s.executeStep()) {
         out.push_back({
             .ip = s.getColumn(0),

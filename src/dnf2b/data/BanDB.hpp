@@ -7,7 +7,7 @@
 
 namespace dnf2b {
 
-struct UnbanInfo {
+struct BanLocationInfo {
     std::string ip;
     std::string bouncer;
     std::optional<uint16_t> port;
@@ -37,12 +37,19 @@ public:
      * independently.
      */
     void unban(const std::string& ip, const std::string& bouncer, bool subprocess = false);
-    void unbanAll(const std::vector<UnbanInfo>& entries);
+    void unbanAll(const std::vector<BanLocationInfo>& entries);
 
     void forgiveFails(double failAge);
     void wipeFailsFor(const std::string& ip);
 
-    std::vector<UnbanInfo> getPendingUnbans();
+    std::vector<BanLocationInfo> getPendingUnbans();
+
+    /**
+     * This gets all currently banned IPs, minus those that would be returned by 
+     * getPendingUnbans(). This is to ensure the load process doesn't
+     * load and then ban IPs that, shortly after, get unbanned.
+     */
+    std::vector<BanLocationInfo> getBannedMinusPendingUnbans();
 
 };
 
