@@ -42,6 +42,20 @@ Note that before the service can be started, `config.local.json` needs to be cre
 
 After you're done, you can delete the source directory, unless you want to keep it for quicker builds or something thin like that.
 
+After configuring, you can run dnf2b with:
+```
+sudo systemctl start dnf2b 
+```
+
+### Adding to the PATH
+
+Due to the install folder being in `/opt/dnf2b/` by default, dnf2b's binary won't be added to the PATH automatically. If you don't want to type `/opt/dnf2b/bin/dnf2b` as the command if you want to access the CLI interface, you can run
+```
+sudo ln -s /opt/dnf2b/bin/dnf2b /usr/local/bin
+```
+
+Or, of course, adding `/opt/dnf2b/bin` to your PATH.
+
 ### Updating
 
 If you've done no changes to the default files (i.e. files installed by dnf2b, NOT files such as config.local.json, or custom files added alongside the default files), just re-run the `curl` command from the installation section. If you kept the cloned directory, you can also run `git pull && cd build && make -j $(nproc) && sudo make -j $(nproc) install` manually. This may not update the dependencies, however.
