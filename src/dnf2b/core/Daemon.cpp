@@ -74,10 +74,12 @@ void Daemon::reload() {
 
 
 void Daemon::startUnbanMonitoring() {
+    spdlog::info("Unban monitor live. Loading rebans...");
     // Loading rebans is offloaded to another service
     man.loadRebans();
 
     while (true) {
+        spdlog::debug("Unban monitor woken up");
         man.checkUnbansAndCleanup();
 
         // Heavily rate limited, because it doesn't need to run faster
@@ -88,6 +90,7 @@ void Daemon::startUnbanMonitoring() {
 void Daemon::run() {
     unban = std::thread(&Daemon::startUnbanMonitoring, this);
 
+    spdlog::info("Daemon is live and watching for evil shit");
     while (true) {
         for (auto& [_file, pipeline] : messagePipelines) {
             auto& [parser, watchers] = pipeline;
