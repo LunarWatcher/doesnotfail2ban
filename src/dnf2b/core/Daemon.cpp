@@ -34,7 +34,7 @@ void Daemon::reload() {
 
         auto logParser = watcher.at("parser");
 
-        auto port = watcher.at("port").get<uint16_t>();
+        auto port = watcher.contains("port") ? std::optional(watcher.at("port").get<uint16_t>()) : std::nullopt;
         auto limit = watcher.value("limit", ctx.getMaxAttempts());
         auto jsonFilters = watcher.at("filters").get<std::vector<std::string>>();
 
