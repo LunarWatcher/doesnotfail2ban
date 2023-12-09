@@ -37,7 +37,9 @@ BanManager::BanManager(const nlohmann::json& ctx) : db(Constants::DNF2B_ROOT / "
     banIncrement = control.value("banIncrement", 2);
 
 
+    
     for (auto& entry : rawWhitelist) {
+        spdlog::info("Whitelisting {}", entry);
         if (entry.find('/') == std::string::npos) {
             // Address
             auto addr = asio::ip::make_address(entry);
