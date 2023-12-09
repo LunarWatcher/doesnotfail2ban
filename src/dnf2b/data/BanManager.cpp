@@ -3,6 +3,7 @@
 #include "asio/ip/network_v4.hpp"
 #include "asio/ip/network_v6.hpp"
 #include "dnf2b/static/Constants.hpp"
+#include "dnf2b/util/Parsing.hpp"
 #include "spdlog/spdlog.h"
 #include <chrono>
 #include <limits>
@@ -13,7 +14,28 @@ namespace dnf2b {
 
 BanManager::BanManager(const nlohmann::json& ctx) : db(Constants::DNF2B_ROOT / "db.sqlite3"){
     auto rawWhitelist = ctx.at("core").value("whitelist", std::vector<std::string>{});
-    auto forgiveRaw = ctx.at("core").value("foregiveAfter", "never");
+    auto& core = ctx.at("core");
+    auto& control = core.at("control");
+    if (control.contains("forgetAfter")) {
+        if (control.at("forgetAfter").is_number_integer()) {
+            this->forgetAfter = Parsing::parseConfigToSeconds(control.at("forgetAfter").get<long long>());
+        } else {
+            this->forgetAfter = Parsing::parseConfigToSeconds(control.at("forgetAfter").get<std::string>());
+        }
+    } else {
+        this->forgetAfter = Parsing::parseConfigToSeconds("2w");
+    }
+    if (control.contains("banPeriod")) {
+        if (control.at("banPeriod").is_number_integer()) {
+            this->banDuration = Parsing::parseConfigToSeconds(control.at("banPeriod").get<long long>());
+        } else {
+            this->banDuration = Parsing::parseConfigToSeconds(control.at("banPeriod").get<std::string>());
+        }
+    } else {
+        this->banDuration = Parsing::parseConfigToSeconds("2w");
+    }
+    banIncrement = control.value("banIncrement", 2);
+
 
     for (auto& entry : rawWhitelist) {
         if (entry.find('/') == std::string::npos) {
@@ -82,6 +104,7 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
             info.currFails.clear();
             if (info.currBans.contains(source->getBouncerName())) {
                 spdlog::warn("{} has already been banned in {}. Skipping re-ban; race condition?", ip, source->getBouncerName());
+                continue;
             } else {
                 int64_t duration = banDuration < 0 ? -1 : banDuration * static_cast<int64_t>(std::pow(banIncrement, info.banCount));
                 if (duration < 0) {
@@ -96,6 +119,13 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
 
             // When banned, get rid of any stored fails
             db.wipeFailsFor(info.ip);
+
+            // Remove cache entries post-ban
+            if (auto it = failCache.find(info.ip); it != failCache.end()) {
+                failCache.erase(it);
+            }
+
+            info.banCount += 1;
         } else {
             // Failed, but not immediately banned, IPs are stored in a cache.
             failCache[ip] = info;

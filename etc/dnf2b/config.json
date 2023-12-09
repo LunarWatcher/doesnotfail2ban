@@ -4,7 +4,7 @@
         "control": {
             "maxAttempts": 3,
             "banPeriod": "1w",
-            "inc": 2,
+            "banIncrement": 2,
             "forgetAfter": "2w"
         },
         "stats": {

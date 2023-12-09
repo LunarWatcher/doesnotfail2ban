@@ -29,11 +29,10 @@ private:
     std::map<std::string /* bouncer name */, std::shared_ptr<Bouncer>> bouncers;
 
     std::vector<std::variant<asio::ip::network_v4, asio::ip::network_v6, asio::ip::address_v4, asio::ip::address_v6>> whitelist;
-    double forgiveAfter;
     bool hasReloadedBans = false;
 
     BanDB db;
-    long long banDuration, banIncrement;
+    long long banDuration, banIncrement, forgetAfter;
 
     std::map<std::string, IPInfo> failCache;
 

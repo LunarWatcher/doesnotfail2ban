@@ -17,6 +17,7 @@ set (SOURCE_FILES
     dnf2b/filters/Filter.cpp
 
     dnf2b/ui/CLI.cpp
+    dnf2b/util/Parsing.cpp
 )
 list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 

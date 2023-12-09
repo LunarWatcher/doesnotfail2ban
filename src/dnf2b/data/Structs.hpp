@@ -18,7 +18,7 @@ struct BanInfo {
 struct IPInfo {
     std::string ip;
     std::vector<int64_t> currFails;
-    int banCount;
+    int banCount = 0;
     std::map<std::string /* bouncerName */, BanInfo> currBans;
 };
 

@@ -8,14 +8,15 @@ This document contains general information about the configuration system, and h
 
 For (former?) f2b users, it's worth noting that dnf2b has a much more global config and handling system. For example, failing a watcher with the iptables bouncer results in an iptables ban on all ports. Additionally, the pool of failures is shared across all watchers. 
 
-Consider two watchers with a limit of 3. If some IP trips the first watcher twice, and then the second watcher once, the fail with the second watcher immediately trips the bouncer, as if that watcher had been tripped 3 times.
+Consider two watchers with a limit of 3. If some IP trips the first watcher twice, and then the second watcher once, the fail with the second watcher immediately invokes the bouncer, as if that watcher had been tripped 3 times.
 
 Additionally, certain bouncers are global by design. This includes the currentely only bouncer, iptables, as the port-specific bans are protocol-specific, requiring 5 different commands<sup>1</sup> rather than 1 for a global ban.
 
-The design is also intended to allow for other kinds of bouncers, such as notifying a webapp to take spam prevention actions in response to multiple password failures. However, at this time, no such bouncers are implemented, because I have no clue what bouncers are required to work for most webapps with such functionality in the wild.
+There are definite advantages and disadvantages to this, compared to the very granular configuration you get with f2b. Aside reducing configuration complexity, part of idea is that an attack on one service is an attack against them all. There's no point in separating fails and ban actions if better security can be achieved by blocking all attack surfaces at once. Granted, this may not be optimal for certain public-facing services (particularly when used in a commercial context), but this is also down to the set of bouncers used.
 
+In the future, a goal is to include more bouncers that act on specific services. For example, notifying a webservice about a possible brute-force attempt, and making it show a captcha (with the bouncer naturally just being the notification bit). If this is a use-case you have, please consider opening an issue with technical details about the notification system.
 
-<sup>1</sup>: Using iptables 1.8.7 (nf_tables) has 5 possible values for protocols: tcp, udp, udplite, sctp, and dccp. While not all services accept all these protocols, a partial block does not a complete port block make.
+<sup>1</sup>: Using iptables 1.8.7 (nf_tables) has 5 possible values for protocols: tcp, udp, udplite, sctp, and dccp. While not all services accept all these protocols, a partial block does not a complete port block make. Reducing the number of unnecessary iptable rules is a net positive for performance.
 
 ## Basic setup
 
@@ -58,9 +59,10 @@ In this case, the `iptables` key is made available for the watchers to use. The 
 
 Ban controls are under `core.control`, and contains four keys:
 
-* **maxAttempts**: the number of allowed attempts before banning,
-* **banPeriod**: A string containing a ban period. Valid postfixes currently include d (days), w (weeks), and m (months). If set to a number instead, the number is interpreted as days. If negative, the ban is permanent.
-* **inc**: The factor the banPeriod is multiplied with for multiple fails. If set to 2 when the ban period is 1 week, that means the first ban is 1 week, the second is two weeks, the third is four, etc.
+* **maxAttempts** [Integer]: the number of allowed attempts before banning,
+* **banPeriod** [NDuration]: A string containing a ban period. Valid postfixes currently include d (days), w (weeks), and m (months). If set to a number instead, the number is interpreted as days. If negative, the ban is permanent.
+* **banIncrement** [Integer]: The factor the banPeriod is multiplied with for multiple fails. If set to 2 when the ban period is 1 week, that means the first ban is 1 week, the second is two weeks, the third is four, etc.
+* **forgetAfter** [Duration]: How long 
 
 Additionally, under just `core`, there's an additional key:
 * **whitelist**: A list of IPs or CIDR ranges that are excluded. It's STRONGLY recommended you include IPs you frequent here, especially if the IPs are static. If possible, whitelisting the entire `192.168.0.0/16` range (or equivalent) is recommended. If you use SSH and don't whitelist yourself, and you have an aggressive configuration, you risk locking yourself out otherwise. This is a mild annoyance when you're in the same building as the server, but quite a bit worse if cloud use is involved.
