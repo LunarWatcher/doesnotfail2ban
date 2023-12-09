@@ -18,6 +18,7 @@ Daemon::Daemon(const Context& ctx) : ctx(ctx), man(ctx.getConfig()) {
 }
 
 void Daemon::reload() {
+
     for (auto& watcher : ctx.getConfig().at("watchers")) {
         auto enabled = watcher.value("enabled", true);
         auto file = watcher.at("file");
@@ -70,6 +71,8 @@ void Daemon::reload() {
 
         pipeline.watchers.push_back(ptrWatcher);
     }
+
+    spdlog::info("Watching {} files for changes", messagePipelines.size());
 }
 
 
