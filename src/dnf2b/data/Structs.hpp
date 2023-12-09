@@ -11,7 +11,7 @@ namespace dnf2b {
 
 struct BanInfo {
     int64_t banStarted;
-    int64_t banDuration;
+    std::optional<int64_t> banDuration;
     std::optional<uint16_t> port;
 };
 

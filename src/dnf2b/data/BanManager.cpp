@@ -106,10 +106,16 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
                 spdlog::warn("{} has already been banned in {}. Skipping re-ban; race condition?", ip, source->getBouncerName());
                 continue;
             } else {
-                int64_t duration = banDuration < 0 ? -1 : banDuration * static_cast<int64_t>(std::pow(banIncrement, info.banCount));
-                if (duration < 0) {
+                std::optional<int64_t> duration =
+                    banDuration < 0 ?
+                        std::nullopt
+                        : std::optional(
+                            banDuration * static_cast<int64_t>(std::pow(banIncrement, info.banCount))
+                        );
+                // Overflow protection
+                if (duration.has_value() && *duration < 0) {
                     // overflow, cap to max
-                    duration = -1;
+                    duration = std::nullopt;
                 }
                 info.currBans[source->getBouncerName()] = {
                     currTime,
@@ -144,7 +150,7 @@ void BanManager::loadRebans() {
         }
 
         auto bouncer = this->bouncers.at(ban.bouncer);
-        bouncer->unban(ban.ip, ban.port);
+        bouncer->ban(ban.ip, ban.port);
     }
 
     hasReloadedBans = true;

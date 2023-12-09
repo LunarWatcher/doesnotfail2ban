@@ -52,6 +52,11 @@ public:
     void checkUnbansAndCleanup();
      
     bool isWhitelisted(const std::string& ip);
+    
+    long long getBanDuration() { return banDuration; }
+    long long getBanIncrement() { return banIncrement; }
+    long long getForgetAfter() { return forgetAfter; }
+
     friend class Daemon;
 };
 

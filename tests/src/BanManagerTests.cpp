@@ -116,7 +116,7 @@ TEST_CASE("Verify unban logic") {
 }
 
 TEST_CASE("Verify ban period") {
-
+    // TODO: The setup to these tests is boilerplate. Outsource
     auto now = std::chrono::system_clock::now();
     auto currTime = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
     tests::util::DBWrapper db;
@@ -172,6 +172,7 @@ TEST_CASE("Verify ban period") {
     auto& currBans = info.currBans;
     REQUIRE(currBans.contains("noop"));
     REQUIRE(currBans.at("noop").banDuration == std::chrono::duration_cast<std::chrono::seconds>(std::chrono::weeks(1)).count());
+    REQUIRE(currBans.at("noop").banDuration == man.getBanDuration());
 
     for (int i = 2; i < 10; ++i) {
         db->unban(info.ip, "noop");
@@ -184,4 +185,58 @@ TEST_CASE("Verify ban period") {
         info = db->loadIp(info.ip);
         REQUIRE(info.banCount == i);
     }
+}
+
+TEST_CASE("Verify perma-bans") {
+
+    auto now = std::chrono::system_clock::now();
+    auto currTime = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+    tests::util::DBWrapper db;
+
+    // TODO: find a better way to do this 
+    auto conf = 
+#include <dnf2b/static/ConfDefault.hpp>
+
+    conf["bouncers"]["noop"] = {
+        {"stfu", ""},
+    };
+
+    conf["core"]["control"].merge_patch({
+        {"banPeriod", -1},
+        {"forgetAfter", "1w"}
+    });
+
+    dnf2b::BanManager man(conf);
+    REQUIRE(man.getBanDuration() == -1);
+
+    dnf2b::Watcher watcher(
+        "demo",
+        std::nullopt,
+        69,
+        0,
+        {
+            dnf2b::Filter("dummy-filter")
+        },
+        "noop"
+    );
+
+    std::vector<dnf2b::Message> messages = {
+        {
+            .entryDate = std::chrono::system_clock::now(),
+            .message = "Foxes <3",
+            .ip = "12.34.56.78"
+        }
+    };
+
+    auto res = watcher.process(messages);
+    man.log(&watcher, res);
+
+    REQUIRE(db->isBanned("12.34.56.78", "noop"));
+    auto info = db->loadIp("12.34.56.78");
+    REQUIRE(info.banCount == 1);
+
+    auto& currBans = info.currBans;
+    REQUIRE(currBans.contains("noop"));
+    REQUIRE_FALSE(currBans.at("noop").banDuration.has_value());
+
 }

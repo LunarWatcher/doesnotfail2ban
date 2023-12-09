@@ -98,7 +98,7 @@ IPInfo BanDB::loadIp(const std::string& ip) {
     while (bq.executeStep()) {
         info.currBans[bq.getColumn(0)] = {
             bq.getColumn(1).getInt64(),
-            bq.getColumn(2).getInt64(),
+            bq.getColumn(2).isNull() ? std::nullopt : std::optional(bq.getColumn(2).getInt64()),
             bq.getColumn(3).isNull() ? std::nullopt : std::optional<uint16_t>(static_cast<uint16_t>(bq.getColumn(3).getInt()))
         };
     }
@@ -133,7 +133,7 @@ void BanDB::updateIp(const IPInfo& source) {
         s.bind(1, source.ip);
         s.bind(2, bouncer);
         s.bind(3, banInfo.banStarted);
-        banInfo.banDuration > 0 ? s.bind(4, banInfo.banDuration) : s.bind(4);
+        banInfo.banDuration.has_value() ? s.bind(4, *banInfo.banDuration) : s.bind(4);
         banInfo.port.has_value() ? s.bind(5, *banInfo.port) : s.bind(5);
 
         s.exec();
