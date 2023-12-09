@@ -39,6 +39,14 @@ To automatically download and run the script. This will download the source, com
 
 Note that before the service can be started, `config.local.json` needs to be created. This is documented in docs/Config.md.
 
+After you're done, you can delete the source directory, unless you want to keep it for quicker builds or something thin like that.
+
+### Updating
+
+If you've done no changes to the default files (i.e. files installed by dnf2b, NOT files such as config.local.json, or custom files added alongside the default files), just re-run the `curl` command from the installation section. If you kept the cloned directory, you can also run `git pull && cd build && make -j $(nproc) && sudo make -j $(nproc) install` manually. This may not update the dependencies, however.
+
+If you've made changes to default files, you get to back up everything you've done first. There's currently no easy way around this at this time.
+
 ## License?
 
 MIT; see the LICENSE file.

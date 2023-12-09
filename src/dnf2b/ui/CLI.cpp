@@ -5,7 +5,7 @@
 #include "dnf2b/core/Daemon.hpp"
 #include "spdlog/spdlog.h"
 #include "stc/FileLock.hpp"
-#include <stc/Fmt.hpp>
+#include "fmt/format.h"
 
 #include <unistd.h>
 
