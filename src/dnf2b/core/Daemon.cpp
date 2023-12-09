@@ -101,6 +101,7 @@ void Daemon::run() {
             auto messages = parser->poll();
 
             if (messages.size() != 0) {
+                spdlog::debug("{} has new entries", _file);
                 for (auto& watcher : watchers) {
                     auto result = watcher->process(messages);
                     if (result.size() > 0) {
