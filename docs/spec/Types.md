@@ -9,6 +9,10 @@ However, some types abstract certain implementation details. This particularly a
 * Integer: 64-bit integer
 * Float: Double precision float
 
+Additionally, there are certain meta types based on base types:
+
+* Enum: strings with a restricted number of allowed values. See the field documentation for the specific allowed values.
+
 ## Duration
 
 A duration is a string or a number representing a, shock, duration of time. Strings consist of a number with a duration format marker, which must be one of the following:

@@ -93,7 +93,8 @@ std::string JournalCTL::getField(IDMethod method) {
     }
 }
 
-JournalCTLParser::JournalCTLParser(const std::string& parserName, const nlohmann::json& config, const std::string& fileName) : Parser(parserName, config, fileName), lastAccessedDate(0) {
+JournalCTLParser::JournalCTLParser(const std::string& parserName, const nlohmann::json& config, const std::string& fileName)
+        : Parser(parserName, config, fileName), lastAccessedDate(0) {
     auto rawMethod = config.value("idMethod", "syslog");
     if (rawMethod == "syslog") {
         method = JournalCTL::IDMethod::SYSLOG_IDENTIFIER;

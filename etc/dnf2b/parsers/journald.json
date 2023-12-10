@@ -1,5 +1,4 @@
 {
     "type": "journalctl",
-    "multiprocess": false,
     "idMethod": "syslog"
 }
