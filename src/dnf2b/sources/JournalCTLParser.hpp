@@ -28,7 +28,7 @@ class JournalCTLParser : public Parser {
 private:
     uint64_t lastAccessedDate;
     JournalCTL::IDMethod method;
-
+    std::shared_ptr<JournalCTL> j;
 public:
     JournalCTLParser(const std::string& parserName, const nlohmann::json& config, const std::string& fileName);
 

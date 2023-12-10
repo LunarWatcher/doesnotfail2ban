@@ -39,6 +39,12 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
         return;
     }
 
+    // Poll for updates with a timeout of 0
+    if (sd_journal_wait(journal, 0) != SD_JOURNAL_APPEND) {
+        // IF nothing new, return
+        return;
+    }
+
     // https://github.com/systemd/systemd/issues/1752
     //SD_JOURNAL_FOREACH(journal) {
     while (sd_journal_next(journal) > 0) {
@@ -97,23 +103,29 @@ JournalCTLParser::JournalCTLParser(const std::string& parserName, const nlohmann
         spdlog::error("Config error: {} is not a valid idMethod.", rawMethod);
         throw std::runtime_error("Config error");
     }
-}
 
-std::vector<Message> JournalCTLParser::poll() {
-    JournalCTL j = {
+    j = std::make_shared<JournalCTL>(
         resourceName,
         lastAccessedDate,
         method
-    };
+    );
+}
 
-    if (j.journal == nullptr) {
+std::vector<Message> JournalCTLParser::poll() {
+
+    if (j->journal == nullptr) {
         spdlog::error("Journal has nullptr");
         return {};
     }
 
     std::vector<Message> out;
 
-    j.read([&](const auto& message, auto time, const auto& host) -> void {
+    j->read([&](const auto& message, auto time, const auto& host) -> void {
+        // I'm sure this won't come back to haunt me.
+        // I'm definitely sure this won't have any problems with DST, and that journalctl timestamps are, in fact, monotonous.
+        if (time < lastAccessedDate) {
+            return;
+        }
         auto normalisedTimeSecs = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::microseconds(time));
 
         out.push_back(Message {
