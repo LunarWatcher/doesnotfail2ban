@@ -35,6 +35,7 @@ public:
         const std::vector<Filter>& filters,
         const std::string& bouncer
     );
+    virtual ~Watcher() = default;
 
     virtual std::map<std::string, int> process(const std::vector<Message>& filteredMessages);
 

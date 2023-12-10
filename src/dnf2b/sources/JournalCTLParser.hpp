@@ -22,7 +22,7 @@ private:
 
 public:
     JournalCTLParser(const std::string& parserName, const nlohmann::json& config, const std::string& fileName) : Parser(parserName, config, fileName), lastAccessedDate(0) {}
-    ~JournalCTLParser();
+    virtual ~JournalCTLParser() = default;
 
     std::vector<Message> poll() override;
 

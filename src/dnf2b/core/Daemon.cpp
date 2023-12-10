@@ -13,7 +13,7 @@ using namespace std::literals;
 namespace dnf2b {
 
 
-Daemon::Daemon(const Context& ctx) : ctx(ctx), man(ctx.getConfig()) {
+Daemon::Daemon(const Context& ctx) : man(ctx.getConfig()), ctx(ctx) {
     reload();
 }
 
@@ -127,8 +127,6 @@ void Daemon::run() {
                             man.log(watcher.get(), result);
                         }
                     }
-
-outer:;
                 }
 
             } else {

@@ -11,7 +11,13 @@
 
 namespace dnf2b {
 
-Parser::Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName) : parserName(parserName), config(config), resourceName(resourceName), multiprocess(config.value("multiprocess", false)) {}
+Parser::Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName)
+    :
+        config(config),
+        parserName(parserName),
+        resourceName(resourceName),
+        multiprocess(config.value("multiprocess", false))
+{}
 
 std::optional<Message> Parser::parse(const std::string& line) {
     std::smatch match;
@@ -102,7 +108,8 @@ std::optional<Message> Parser::parse(const std::string& line) {
     return std::nullopt;
 }
 
-std::vector<Message> Parser::filterMessages(const std::string& serviceName, const std::vector<Message>& messages) {
+// TODO: reconsider this function
+std::vector<Message> Parser::filterMessages(const std::string&, const std::vector<Message>& messages) {
     // If the input isn't multiprocess, it's guaranteed correct
     // Note that some inputs are multiprocess, but aren't declared multiprocess. 
     //

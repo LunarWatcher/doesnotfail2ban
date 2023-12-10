@@ -100,7 +100,7 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
 
         info.currFails.insert(info.currFails.end(), fails.begin(), fails.end());
 
-        if (info.currFails.size() >= source->getFailThreshold()) {
+        if ((info.currFails.size() > 0 && source->getFailThreshold() < 0) || (info.currFails.size() >= (size_t) source->getFailThreshold())) {
             spdlog::info("{} has received the threshold for {} and will be banned", ip, source->getId());
             auto bouncer = bouncers.at(source->getBouncerName());
 
@@ -124,7 +124,8 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
                 }
                 info.currBans[source->getBouncerName()] = {
                     currTime,
-                    duration
+                    duration,
+                    std::nullopt
                 };
             }
 

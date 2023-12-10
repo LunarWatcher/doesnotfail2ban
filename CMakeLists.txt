@@ -110,6 +110,8 @@ endif()
 add_definitions(-DDNF2B_VERSION="${DNF2B_VERSION}")
 # }}}
 
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra")
+set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
 
 add_subdirectory(src)
 add_subdirectory(tests EXCLUDE_FROM_ALL)

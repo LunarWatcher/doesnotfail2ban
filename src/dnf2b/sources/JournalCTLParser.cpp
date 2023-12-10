@@ -40,12 +40,12 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
         const void *data;
         size_t length;
 
-        std::string message;
-        uint64_t messageDate;
-        std::string hostname;
+        std::string message = "";
+        uint64_t messageDate = 0;
+        std::string hostname = "";
 
         if (sd_journal_get_data(journal, "__REALTIME_TIMESTAMP", &data, &length) >= 0) {
-            time_t timestamp = *(uint64_t *)data;
+            messageDate = *(uint64_t *)data;
         }
 
         if (sd_journal_get_data(journal, "MESSAGE", &data, &length) >= 0) {
@@ -58,10 +58,6 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
 
         callback(message, messageDate, hostname);
     }
-}
-
-JournalCTLParser::~JournalCTLParser() {
-    
 }
 
 std::vector<Message> JournalCTLParser::poll() {

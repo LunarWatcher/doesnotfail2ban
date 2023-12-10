@@ -19,6 +19,7 @@ private:
 
 public:
     FileParser(const std::string& parserName, const nlohmann::json& config, const std::string& fileName) : Parser(parserName, config, fileName), lastAccessedByte(0) {}
+    virtual ~FileParser() = default;
 
     std::vector<Message> poll() override;
     //std::optional<Message> parse(Context& ctx, const std::string& line) override;
