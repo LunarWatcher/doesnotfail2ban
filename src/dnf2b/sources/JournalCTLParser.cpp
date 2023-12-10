@@ -48,11 +48,17 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
         std::string hostname = "";
 
         if (sd_journal_get_data(journal, "__REALTIME_TIMESTAMP", &data, &length) >= 0) {
-            messageDate = *(uint64_t *)data;
+            messageDate = *(uint64_t*) data;
+        } else if (sd_journal_get_data(journal, "_SOURCE_REALTIME_TIMESTAMP", &data, &length) >= 0) {
+            messageDate = *(uint64_t*) data;
+        } else {
+            spdlog::error("Critical: failed to load timestamp from either __REALTIME_TIMESTAMP or _SOURCE_REALTIME_TIMESTAMP.");
+            throw std::runtime_error("Failed to load date");
         }
 
         if (sd_journal_get_data(journal, "MESSAGE", &data, &length) >= 0) {
             message = std::string(static_cast<const char*>(data), length);
+            // TODO: There has to be a better way to do this
             constexpr auto search = "MESSAGE=";
             if (message.starts_with(search)) {
                 message = message.substr(strlen(search));
