@@ -53,10 +53,18 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
 
         if (sd_journal_get_data(journal, "MESSAGE", &data, &length) >= 0) {
             message = std::string(static_cast<const char*>(data), length);
+            constexpr auto search = "MESSAGE=";
+            if (message.starts_with(search)) {
+                message = message.substr(strlen(search));
+            }
         }
 
         if (sd_journal_get_data(journal, "_HOSTNAME", &data, &length) >= 0) {
             hostname = std::string(static_cast<const char*>(data), length);
+            constexpr auto search = "_HOSTNAME=";
+            if (hostname.starts_with(search)) {
+                hostname = hostname.substr(strlen(search));
+            }
         }
 
         callback(message, messageDate, hostname);
