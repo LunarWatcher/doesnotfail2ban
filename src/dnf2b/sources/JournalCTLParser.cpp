@@ -7,7 +7,7 @@
 
 namespace dnf2b {
 
-JournalCTL::JournalCTL(const std::string& syslogID, uint64_t since) {
+JournalCTL::JournalCTL(const std::string& syslogID, uint64_t since, IDMethod method) {
     if (int r = sd_journal_open(&journal, SD_JOURNAL_SYSTEM | SD_JOURNAL_LOCAL_ONLY); r < 0) {
         spdlog::error("Failed to open journald journal: {}", strerror(-r));
         return;
@@ -21,7 +21,7 @@ JournalCTL::JournalCTL(const std::string& syslogID, uint64_t since) {
     }
     
 
-    if (sd_journal_add_match(journal, fmt::format("_SYSTEMD_UNIT={}", syslogID).c_str(), 0) < 0) {
+    if (sd_journal_add_match(journal, fmt::format("{}={}", getField(method), syslogID).c_str(), 0) < 0) {
         spdlog::error("Failed to add _SYSTEMD_UNIT={} as a match", syslogID);
         throw std::runtime_error("Failed to subscribe to systemd unit");
     }
@@ -63,10 +63,32 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
     }
 }
 
+std::string JournalCTL::getField(IDMethod method) {
+    switch (method) {
+    case IDMethod::SYSLOG_IDENTIFIER:
+        return "SYSLOG_IDENTIFIER";
+    case IDMethod::SYSTEMD_UNIT:
+        return "_SYSTEMD_UNIT";
+    }
+}
+
+JournalCTLParser::JournalCTLParser(const std::string& parserName, const nlohmann::json& config, const std::string& fileName) : Parser(parserName, config, fileName), lastAccessedDate(0) {
+    auto rawMethod = config.value("idMethod", "syslog");
+    if (rawMethod == "syslog") {
+        method = JournalCTL::IDMethod::SYSLOG_IDENTIFIER;
+    } else if (rawMethod == "systemd_unit") {
+        method = JournalCTL::IDMethod::SYSTEMD_UNIT;
+    } else {
+        spdlog::error("Config error: {} is not a valid idMethod.", rawMethod);
+        throw std::runtime_error("Config error");
+    }
+}
+
 std::vector<Message> JournalCTLParser::poll() {
     JournalCTL j = {
         resourceName,
-        lastAccessedDate
+        lastAccessedDate,
+        method
     };
 
     if (j.journal == nullptr) {
