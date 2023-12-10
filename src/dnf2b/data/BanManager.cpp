@@ -154,7 +154,7 @@ void BanManager::loadRebans() {
             spdlog::warn("{} was banned by {}, which is no longer loaded, and cannot be rebanned", ban.ip, ban.bouncer);
             continue;
         }
-
+        spdlog::debug("Re-banning {}", ban.ip);
         auto bouncer = this->bouncers.at(ban.bouncer);
         bouncer->ban(ban.ip, ban.port);
     }

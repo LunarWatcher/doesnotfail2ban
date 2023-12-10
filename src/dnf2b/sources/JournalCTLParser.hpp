@@ -7,6 +7,8 @@
 namespace dnf2b {
 
 class JournalCTL {
+private:
+    std::string parseValue(const void* raw, size_t length);
 public:
     enum class IDMethod {
         SYSLOG_IDENTIFIER,

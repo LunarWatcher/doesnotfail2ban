@@ -87,6 +87,7 @@ void Daemon::startUnbanMonitoring() {
     spdlog::info("Unban monitor live. Loading rebans...");
     // Loading rebans is offloaded to another service
     man.loadRebans();
+    spdlog::info("Rebans issued");
 
     while (true) {
         spdlog::debug("Unban monitor woken up");
