@@ -7,6 +7,7 @@ set (SOURCE_FILES
 
     dnf2b/sources/Parser.cpp
     dnf2b/sources/FileParser.cpp
+    dnf2b/sources/JournalCTLParser.cpp
     dnf2b/sources/ParserLoader.cpp
 
     dnf2b/bouncers/BouncerLoader.cpp
@@ -24,7 +25,7 @@ list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 add_library(dnf2b_src STATIC ${SOURCE_FILES})
 
 add_executable(dnf2b dnf2b/Main.cpp)
-target_include_directories(dnf2b_src PUBLIC ./)
+target_include_directories(dnf2b_src PUBLIC ./ ${SYSTEMD_INCLUDE_DIRS})
 
 # TODO: conditionally link fmt (probably)
 # Source library linking
@@ -40,6 +41,8 @@ target_link_libraries(dnf2b_src PUBLIC
     dl
 
     asio::asio
+
+    ${SYSTEMD_LIBRARIES}
 )
 
 # Executable linking

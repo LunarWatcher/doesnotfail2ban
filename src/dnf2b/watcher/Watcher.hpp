@@ -40,6 +40,7 @@ public:
 
     const std::string& getId() { return id; }
     const std::string& getBouncerName() { return bouncer; }
+    const std::optional<std::string>& getProcessID() { return multiProcessID; }
     int getFailThreshold() { return limit; }
     decltype(port) getPort() { return port; }
 };

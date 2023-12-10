@@ -11,7 +11,7 @@
 
 namespace dnf2b {
 
-Parser::Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName) : parserName(parserName), config(config), resourceName(resourceName) {}
+Parser::Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName) : parserName(parserName), config(config), resourceName(resourceName), multiprocess(config.value("multiprocess", false)) {}
 
 std::optional<Message> Parser::parse(const std::string& line) {
     std::smatch match;
@@ -54,18 +54,15 @@ std::optional<Message> Parser::parse(const std::string& line) {
         std::time_t currTimeMillis = std::time(nullptr);
         // Which we dump into a localtime struct, because
         // we have 0 contextual info
-        //
-        // HOWEVER; this returns a pointer, and not a struct. We _could_ flatten it, but it's
-        // so much easier not to.
-        // I have no idea what the lifecycle of this thing is, so I imagine this is a memory leak,
-        // but I wrote this on a plane without access to documentation. Cut me 
-        // some god damn slack, this is high-level time fuckery.
-        auto tm = std::localtime(&currTimeMillis);
+
+        auto raw = std::localtime(&currTimeMillis);
+        tm tm = *raw;
+
         // we now have a tm struct prepopulated with all the necessary
         // dates for the current time
         // What we then do is shove the parsed time on top of the predefined values:
         std::stringstream ss(timeString);
-        ss >> std::get_time(tm, timePattern.c_str());
+        ss >> std::get_time(&tm, timePattern.c_str());
         // The struct isn't wiped, fortunately, so any data in there not overridden, such as
         // where the time specifiers are missing, is preserved
 
@@ -89,7 +86,7 @@ std::optional<Message> Parser::parse(const std::string& line) {
         // TODO: deserialize the config, so lookups aren't necessary
         return Message {
             // entryDate
-            std::chrono::system_clock::from_time_t(std::mktime(tm)),
+            std::chrono::system_clock::from_time_t(std::mktime(&tm)),
             // process
             config["multiprocess"] ? match[groups["process"].get<int>() + 1].str() : "",
             // host

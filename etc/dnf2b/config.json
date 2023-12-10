@@ -19,7 +19,6 @@
             "id": "sshd",
             "process": "sshd",
             "enabled": true,
-            "file": "/var/log/auth.log",
             "parser": "journald",
             "filters": ["sshd-bruteforce"],
             "banaction": "iptables"

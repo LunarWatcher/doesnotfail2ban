@@ -1,5 +1,6 @@
 #include "ParserLoader.hpp"
 #include "dnf2b/sources/FileParser.hpp"
+#include "dnf2b/sources/JournalCTLParser.hpp"
 #include "dnf2b/static/Constants.hpp"
 #include "spdlog/spdlog.h"
 
@@ -21,6 +22,8 @@ std::shared_ptr<Parser> ParserLoader::loadParser(const std::string &parserName, 
     auto type = config.at("type").get<std::string>();
     if (type == "file") {
         return std::make_shared<FileParser>(parserName, config, resourceName);
+    } else if (type == "journald") {
+        return std::make_shared<JournalCTLParser>(parserName, config, resourceName);
     } else {
         spdlog::error("Type {} is not valid", type);
         throw std::runtime_error("Configuration error: type is not valid");

@@ -21,7 +21,14 @@ void Daemon::reload() {
 
     for (auto& watcher : ctx.getConfig().at("watchers")) {
         auto enabled = watcher.value("enabled", true);
-        auto file = watcher.at("file");
+        std::string file;
+        if (watcher.contains("file")) {
+            file = watcher.at("file");
+        } else if (watcher.contains("resource")) {
+            file = watcher.at("resource");
+        } else {
+            file = watcher.at("process");
+        }
 
         if (!enabled) {
             spdlog::debug("Skipping watcher for file {}: Disabled", file);
@@ -103,10 +110,25 @@ void Daemon::run() {
             if (messages.size() != 0) {
                 spdlog::debug("{} has new entries", _file);
                 for (auto& watcher : watchers) {
-                    auto result = watcher->process(messages);
-                    if (result.size() > 0) {
-                        man.log(watcher.get(), result);
+                    decltype(messages) filteredMessages;
+                    if (parser->multiprocess && watcher->getProcessID().has_value()) {
+                        for (auto& message : messages) {
+                            if (message.process == watcher->getProcessID()) {
+                                filteredMessages.push_back(message);
+                            }
+                        }
+                    } else {
+                        filteredMessages = messages;
                     }
+
+                    {
+                        auto result = watcher->process(filteredMessages);
+                        if (result.size() > 0) {
+                            man.log(watcher.get(), result);
+                        }
+                    }
+
+outer:;
                 }
 
             } else {

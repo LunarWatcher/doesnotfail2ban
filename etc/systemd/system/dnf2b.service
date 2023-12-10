@@ -7,7 +7,7 @@ After=network.target ufw.service
 Restart=on-failure
 RestartSec=10s
 RestartPreventExitStatus=0 255
-
+Environment="SPDLOG_LEVEL=info"
 Type=idle
 WorkingDirectory=/etc/dnf2b/
 ExecStart=/opt/dnf2b/bin/dnf2b daemon

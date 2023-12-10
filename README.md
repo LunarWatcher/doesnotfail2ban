@@ -6,6 +6,7 @@ Because fail2ban does often fail to ban.
 
 * A C++20 compiler
 * A Linux server
+* Systemd development package (`libsystemd-dev` on Debian)
 
 ## Current status
 

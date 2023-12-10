@@ -1,14 +1,4 @@
 {
-    "type": "file",
-    "multiprocess": true,
-    "pattern": {
-        "full": "^([^ ]+)\\.\\d+\\+\\S+ ([^ ]+) ([^ \\[]+)(?:\\[\\d+\\])?: (.*)$",
-        "time": "%FT%T",
-        "groups": {
-            "time": 0,
-            "host": 1,
-            "process": 2,
-            "message": 3
-        }
-    }
+    "type": "journalctl",
+    "multiprocess": true
 }

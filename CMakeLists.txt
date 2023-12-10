@@ -20,6 +20,31 @@ set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDNF2B_VERY_VERBOSE")
 set(SPDLOG_FMT_EXTERNAL ON CACHE STRING "" FORCE)
 set(CURL_ZLIB ON CACHE STRING "" FORCE)
 
+# Find the systemd library
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SYSTEMD "systemd" REQUIRED)
+pkg_check_modules(JOURNALD "libsystemd" REQUIRED)
+
+find_path(SYSTEMD_INCLUDE_DIR
+    NAMES systemd/sd-journal.h
+    HINTS ${PC_SYSTEMD_INCLUDE_DIRS})
+find_library(SYSTEMD_LIBRARY
+    NAMES systemd
+    HINTS ${PC_SYSTEMD_LIBRARY_DIRS})
+
+include(FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args(SYSTEMD
+    REQUIRED_VARS
+        SYSTEMD_LIBRARY
+        SYSTEMD_INCLUDE_DIR)
+
+mark_as_advanced(SYSTEMD_INCLUDE_DIR SYSTEMD_LIBRARY)
+
+set(SYSTEMD_INCLUDE_DIRS ${SYSTEMD_INCLUDE_DIR})
+set(SYSTEMD_LIBRARIES ${SYSTEMD_LIBRARY})
+
+
 include(FetchContent)
 FetchContent_Declare(fmt
     GIT_REPOSITORY https://github.com/fmtlib/fmt.git

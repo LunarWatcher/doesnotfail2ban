@@ -63,12 +63,4 @@ std::vector<Message> FileParser::poll() {
 
 void FileParser::close(const std::string&) {}
 
-std::string FileParser::checkHealth() {
-    std::string health = "FileParser[" + parserName + "]\n";
-
-    // Check the status of resources or whatever
-
-    return health;
-}
-
 }

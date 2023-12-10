@@ -8,33 +8,6 @@
 
 #include <time.h>
 
-TEST_CASE("Make sure trivial parsing works", "[parser]") {
-    // TODO: this should really be refactored
-    auto parser = dnf2b::ParserLoader::loadParser("journald", "unused");
-    dnf2b::FileParser& p = *std::static_pointer_cast<dnf2b::FileParser>(parser);
-
-    auto message = p.parse("Aug 17 22:17:44 sinon sshd[20094]: Failed password for invalid user admin from 123.45.67.89 port 57792 ssh2");
-
-    REQUIRE(message);
-
-
-    std::time_t raw = std::chrono::system_clock::to_time_t(message->entryDate);
-    auto tmStruct = std::localtime(&raw);
-    INFO(raw);
-
-    INFO(std::put_time(tmStruct, "%b %d %T, %Y"));
-    REQUIRE(tmStruct->tm_mon == 7);
-    REQUIRE(tmStruct->tm_mday == 17);
-    // For some reason, localtime suddenly converts to dst, making this test flaky without a check for 22 || 23
-    REQUIRE((tmStruct->tm_hour == 22 || tmStruct->tm_hour == 23));
-    REQUIRE(tmStruct->tm_min == 17);
-    REQUIRE(tmStruct->tm_sec == 44);
-
-    REQUIRE(message->host == "sinon");
-    REQUIRE(message->process == "sshd");
-    REQUIRE(message->message == "Failed password for invalid user admin from 123.45.67.89 port 57792 ssh2");
-}
-
 TEST_CASE("Non-multiprocess parsing", "[parser]") {
     nlohmann::json config = {
         {"type", "file"},
@@ -57,7 +30,7 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
     // that uses this log format:
     //    [subsystem, not unique, and not constant] Month Day Time: message
     //
-    // The date format is identical to the systemd example, because I'm lazy. Fight me.
+    // The date format is identical to an old systemd example, because I'm lazy. Fight me.
 
     auto message = p.parse("[core] Aug 17 21:22:23: message");
 

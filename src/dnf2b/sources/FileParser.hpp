@@ -25,7 +25,6 @@ public:
     
     void close(const std::string& resourceName) override;
 
-    std::string checkHealth() override;
 };
 
 }
