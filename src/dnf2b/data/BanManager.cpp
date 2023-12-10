@@ -35,8 +35,6 @@ BanManager::BanManager(const nlohmann::json& ctx) : db(Constants::DNF2B_ROOT / "
         this->banDuration = Parsing::parseConfigToSeconds("2w");
     }
     banIncrement = control.value("banIncrement", 2);
-
-
     
     for (auto& entry : rawWhitelist) {
         spdlog::info("Whitelisting {}", entry);

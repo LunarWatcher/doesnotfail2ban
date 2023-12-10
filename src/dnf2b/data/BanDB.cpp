@@ -200,9 +200,9 @@ std::vector<BanLocationInfo> BanDB::getBannedMinusPendingUnbans() {
     SELECT IP, Bouncer, Port, BanStarted, BanDuration, (BanStarted + BanDuration)
     FROM BanRegistry
     WHERE
-        BanDuration >= 0
-    AND
-        (BanStarted + BanDuration) > ?
+    (BanDuration >= 0 AND
+        (BanStarted + BanDuration) > ?)
+    OR BanDuration IS NULL
     )");
     s.bind(1, currTime);
 

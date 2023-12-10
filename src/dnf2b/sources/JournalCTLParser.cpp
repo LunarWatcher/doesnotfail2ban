@@ -15,7 +15,7 @@ JournalCTL::JournalCTL(const std::string& syslogID, uint64_t since, IDMethod met
     }
 
     if (since > 0) {
-        if (sd_journal_seek_realtime_usec(journal, since * 1'000'000) < 0) {
+        if (sd_journal_seek_realtime_usec(journal, since) < 0) {
             spdlog::error("Seek failed");
             throw std::runtime_error("Journald failed");
         }
