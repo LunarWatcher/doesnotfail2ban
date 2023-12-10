@@ -28,6 +28,9 @@ jobs:
         with:
           submodules: recursive
       - uses: LunarWatcher/install-conan@master
+      - name: Install dependencies
+        run: |
+          apt install -y libsystemd-dev
       - name: Run tests
         run: |
           mkdir build
