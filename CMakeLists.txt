@@ -110,6 +110,7 @@ endif()
 add_definitions(-DDNF2B_VERSION="${DNF2B_VERSION}")
 # }}}
 
+
 add_subdirectory(src)
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 

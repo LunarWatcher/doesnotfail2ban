@@ -1,7 +1,6 @@
 #include "dnf2b/bouncers/NoopBouncer.hpp"
 #include "dnf2b/data/BanManager.hpp"
 #include "util/DBWrapper.hpp"
-#include <bits/chrono.h>
 #include <catch2/catch_test_macros.hpp>
 
 #include <chrono>
