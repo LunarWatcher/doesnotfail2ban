@@ -22,7 +22,7 @@ std::shared_ptr<Parser> ParserLoader::loadParser(const std::string &parserName, 
     auto type = config.at("type").get<std::string>();
     if (type == "file") {
         return std::make_shared<FileParser>(parserName, config, resourceName);
-    } else if (type == "journald") {
+    } else if (type == "journalctl") {
         return std::make_shared<JournalCTLParser>(parserName, config, resourceName);
     } else {
         spdlog::error("Type {} is not valid", type);
