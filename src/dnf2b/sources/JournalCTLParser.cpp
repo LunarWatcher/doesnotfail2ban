@@ -14,17 +14,16 @@ JournalCTL::JournalCTL(const std::string& syslogID, uint64_t since, IDMethod met
         return;
     }
 
+    if (sd_journal_add_match(journal, fmt::format("{}={}", getField(method), syslogID).c_str(), 0) < 0) {
+        spdlog::error("Failed to add _SYSTEMD_UNIT={} as a match", syslogID);
+        throw std::runtime_error("Failed to subscribe to systemd unit");
+    }
+
     if (since > 0) {
         if (sd_journal_seek_realtime_usec(journal, since) < 0) {
             spdlog::error("Seek failed");
             throw std::runtime_error("Journald failed");
         }
-    }
-    
-
-    if (sd_journal_add_match(journal, fmt::format("{}={}", getField(method), syslogID).c_str(), 0) < 0) {
-        spdlog::error("Failed to add _SYSTEMD_UNIT={} as a match", syslogID);
-        throw std::runtime_error("Failed to subscribe to systemd unit");
     }
 }
 
@@ -40,7 +39,9 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
         return;
     }
 
-    SD_JOURNAL_FOREACH(journal) {
+    // https://github.com/systemd/systemd/issues/1752
+    //SD_JOURNAL_FOREACH(journal) {
+    while (sd_journal_next(journal) > 0) {
         const void *data;
         size_t length;
 
