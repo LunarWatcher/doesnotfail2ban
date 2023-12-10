@@ -3,6 +3,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <systemd/sd-journal.h>
+#include <algorithm>
 
 namespace dnf2b {
 
@@ -12,9 +13,11 @@ JournalCTL::JournalCTL(const std::string& syslogID, uint64_t since) {
         return;
     }
 
-    if (sd_journal_seek_realtime_usec(journal, since * 1'000'000) < 0) {
-        spdlog::error("Seek failed");
-        throw std::runtime_error("Journald failed");
+    if (since > 0) {
+        if (sd_journal_seek_realtime_usec(journal, since * 1'000'000) < 0) {
+            spdlog::error("Seek failed");
+            throw std::runtime_error("Journald failed");
+        }
     }
     
 
@@ -66,9 +69,14 @@ std::vector<Message> JournalCTLParser::poll() {
         lastAccessedDate
     };
 
+    if (j.journal == nullptr) {
+        spdlog::error("Journal has nullptr");
+        return {};
+    }
+
     std::vector<Message> out;
 
-    j.read([&out](const auto& message, auto time, const auto& host) -> void {
+    j.read([&](const auto& message, auto time, const auto& host) -> void {
         auto normalisedTimeSecs = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::microseconds(time));
 
         out.push_back(Message {
@@ -76,6 +84,7 @@ std::vector<Message> JournalCTLParser::poll() {
             .host = host,
             .message = message,
         });
+        this->lastAccessedDate = std::max(this->lastAccessedDate, time);
     });
     return out;
 }
