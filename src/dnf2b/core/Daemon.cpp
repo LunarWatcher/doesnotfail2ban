@@ -1,9 +1,11 @@
 #include "Daemon.hpp"
+#include "dnf2b/data/ReadStateDB.hpp"
 #include "dnf2b/filters/Filter.hpp"
 #include "dnf2b/sources/ParserLoader.hpp"
 #include "spdlog/spdlog.h"
 
 #include <algorithm>
+#include <chrono>
 #include <cstdint>
 #include <iterator>
 #include <thread>
@@ -135,6 +137,7 @@ void Daemon::run() {
             }
         }
 
+        ReadStateDB::getInstance().commit();
         std::this_thread::sleep_for(30s);
     }
 }

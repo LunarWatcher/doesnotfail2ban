@@ -30,6 +30,7 @@ private:
     nlohmann::json state;
 
     std::filesystem::path path;
+    bool dirty = false;
 public:
     ReadStateDB(std::filesystem::path path);
     ~ReadStateDB() {

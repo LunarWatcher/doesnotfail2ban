@@ -18,6 +18,7 @@ ReadStateDB::ReadStateDB(std::filesystem::path path) : path(path / "parser-read-
 
 void ReadStateDB::store(const std::string& parserName, const std::string& resourceName, const nlohmann::json& fieldValue) {
     std::lock_guard<std::mutex> _g(mutex);
+    dirty = true;
     state[parserName][resourceName] = fieldValue;
 }
 
@@ -46,6 +47,11 @@ std::optional<nlohmann::json> ReadStateDB::read(const std::string& parserName, c
 
 void ReadStateDB::commit() {
     std::lock_guard<std::mutex> _g(mutex);
+    if (!dirty) {
+        return;
+    }
+    dirty = false;
+
     std::ofstream f(path);
     if (!f) {
         spdlog::error("ReadStateDB failed to access {}", path.string());
