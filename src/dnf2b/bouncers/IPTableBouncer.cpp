@@ -41,7 +41,7 @@ IPTableBouncer::IPTableBouncer(const nlohmann::json& config) {
                 spdlog::info("{} -> dnf2b already exists in {}", chain, command);
                 continue;
             } 
-            if (std::system(fmt::format("{} -I {} -j dnf2b", command, chain).c_str()) != 0) {
+            if (std::system(fmt::format("{} -A {} -j dnf2b", command, chain).c_str()) != 0) {
                 spdlog::error("Failed to bootstrap dnf2b in the {} chain ({})", chain, command);
                 throw std::runtime_error("Fatal init error");
             }

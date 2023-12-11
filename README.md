@@ -35,11 +35,14 @@ Because [Docker hates firewalls](https://docs.docker.com/network/packet-filterin
 
 This is not dnf2b's fault; it's Docker's fault. Due to how Docker works, it can (and happily will) bypass other rules, including UFW and general iptable rules. In fact, this problem also affects fail2ban, and requires [explicit config](https://serverfault.com/a/1044788/569995) to get it to behave. 
 
-dnf2b makes an elementary attempt to insert itself before docker. However, attempting to guarantee insertion prior to docker is an exercise in unnecessary pain. As a result, it's strongly recommended that you either:
+dnf2b does not make any attempt to insert itself before docker. Attempting to guarantee insertion prior to docker is an exercise in unnecessary pain. If docker either starts before dnf2b, or restarts after dnf2b has started, dnf2b's rule will be treated identically to 
+
+As a result, it's strongly recommended that you either:
 
 1. Don't use docker for exposed services; and/or
-2. Use a reverse proxy (such as nginx) to forward to the docker containers. By doing so, you have a non-docker layer between the user and your docker containers, and this layer actually respects iptable rules. Note that for this to work, nginx **cannot** be installed as a docker container, or you're right back to the same problem of exposing docker containers; or
-3. Figure out a way to stay ahead of the  Docker rules
+2. Use a reverse proxy (such as nginx) to forward to the docker containers. By doing so, you have a non-docker layer between the user and your docker containers, and this layer actually respects iptable rules. Note that for this to work, nginx **cannot** be installed as a docker container, or you're right back to the same problem of exposing docker containers
+
+Alternatively, you can also fuck around with iptables and hope you manage to get a rule that docker doesn't overwrite. This is non-trivial to do, and personally, I found it orders of magnitude easier to just not use docker, and use nginx for the few services that are docker-centric. Your mileage may vary, though.
 
 ## Installing
 
