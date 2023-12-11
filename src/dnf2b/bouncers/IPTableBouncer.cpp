@@ -38,15 +38,20 @@ IPTableBouncer::IPTableBouncer(const nlohmann::json& config) {
     }
 
     if (useIpset) {
-        auto createIPTable = [](std::string name, std::string family) {
+        auto createIPTable = [](const std::string& name, const std::string& family) -> bool {
 
-            auto message = stc::syscommand(fmt::format("ipset create {} hash:ip hashsize 4096 family {} 2>&1", name, family));
+            int code = 0;
+            auto message = stc::syscommand(fmt::format("ipset create {} hash:ip hashsize 4096 family {} 2>&1", name, family), &code);
+            if (code == 0) {
+                spdlog::info("Ipset {} created", name);
+                return true;
+            }
             if (message.find("set with the same name already exists") != std::string::npos) {
                 spdlog::info("{} already exists. Flushing set...", name);
                 std::system(fmt::format("ipset flush {}", name).c_str());
                 return true;
             }
-            spdlog::error("ipset failed: {}", message);
+            spdlog::error("ipset ({}) failed: {}", name, message);
             return false;
         };
 
