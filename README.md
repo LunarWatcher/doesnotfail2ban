@@ -33,7 +33,7 @@ Due to this being a significantly less established project than f2b, it's lackin
 
 Because [Docker hates firewalls](https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw) (oversimplified), there's a significant chance that dnf2b's iptable rules will be ignored when forwarding to docker containers.
 
-This is not dnf2b's fault; it's Docker's fault. Due to how Docker works, it can (and happily will) bypass other rules, including UFW and general iptable rules. In fact, this problem also affects fail2ban, and requires [explicit config](https://serverfault.com/a/1044788/569995) to get it to behave. 
+This is not dnf2b's fault; it's Docker's fault. Due to how Docker works[^1], it can (and happily will) bypass other rules, including UFW and general iptable rules. In fact, this problem also affects fail2ban, and requires [explicit config](https://serverfault.com/a/1044788/569995) to get it to behave. 
 
 dnf2b does not make any attempt to insert itself before docker. Attempting to guarantee insertion prior to docker is an exercise in unnecessary pain. If docker either starts before dnf2b, or restarts after dnf2b has started, dnf2b's rule will be treated identically to 
 
@@ -43,6 +43,10 @@ As a result, it's strongly recommended that you either:
 2. Use a reverse proxy (such as nginx) to forward to the docker containers. By doing so, you have a non-docker layer between the user and your docker containers, and this layer actually respects iptable rules. Note that for this to work, nginx **cannot** be installed as a docker container, or you're right back to the same problem of exposing docker containers
 
 Alternatively, you can also fuck around with iptables and hope you manage to get a rule that docker doesn't overwrite. This is non-trivial to do, and personally, I found it orders of magnitude easier to just not use docker, and use nginx for the few services that are docker-centric. Your mileage may vary, though.
+
+It is theoretically possible to fix this by adding a rule to the `DOCKER-USER` chain, but it involves a bunch of crap that I have no clue how work, and the alternatives to figuring out how to apply a firewall to docker traffic (i.e. reverse proxy and not using docker) are significantly easier.
+
+[^1]: Docker prepends its rules to iptables. I can't tell if ufw does too (though I half doubt it), but I did try prepending the dnf2b rules in FORWARD and INPUT, and Docker happily placed itself in front of them when it (re)started. This would be a lot easier to work around if Docker didn't try to put itself in front of other firewall rules, but here we are.
 
 ## Installing
 
