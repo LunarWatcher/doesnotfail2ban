@@ -15,6 +15,6 @@ extern std::filesystem::path DNF2B_ROOT;
  * is an IP, and not accidentally something else that was globbed in. I don't really see that as necessary.
  * Consumer regexes should anchor themselves properly instead.
  */
-const static std::string IP_SEARCH_GROUP = "(\\S+)";
+const static std::string IP_SEARCH_GROUP = "(?<IP>\\S+)";
 
 }

@@ -34,10 +34,10 @@ PCREMatcher::PCREMatcher(pcre2_code* pattern, const std::string& input) : input(
     matchData = pcre2_match_data_create_from_pattern(pattern, nullptr);
 }
 
-std::string PCREMatcher::get(size_t group) {
+std::optional<std::string> PCREMatcher::get(size_t group) {
     // >=?
     if (group >= count) {
-        throw std::runtime_error("Invalid group index");
+        return std::nullopt;
     }
 
     auto start = ovector[2 * group];
@@ -46,15 +46,15 @@ std::string PCREMatcher::get(size_t group) {
     return input.substr(start, length);
 }
 
-std::string PCREMatcher::get(const std::string& group) {
+std::optional<std::string> PCREMatcher::get(const std::string& group) {
     if (count <= 1) {
-        throw std::runtime_error("Invalid group index");
+        return std::nullopt;
     }
     auto groupIdx = pcre2_substring_number_from_name(pattern, reinterpret_cast<PCRE2_SPTR>(group.c_str()));
     if (groupIdx >= 0) {
         return get(groupIdx);
     }
-    throw std::runtime_error("Invalid group name");
+    return std::nullopt;
 }
 
 bool PCREMatcher::next() {

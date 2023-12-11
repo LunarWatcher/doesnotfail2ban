@@ -46,7 +46,7 @@ TEST_CASE("Multiple matches in the text should work", "[PCRE]") {
                 REQUIRE(matcher.getMatchGroups() == 2);
                 REQUIRE(matcher.get(0) == fullMatches[count]);
                 REQUIRE(matcher.get(1) == matchGroupResults[count]);
-                REQUIRE_THROWS(matcher.get(2));
+                REQUIRE_FALSE(matcher.get(2).has_value());
 
                 ++count;
             }
@@ -62,11 +62,11 @@ TEST_CASE("Named matches should work", "[PCRE]") {
     dnf2b::PCREMatcher m(p, message);
     REQUIRE(m.next());
     REQUIRE(m.get("IP") == "192.168.69.420");
-    REQUIRE_THROWS(m.get("joemama"));
-    REQUIRE_THROWS(m.get(56201));
-    REQUIRE_NOTHROW(m.get(0));
-    REQUIRE_NOTHROW(m.get(1));
-    REQUIRE_THROWS(m.get(2));
+    REQUIRE(m.get("joemama") == std::nullopt);
+    REQUIRE(m.get(56201) == std::nullopt);
+    REQUIRE(m.get(0).has_value());
+    REQUIRE(m.get(1).has_value());
+    REQUIRE(m.get(2) == std::nullopt);
     REQUIRE_FALSE(m.next());
 
 }

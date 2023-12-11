@@ -2,6 +2,8 @@
 
 
 #include "dnf2b/sources/Parser.hpp"
+#include "dnf2b/util/PCRE.hpp"
+
 namespace dnf2b {
 
 /**
@@ -13,7 +15,7 @@ struct MatchResult {
 
 class Filter {
 private:
-    std::vector<std::string> patterns;
+    std::vector<Pattern> patterns;
 
     bool insensitive;
 public:

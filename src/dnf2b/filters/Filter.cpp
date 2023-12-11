@@ -1,4 +1,6 @@
 #include "Filter.hpp"
+#include "dnf2b/util/PCRE.hpp"
+#include "pcre2.h"
 #include "spdlog/spdlog.h"
 
 #include <dnf2b/static/Constants.hpp>
@@ -17,47 +19,35 @@ Filter::Filter(const std::string& filterName) : filterName(filterName) {
     nlohmann::json config;
     in >> config;
 
-    config.at("patterns").get_to(this->patterns);
+    std::vector<std::string> strPatterns = config.at("patterns");
+    std::transform(strPatterns.cbegin(), strPatterns.cend(), std::back_inserter(patterns), 
+        [](auto pattern) {
+        size_t pos = 0;
+        while ((pos = pattern.find("${dnf2b.ip}", pos)) != std::string::npos) {
+            pattern.replace(pos, strlen("${dnf2b.ip}"), Constants::IP_SEARCH_GROUP);
+            pos += Constants::IP_SEARCH_GROUP.length();
+
+        }
+        return Pattern(pattern, PCRE2_CASELESS | PCRE2_UTF);
+        }
+    );
     insensitive = config.value("insensitive", false);
 }
 
 std::optional<MatchResult> Filter::checkMessage(const Message& message) {
 
-    for (auto pattern : patterns) {
-        if (message.ip.empty() && pattern.find("${dnf2b.ip}") == std::string::npos) {
-            spdlog::error("Pattern {} (from filter {}) has no IP field, and was used with a parser that failed to find an IP. Skipping...",
-                          pattern, this->filterName);
-            continue;
-        }
-
-        bool hasInlineIP = false;
-
-        size_t pos = 0;
-        std::string search = "${dnf2b.ip}";
-        while ((pos = pattern.find(search, pos)) != std::string::npos) {
-            pattern.replace(pos, search.length(), Constants::IP_SEARCH_GROUP);
-            pos += Constants::IP_SEARCH_GROUP.length();
-
-            hasInlineIP = true;
-        }
-
-        auto opts = std::regex_constants::ECMAScript;
-        if (insensitive) {
-            opts |= std::regex_constants::icase;
-        }
-
-        std::regex compiledPattern(pattern, opts);
-
-        std::smatch m;
-        if (!std::regex_search(message.message, m, compiledPattern)) {
-#ifdef DNF2B_VERY_VERBOSE
-            spdlog::debug("No match for {} against {}", message.message, pattern);
-#endif
+    for (const auto& pattern : patterns) {
+        PCREMatcher matcher(pattern, message.message);
+        if (!matcher.next()) {
             // No match found.
             continue;
         }
 
-        std::string ip = hasInlineIP ? m[1].str() : message.ip;
+        std::string ip = matcher.get("IP").value_or(message.ip);
+        if (ip == "") {
+            spdlog::error("Filter {} lacks ${{dnf2b.ip}}, but was used with a parser that doesn't find an IP outside the message", this->filterName);
+            throw std::runtime_error("Filter syntax error");
+        }
 
         return MatchResult {
             .ip = ip

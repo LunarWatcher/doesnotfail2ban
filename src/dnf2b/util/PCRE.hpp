@@ -38,8 +38,8 @@ public:
             matchIndex(m.matchIndex), 
             count(m.count) {}
 
-    std::string get(size_t group);
-    std::string get(const std::string& group);
+    std::optional<std::string> get(size_t group);
+    std::optional<std::string> get(const std::string& group);
 
     bool next();
     int getMatchGroups() { return count; }
@@ -56,8 +56,17 @@ public:
             pcre2_code_free(pattern);
         }
     }
+    Pattern(const Pattern& s)
+        : pattern(pcre2_code_copy(s.pattern)) {}
+    Pattern(Pattern&& m)
+        : pattern(std::move(m.pattern)) {
+        m.pattern = nullptr;
+    }
 
     operator pcre2_code*() {
+        return pattern;
+    }
+    operator pcre2_code*() const {
         return pattern;
     }
 };
