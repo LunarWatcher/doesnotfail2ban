@@ -1,5 +1,6 @@
 {
     "patterns": [
         "^banner exchange: Connection from ${dnf2b.ip} port \\d+: (invalid format|could not read protocol version)"
-    ]
+    ],
+    "insensitive": true
 }

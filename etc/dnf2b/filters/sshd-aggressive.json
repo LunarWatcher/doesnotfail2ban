@@ -1,0 +1,6 @@
+{
+    "patterns": [
+        "^Connection closed by invalid user \\S+ ${dnf2b.ip} port \\d+"
+    ],
+    "insensitive": true
+}

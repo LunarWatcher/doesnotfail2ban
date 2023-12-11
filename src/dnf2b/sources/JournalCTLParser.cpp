@@ -5,6 +5,7 @@
 #include <string>
 #include <systemd/sd-journal.h>
 #include <algorithm>
+#include <dnf2b/data/ReadStateDB.hpp>
 
 namespace dnf2b {
 
@@ -104,6 +105,17 @@ JournalCTLParser::JournalCTLParser(const std::string& parserName, const nlohmann
         spdlog::error("Config error: {} is not a valid idMethod.", rawMethod);
         throw std::runtime_error("Config error");
     }
+    auto state = ReadStateDB::getInstance().read(parserName, resourceName);
+    if (state.has_value()) {
+        // Can nlohmann/json even store unsigned 64 bit ints?
+        // Tbf, as long as it stores an int64_t, it should be fine.
+        // It just means the uint risks overflowing to a negative number when converted to a
+        // signed int64_t, but they'll then overflow again back to more or less the correct
+        // positive value.
+        // It'll be fine
+        lastAccessedDate = state.value().get<uint64_t>();
+        spdlog::debug("Loaded lastAccessedDate = {} from ReadStateDB", lastAccessedDate);
+    }
 
     j = std::make_shared<JournalCTL>(
         resourceName,
@@ -124,6 +136,8 @@ std::vector<Message> JournalCTLParser::poll() {
     j->read([&](const auto& message, auto time, const auto& host) -> void {
         // I'm sure this won't come back to haunt me.
         // I'm definitely sure this won't have any problems with DST, and that journalctl timestamps are, in fact, monotonous.
+        // Tbf, DST is probably going to fuck over the FileParser when I get around to beefing it up
+        // with time checks
         if (time < lastAccessedDate) {
             return;
         }
@@ -136,6 +150,9 @@ std::vector<Message> JournalCTLParser::poll() {
         });
         this->lastAccessedDate = std::max(this->lastAccessedDate, time);
     });
+
+    ReadStateDB::getInstance().store(this->parserName, this->resourceName, lastAccessedDate);
+
     return out;
 }
 

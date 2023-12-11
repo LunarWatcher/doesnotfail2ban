@@ -35,3 +35,4 @@ Filters are based purely on the message of the log entry. For example, consider 
 ```
 
 After being parsed by the journald parser, the message is determined to be "`Accepted publickey for olivia from 192.168.0.190 port 40976 ssh2: ED25519 SHA256:<hidden>`". This is the string that's passed on to specified filters, and when writing filters, this is what you should use to write patterns.
+

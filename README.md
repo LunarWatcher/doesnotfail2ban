@@ -57,11 +57,18 @@ sudo ln -s /opt/dnf2b/bin/dnf2b /usr/local/bin
 
 Or, of course, adding `/opt/dnf2b/bin` to your PATH.
 
+### Getting started
+
+See docs/Config.md for help with the configuration.
+
+The docs are still very new. If they don't make sense, lack information, or you otherwise can't figure out how to make dnf2b do what you want, you can [browse existing or start a new discussion](https://github.com/LunarWatcher/doesnotfail2ban/discussions) here on GitHub.
+
 ### Updating
 
 If you've done no changes to the default files (i.e. files installed by dnf2b, NOT files such as config.local.json, or custom files added alongside the default files), just re-run the `curl` command from the installation section. If you kept the cloned directory, you can also run `git pull && cd build && make -j $(nproc) && sudo make -j $(nproc) install` manually. This may not update the dependencies, however.
 
 If you've made changes to default files, you get to back up everything you've done first. There's currently no easy way around this at this time.
+
 
 ## License?
 
