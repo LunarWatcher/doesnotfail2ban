@@ -81,6 +81,8 @@ Communicators are an optional feature that serve configurable notifications abou
 
 The only limitation for non-builtin services is the parsers. As long as dnf2b can parse your log files or other kind of output, you can usually write filters for that output.[^1]
 
+When the parser is up and running, you can start writing filters. This is documented in more details in Filters.md.
+
 As an obligatory reminder, if you're writing filters for common services to fill a gap in the built-in filters, a pull request is appreciated.
 
 [^1]: Emphasis on usually. Log formats with multiline output (i.e. logging the problem on one line and the source on a new, separate line that isn't part of the message) are is much trickier to parse, and by extension, write rules for. This is particularly true in multithreaded environments, where message order isn't guaranteed. Newlines within a log message can also cause problems, but this is more a much bigger problem with the file parser than the journald parser, due to how journald data is accessed. 

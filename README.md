@@ -48,6 +48,14 @@ It is theoretically possible to fix this by adding a rule to the `DOCKER-USER` c
 
 [^1]: Docker prepends its rules to iptables. I can't tell if ufw does too (though I half doubt it), but I did try prepending the dnf2b rules in FORWARD and INPUT, and Docker happily placed itself in front of them when it (re)started. This would be a lot easier to work around if Docker didn't try to put itself in front of other firewall rules, but here we are.
 
+### Docker and dnf2b
+
+Without using a reverse proxy (nginx logs are great for a lot of the detections) that itself is not dockerised, you need to provide a way for dnf2b to access the logs from your docker containers for the various services.
+
+This is left as an exercise to the reader, as the process for doing so varies from service to service. You can in theory use the [journald logging driver](https://docs.docker.com/config/containers/logging/journald/), but this is untested and will likely have multiple bugs.
+
+Dnf2b itself is not available as a docker container, and there is no official support for running dnf2b within a docker container. If you try to do so anyway, you're on your own.
+
 ## Installing
 
 In case you're fine with the warnings, installing has been conveniently placed in a script that you can find under `scripts/install.sh`. These commands will not be included separately in the readme, because they're already in that script file. TL;DR: it's `mkdir build && cd build && cmake .. && make && sudo make install`.

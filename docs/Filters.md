@@ -73,5 +73,10 @@ If you wanted to match this particular line, you could write a filter file conta
 ```
 
 
-
 [^1]: it's worth noting that using /var/log/auth.log is discouraged due to the unreliable date format. The journald parser exists to fill this gap, though the message it returns is still identical to the example. 
+
+### Special keys
+
+| Key | Usage | Notes |
+| --- | ----- | --- |
+| `${dnf2b.ip}` | Used to signal an IP in the log output that should be used for ban purposes. This key is only required if the parser doesn't extract an IP from outside the message. | This key under the hood is just a `\S+` search, so the IP must be properly delimited by the rest of the regex. |
