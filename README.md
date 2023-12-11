@@ -26,7 +26,20 @@ At this time, dnf2b is considered barely deployable, and barely functional. It h
 
 ## Caveats
 
+### Filter availability
 Due to this being a significantly less established project than f2b, it's lacking in filters. Other alternatives offer a better out-of-the-box experience. The primary goal of this project is to provide a more stable system, at least on systems I'm able to test.
+
+### Docker and iptables
+
+Because [Docker hates firewalls](https://docs.docker.com/network/packet-filtering-firewalls/#docker-and-ufw) (oversimplified), there's a significant chance that dnf2b's iptable rules will be ignored when forwarding to docker containers.
+
+This is not dnf2b's fault; it's Docker's fault. Due to how Docker works, it can (and happily will) bypass other rules, including UFW and general iptable rules. In fact, this problem also affects fail2ban, and requires [explicit config](https://serverfault.com/a/1044788/569995) to get it to behave. 
+
+dnf2b makes an elementary attempt to insert itself before docker. However, attempting to guarantee insertion prior to docker is an exercise in unnecessary pain. As a result, it's strongly recommended that you either:
+
+1. Don't use docker for exposed services; and/or
+2. Use a reverse proxy (such as nginx) to forward to the docker containers. By doing so, you have a non-docker layer between the user and your docker containers, and this layer actually respects iptable rules. Note that for this to work, nginx **cannot** be installed as a docker container, or you're right back to the same problem of exposing docker containers; or
+3. Figure out a way to stay ahead of the  Docker rules
 
 ## Installing
 
