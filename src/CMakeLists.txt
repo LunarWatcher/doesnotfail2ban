@@ -20,6 +20,7 @@ set (SOURCE_FILES
 
     dnf2b/ui/CLI.cpp
     dnf2b/util/Parsing.cpp
+    dnf2b/util/PCRE.cpp
 )
 list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 
@@ -40,6 +41,7 @@ target_link_libraries(dnf2b_src PUBLIC
     sqlite3
     pthread
     dl
+    pcre2-posix-static
 
     asio::asio
 

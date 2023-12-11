@@ -63,17 +63,27 @@ FetchContent_Declare(stc
 FetchContent_Declare(sql
     GIT_REPOSITORY https://github.com/SRombauts/SQLiteCpp
     GIT_TAG 3.3.1)
-
+FetchContent_Declare(pcre
+    GIT_REPOSITORY https://github.com/PCRE2Project/pcre2
+    GIT_TAG pcre2-10.42)
 
 FetchContent_MakeAvailable(fmt)
 FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(nlohmann)
 FetchContent_MakeAvailable(stc)
+
+FetchContent_GetProperties(pcre)
+if (NOT pcre_POPULATED)
+    FetchContent_Populate(pcre)
+    add_subdirectory(${pcre_SOURCE_DIR} ${pcre_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
 FetchContent_GetProperties(sql)
 if (NOT sql_POPULATED)
     FetchContent_Populate(sql)
     add_subdirectory(${sql_SOURCE_DIR} ${sql_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
+
 FetchContent_GetProperties(cpr)
 if (NOT cpr_POPULATED)
     FetchContent_Populate(cpr)
@@ -110,8 +120,9 @@ endif()
 add_definitions(-DDNF2B_VERSION="${DNF2B_VERSION}")
 # }}}
 
-set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra")
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -fsanitize=undefined")
 set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
+add_definitions(-DPCRE2_CODE_UNIT_WIDTH=8)
 
 add_subdirectory(src)
 add_subdirectory(tests EXCLUDE_FROM_ALL)

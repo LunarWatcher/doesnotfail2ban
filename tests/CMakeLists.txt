@@ -7,6 +7,7 @@ add_executable(tests src/TestRunner.cpp
     src/BanManagerTests.cpp
     src/DatabaseTests.cpp
     src/ParsingUtilTests.cpp
+    src/PCRETests.cpp
     # }}}
 )
 
