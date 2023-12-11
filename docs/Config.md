@@ -32,41 +32,53 @@ After this, you need to configure your services and bouncers.
 
 Watchers, as the name indicates, watch logs for problems. Sshd is included as an example of this in the template you just copied from. There are a few valid options:
 
-* **id**: required, must be unique. Does not need to correspond to the name of the process
-* **process**: optional, except for certain parsers (such as journald). Used to identify the process in logfiles used by multiple processes
-* **enabled**: true/false, self-explanatory. Defaults to true, doesn't need to be present
-* **parser**: required, defines what parser to use. For ssh, and many other systems, journald is used. Others, such as nginx, use different formats, and therefore have different parsers. Parsers are documented elsewhere.
-* **filters**: An array of filters to use. Corresponds to filenames in /etc/dnf2b/filters.
-* **limit**: optional number, defaults to core.control.maxAttempts if not provided. Like the global limit, if set to 0 or less, offending IPs are instantly banned.
-* **banaction**: Which bouncer to use when the limit has been exceeded (note that, as previosuly mentioned, the counter is global even if the limit is local)
+* **id** [string]: required, must be unique. Does not need to correspond to the name of the process
+* **process** [string]: optional, except for certain parsers (such as journald). Used to identify the process in logfiles used by multiple processes
+* **enabled** [bool]: true/false, self-explanatory. Defaults to true, doesn't need to be present
+* **parser** [string]: required, defines what parser to use. For ssh, and many other systems, journald is used. Others, such as nginx, use different formats, and therefore have different parsers. Parsers are documented elsewhere.
+* **filters** [string]: An array of filters to use. Corresponds to filenames in /etc/dnf2b/filters.
+* **limit** [number]: optional number, defaults to core.control.maxAttempts if not provided. Like the global limit, if set to 0 or less, offending IPs are instantly banned.
+* **banaction** [string]: Which bouncer to use when the limit has been exceeded (note that, as previosuly mentioned, the counter is global even if the limit is local)
 
 
 ### Configuring bouncers
+
+Bouncers are in charge of taking action against IPs that reach the limit and get banned.
 
 The global bouncer configuration defines what bouncers should be available for watchers to use, as well as overall config. For a watcher to be able to use a bouncer, the bouncer **must** be added to the global `bouncers` key. For example:
 
 ```json
 "bouncers": {
     "iptables": {
-        "strategy": "DROP"
+        "ipset": true
     }
 },
 ```
 
-In this case, the `iptables` key is made available for the watchers to use. The other valid strategy key for iptables is `REJECT`. However, `DROP` is default to make it more difficult for the blocked party to tell if they have  been caught, or if the service just happened to go down. Whether or not this makes any difference in practice is unclear at best.
+In this case, the `iptables` key is made available for the watchers to use, and it's also instructed to use `ipset` instead of storing each ban as an iptable rule. Note that `ipset` needs to be installed separately for this to work.
+
+Some bouncers, including iptables, do not have mandatory configuration options. See the documentation for the bouncer you want to use to learn more about the available (and if applicable, mandatory) configuration options.
 
 ### Configuring ban controls
 
 Ban controls are under `core.control`, and contains four keys:
 
-* **maxAttempts** [Integer]: the number of allowed attempts before banning,
-* **banPeriod** [NDuration]: A string containing a ban period. Valid postfixes currently include d (days), w (weeks), and m (months). If set to a number instead, the number is interpreted as days. If negative, the ban is permanent.
+* **maxAttempts** [Integer]: the number of allowed attempts before banning. Note that the watchers have individual limits as well, meaning this represents the default for watchers without an explicit limit
+* **banPeriod** [NDuration]: A string containing a ban period. If set to a number instead, the number is interpreted as days. If negative, the ban is permanent.
 * **banIncrement** [Integer]: The factor the banPeriod is multiplied with for multiple fails. If set to 2 when the ban period is 1 week, that means the first ban is 1 week, the second is two weeks, the third is four, etc.
-* **forgetAfter** [Duration]: How long 
+* **forgetAfter** [Duration]: How long it takes before fails are forgiven. To avoid excessive data storage, this has to be a finite value. Hwoever, for those that never want to forgive fails, setting this value high (for example multiple years) has the same effect.
 
 Additionally, under just `core`, there's an additional key:
-* **whitelist**: A list of IPs or CIDR ranges that are excluded. It's STRONGLY recommended you include IPs you frequent here, especially if the IPs are static. If possible, whitelisting the entire `192.168.0.0/16` range (or equivalent) is recommended. If you use SSH and don't whitelist yourself, and you have an aggressive configuration, you risk locking yourself out otherwise. This is a mild annoyance when you're in the same building as the server, but quite a bit worse if cloud use is involved.
+* **whitelist**: A list of IPs or CIDR ranges that are excluded. It's STRONGLY recommended you include IPs you frequent here, especially if the IPs are static. If possible, whitelisting the entire `192.168.0.0/16` range (or equivalent if your router uses one of the other two localhost ranges instead; refer to your router's DHCP config for more information) is recommended. If you use SSH to access the server and don't whitelist yourself, and you have an aggressive configuration, you risk locking yourself out if you don't add a whitelist entry. This is a mild annoyance when you're in the same building as the server, but quite a bit worse if cloud use is involved (though there are other ways around this, such as switching to a different IP).
 
 ### Communicators
 
-TBA
+Communicators are an optional feature that serve configurable notifications about various events. 
+
+## Advanced configuration
+
+### Support for non-builtins
+
+The only limitation for non-builtin services is the parsers. As long as dnf2b can parse your log files or other kind of output, you can write filters for that output.[^1]
+
+[^1]: Mostly. Log formats with multiline output (i.e. logging the problem on one line and the source on a new, separate line that isn't part of the message) are is much trickier to parse, and by extension, write rules for. This is particularly true in multithreaded environments, where message order isn't guaranteed.
