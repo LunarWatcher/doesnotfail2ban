@@ -16,6 +16,7 @@ At this time, dnf2b is considered barely deployable, and barely functional. It h
 * [x] Data storage
 * [x] Unbanning
 * [ ] Date tracking to avoid excessive rescanning of files (and to better deal with logfile cycling)
+* [ ] Thread safety stuff
 * [ ] Fully usable CLI
 * [ ] External rule repositories
 * [ ] Proper documentation

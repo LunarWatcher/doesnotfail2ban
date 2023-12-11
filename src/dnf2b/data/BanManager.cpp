@@ -5,6 +5,7 @@
 #include "dnf2b/static/Constants.hpp"
 #include "dnf2b/util/Parsing.hpp"
 #include "spdlog/spdlog.h"
+#include <algorithm>
 #include <chrono>
 #include <limits>
 #include <variant>
@@ -176,6 +177,7 @@ void BanManager::checkUnbansAndCleanup() {
 
         db.unbanAll(pending);
     }
+
 }
 
 bool BanManager::isWhitelisted(const std::string& ip) {
