@@ -38,6 +38,10 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt install -y libsystemd-dev
+      - name: Print versions
+        run: |
+          ${{ matrix.cxx }} --version
+          ${{ matrix.cc }} --version
       - name: Run tests
         run: |
           mkdir build
