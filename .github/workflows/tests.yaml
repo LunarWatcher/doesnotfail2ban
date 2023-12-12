@@ -16,10 +16,22 @@ jobs:
           - debug
 
         include:
-          - config: release
+          - config: release (clang)
             variant: Release
-          - config: debug
+            cc: clang
+            cxx: clang++
+          - config: debug (clang)
             variant: Debug
+            cc: clang
+            cxx: clang++
+          - config: release (gcc)
+            variant: Release
+            cc: gcc
+            cxx: g++
+          - config: debug (gcc)
+            variant: Debug
+            cc: gcc
+            cxx: g++
 
     # The OS to run on
     runs-on: ubuntu-latest
@@ -38,5 +50,8 @@ jobs:
           cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.variant }}
           # Not entirely sure how much the GitHub runners support
           make -j $(nproc) test
+        env:
+          CXX: ${{matrix.cxx}}
+          CC: ${{matrix.cc}}
 
 
