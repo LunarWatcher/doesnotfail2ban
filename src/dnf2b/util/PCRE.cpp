@@ -4,7 +4,7 @@
 #include <string>
 
 namespace dnf2b {
-Pattern::Pattern(const std::string& patternStr, int options) {
+Pattern::Pattern(const std::string& patternStr, int options) : rawPattern(patternStr) {
     int errorcode;
     size_t errorOffset;
 

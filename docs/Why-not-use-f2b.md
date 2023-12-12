@@ -13,7 +13,7 @@ Another thing I had happen once was fail2ban quietly dying because I fucked arou
 
 This is one of the more ironic points, but fail2ban often lives up to its name in the wrong way. 
 
-Certain things cannot be fully blamed on fail2ban; out-of-date filters and changes to systems resulting in different log formats happens to all systems. Particularly the apt version is exposed to this, as it's heavily out of date. Dnf2b is no exception to this. However, even seemingly with the right filters enabled, it occasionally blatantly ignored matches for reasons I'm not going to pretend to understand.
+Certain things cannot be fully blamed on fail2ban; out-of-date filters and changes to systems resulting in different log formats happens to all systems. Particularly the apt version is exposed to this, as it's heavily out of date. Dnf2b is no exception to this. However, even seemingly with the right filters enabled, it occasionally blatantly ignored matches for reasons I'm not going to pretend to understand. This also applied to native services, so this is completely unrelated to the docker problem mentioned in the README.
 
 ## Permabans aren't permabans
 

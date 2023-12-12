@@ -33,7 +33,7 @@ void Daemon::reload() {
         }
 
         if (!enabled) {
-            spdlog::debug("Skipping watcher for file {}: Disabled", file);
+            spdlog::debug("Skipping watcher for resource {}: Disabled", file);
             continue;
         }
         auto id = watcher.at("id");

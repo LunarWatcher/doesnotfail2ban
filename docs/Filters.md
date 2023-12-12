@@ -80,3 +80,4 @@ If you wanted to match this particular line, you could write a filter file conta
 | Key | Usage | Notes |
 | --- | ----- | --- |
 | `${dnf2b.ip}` | Used to signal an IP in the log output that should be used for ban purposes. This key is only required if the parser doesn't extract an IP from outside the message. | This key under the hood is just a `\S+` search, so the IP must be properly delimited by the rest of the regex. |
+

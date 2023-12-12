@@ -48,6 +48,7 @@ public:
 class Pattern {
 private:
     pcre2_code* pattern;
+    std::string rawPattern;
 public:
 
     Pattern(const std::string& patternStr, int options = 0);
@@ -68,6 +69,10 @@ public:
     }
     operator pcre2_code*() const {
         return pattern;
+    }
+
+    const std::string& getRawPattern() {
+        return rawPattern;
     }
 };
 

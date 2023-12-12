@@ -24,6 +24,9 @@ public:
     Filter(const std::string& filterName);
 
     std::optional<MatchResult> checkMessage(const Message& message);
+    static std::filesystem::path getPathFromFilterName(const std::string& filterName);
+
+    const std::vector<Pattern>& getPatterns() { return patterns; }
 
 };
 

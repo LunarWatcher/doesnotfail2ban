@@ -8,6 +8,7 @@ add_executable(tests src/TestRunner.cpp
     src/DatabaseTests.cpp
     src/ParsingUtilTests.cpp
     src/PCRETests.cpp
+    src/FilterTests.cpp
     # }}}
 )
 
@@ -29,6 +30,7 @@ add_custom_target(test_resources
 
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_SOURCE_DIR}/etc ${CMAKE_BINARY_DIR}/test-files
 )
+
 
 add_dependencies(tests test_resources)
 

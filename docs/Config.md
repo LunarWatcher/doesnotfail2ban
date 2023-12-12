@@ -40,6 +40,15 @@ Watchers, as the name indicates, watch logs for problems. Sshd is included as an
 * **limit** [number]: optional number, defaults to core.control.maxAttempts if not provided. Like the global limit, if set to 0 or less, offending IPs are instantly banned.
 * **banaction** [string]: Which bouncer to use when the limit has been exceeded (note that, as previosuly mentioned, the counter is global even if the limit is local)
 
+#### Configuring filters
+
+One filter corresponds to the name of one json file without the extension. This means that to use the filter defined in `sshd.json`, you'd use:
+```json
+{
+    "filters": [ "sshd" ]    
+}
+```
+You can configure as many filters as you want for a watcher, but for obvious reasons, it's a good idea to only enable filters able to correctly read the message output.
 
 ### Configuring bouncers
 
@@ -69,11 +78,8 @@ Ban controls are under `core.control`, and contains four keys:
 * **forgetAfter** [Duration]: How long it takes before fails are forgiven. To avoid excessive data storage, this has to be a finite value. Hwoever, for those that never want to forgive fails, setting this value high (for example multiple years) has the same effect.
 
 Additionally, under just `core`, there's an additional key:
-* **whitelist**: A list of IPs or CIDR ranges that are excluded. It's STRONGLY recommended you include IPs you frequent here, especially if the IPs are static. If possible, whitelisting the entire `192.168.0.0/16` range (or equivalent if your router uses one of the other two localhost ranges instead; refer to your router's DHCP config for more information) is recommended. If you use SSH to access the server and don't whitelist yourself, and you have an aggressive configuration, you risk locking yourself out if you don't add a whitelist entry. This is a mild annoyance when you're in the same building as the server, but quite a bit worse if cloud use is involved (though there are other ways around this, such as switching to a different IP).
+* **whitelist**: A list of IPs or CIDR ranges that are excluded. It's STRONGLY recommended you include IPs you frequent here, especially if the IPs are static. This especially implies to internal IP addresses, if dnf2b is configured in a homelab. If possible, whitelisting the entire `192.168.0.0/16` range (or equivalent if your router uses one of the other two localhost ranges instead; refer to your router's DHCP config for more information) is recommended. If you use SSH to access the server and don't whitelist yourself, and you have an aggressive configuration, you risk locking yourself out if you don't add a whitelist entry. This is a mild annoyance when you're in the same building as the server, but quite a bit worse if cloud use is involved (though there are other ways around this, such as switching to a different IP).
 
-### Communicators
-
-Communicators are an optional feature that serve configurable notifications about various events. 
 
 ## Advanced configuration
 

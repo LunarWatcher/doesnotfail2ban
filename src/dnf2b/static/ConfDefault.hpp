@@ -17,6 +17,5 @@ nlohmann::json {
     // We don't enable watchers and bouncers by default here; far too annoying
     // to deal with.
     {"watchers", {}},
-    {"bouncers", {}},
-    {"communicators", {}}
+    {"bouncers", {}}
 };

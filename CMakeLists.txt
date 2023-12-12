@@ -124,6 +124,17 @@ set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -fsanitize=un
 set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -Wextra")
 add_definitions(-DPCRE2_CODE_UNIT_WIDTH=8)
 
+if (ENABLE_COVERAGE)
+    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -coverage")
+
+    #target_link_options(-lgcov --coverage)
+    add_custom_target(coverage
+        COMMAND lcov --directory src --capture --output-file coverage.info
+        COMMAND lcov -r coverage.info '/usr*' '${CMAKE_BINARY_DIR}/_deps/*' -o coverage.info
+        COMMAND genhtml --demangle-cpp -o coverage coverage.info
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+endif()
+
 add_subdirectory(src)
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 
