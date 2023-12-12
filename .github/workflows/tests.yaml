@@ -10,11 +10,6 @@ jobs:
       fail-fast: false
       
       matrix:
-        # Config: contains the system setup.
-        config:
-          - release
-          - debug
-
         include:
           - config: release (clang)
             variant: Release
