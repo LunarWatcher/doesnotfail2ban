@@ -13,12 +13,12 @@ jobs:
         include:
           - config: release (clang)
             variant: Release
-            cc: clang
-            cxx: clang++
+            cc: clang-15
+            cxx: clang++-15
           - config: debug (clang)
             variant: Debug
-            cc: clang
-            cxx: clang++
+            cc: clang-15
+            cxx: clang++-15
           - config: release (gcc)
             variant: Release
             cc: gcc
@@ -39,6 +39,10 @@ jobs:
         run: |
           sudo apt update && sudo apt upgrade -y
           sudo apt install -y libsystemd-dev
+      - name: Update clang
+        if: ${{matrix.cc}} == 'clang-15'
+        run: |
+          sudo apt install -y clang-15
       - name: Print versions
         run: |
           ${{ matrix.cxx }} --version
