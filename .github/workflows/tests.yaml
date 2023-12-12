@@ -37,6 +37,7 @@ jobs:
       - uses: LunarWatcher/install-conan@master
       - name: Install dependencies
         run: |
+          sudo apt update && sudo apt upgrade -y
           sudo apt install -y libsystemd-dev
       - name: Print versions
         run: |

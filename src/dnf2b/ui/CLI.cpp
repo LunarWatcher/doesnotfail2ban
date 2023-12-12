@@ -48,7 +48,10 @@ int CLI::parse(int argc, const char* argv[]) {
             << format("unban", "Manually unban one or more IPs");
 
         return 0;
-    } 
+    } else if (command == "version") {
+        std::cout << "doesnotfail2ban version " << DNF2B_VERSION << std::endl;
+        return 0;
+    }
 
     if (getuid() != 0) {
         std::cerr << "Must be root to run other non-help commands." << std::endl;
@@ -81,6 +84,9 @@ int CLI::parse(int argc, const char* argv[]) {
             << std::endl;
         std::this_thread::sleep_for(std::chrono::seconds(15));
         std::filesystem::remove("/var/run/lock/dnf2b.daemon.lock");
+    } else {
+        std::cerr << "Invalid command: " << command << std::endl;
+        return -1;
     }
 
     return 0;
