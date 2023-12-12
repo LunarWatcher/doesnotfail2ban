@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdexcept>
 
 #include "dnf2b/static/Constants.hpp"
 #include "dnf2b/ui/CLI.hpp"
@@ -21,5 +22,8 @@ int main(int argc, const char* argv[]) {
         //
         // Future me here: What the actual fuck was past me thinking?
         return x;
+    } catch (const std::runtime_error& e) {
+        spdlog::error("Runtime exception caught: {}", e.what());
+        return 255;
     }
 }

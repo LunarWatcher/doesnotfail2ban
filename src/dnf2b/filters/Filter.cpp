@@ -93,6 +93,7 @@ std::filesystem::path Filter::getPathFromFilterName(const std::string& rawFilter
         if (!std::filesystem::exists(path)) {
             auto customRoot = Constants::DNF2B_ROOT / "custom";
             for (auto custom : std::filesystem::directory_iterator(customRoot)) {
+
                 if (std::filesystem::is_directory(custom) && std::filesystem::exists(custom.path() / "filters")) {
                     // check for filter existence
                     auto filterPath = custom.path() / "filters" / (rawFilterName + ".json");

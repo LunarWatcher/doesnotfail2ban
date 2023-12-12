@@ -6,7 +6,7 @@
 ```json
 {
     "patterns": [
-        "A list of ECMAScript-like regex patterns. See https://en.cppreference.com/w/cpp/regex/ecmascript"
+        "A list of PCRE2 patterns"
     ],
     "insensitive": false
 }
@@ -14,6 +14,16 @@
 
 * **patterns** (required): A list of strings following C++'s modified ECMAScript syntax
 * **insensitive**: Whether or not the patterns are case-insensitive. Default: false
+
+### Reserved capture group names
+
+DNF2B uses a few internal capture groups. The regex for the groups are primarily exposed through variables like `${dnf2b.ip}`; see the [Special keys](#special-keys).
+
+These may use special capture groups to extract content, and use named groups to do so. These group names are:
+
+* `IP`
+
+These group names must NOT be used within filters, unless writing explicit capture groups to replace the built-in groups, for whatever reason (which, as an aside, is strongly discouraged).
 
 ## Filter location and search system
 

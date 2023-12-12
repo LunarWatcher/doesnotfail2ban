@@ -28,7 +28,8 @@ TEST_CASE("The filter class should load @scope/filter-name filters", "[Filters]"
     std::filesystem::create_directories(dnf2b::Constants::DNF2B_ROOT / "custom/filtertests-1/filters");
     {
         std::ofstream f(dnf2b::Constants::DNF2B_ROOT / "custom/filtertests-1/filters/dummy-filter.json");
-        f << nlohmann::json {
+        REQUIRE(f);
+        auto testJson = nlohmann::json {
             {"patterns", {
                 "a",
                 "potato",
@@ -36,6 +37,7 @@ TEST_CASE("The filter class should load @scope/filter-name filters", "[Filters]"
                 "hut"
             }}
         };
+        f << testJson;
     }
 
     REQUIRE_NOTHROW(dnf2b::Filter("@filtertests-1/dummy-filter"));
@@ -46,4 +48,28 @@ TEST_CASE("The filter class should load @scope/filter-name filters", "[Filters]"
     const auto& p1 = dummyA.getPatterns();
     const auto& p2 = dummyB.getPatterns();
     REQUIRE(p1.size() != p2.size());
+}
+
+TEST_CASE("Validate passthrough behaviour for non-scoped filters", "[Filters]") {
+    std::filesystem::create_directories(dnf2b::Constants::DNF2B_ROOT / "custom/filtertests-2/filters");
+    {
+        std::ofstream f(dnf2b::Constants::DNF2B_ROOT / "custom/filtertests-2/filters/i-like-trains.json");
+        REQUIRE(f);
+        auto testJson = nlohmann::json {
+            {"patterns", {
+                "a",
+                "potato",
+                "17",
+                "hut"
+            }}
+        };
+        f << testJson;
+    }
+    REQUIRE_NOTHROW(dnf2b::Filter("@filtertests-2/i-like-trains"));
+    REQUIRE_NOTHROW(dnf2b::Filter("i-like-trains"));
+}
+
+TEST_CASE("Error handling for non-existent filters", "[Filters]") {
+    REQUIRE_THROWS(dnf2b::Filter("this-will-never-exist-aaaaaaaaaaaaaaaa"));
+    REQUIRE_THROWS(dnf2b::Filter("@50-fucking-potatoes/this-will-never-exist-aaaaaaaaaaaaaaaa"));
 }

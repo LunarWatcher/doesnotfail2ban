@@ -1,7 +1,6 @@
 #include "Parser.hpp"
 
 #include "dnf2b/core/Context.hpp"
-#include "dnf2b/except/Exceptions.hpp"
 #include "dnf2b/static/Constants.hpp"
 
 #include <sstream>
@@ -32,13 +31,13 @@ std::optional<Message> Parser::parse(const std::string& line) {
     auto& groups = pattern["groups"];
 
     if (!groups.contains("time")) {
-        throw except::GenericException("Required field \"time\" missing from " + parserName, 255);
+        throw std::runtime_error("Required field \"time\" missing from " + parserName);
     } else if (!groups.contains("message")) {
-        throw except::GenericException("Required field \"message\" missing from " + parserName, 255);
+        throw std::runtime_error("Required field \"message\" missing from " + parserName);
     } else if (!config.contains("multiprocess")) {
-        throw except::GenericException("Required field \"multiprocess\" missing from " + parserName, 255);
+        throw std::runtime_error("Required field \"multiprocess\" missing from " + parserName);
     } else if (config["multiprocess"].get<bool>() && !groups.contains("process")) {
-        throw except::GenericException("Required field \"process\" in multiprocess parser missing from " + parserName, 255);
+        throw std::runtime_error("Required field \"process\" in multiprocess parser missing from " + parserName);
     }
 
     if (std::regex_match(line, match, regex)) {
