@@ -72,23 +72,9 @@ FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(nlohmann)
 FetchContent_MakeAvailable(stc)
 
-FetchContent_GetProperties(pcre)
-if (NOT pcre_POPULATED)
-    FetchContent_Populate(pcre)
-    add_subdirectory(${pcre_SOURCE_DIR} ${pcre_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
-
-FetchContent_GetProperties(sql)
-if (NOT sql_POPULATED)
-    FetchContent_Populate(sql)
-    add_subdirectory(${sql_SOURCE_DIR} ${sql_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
-
-FetchContent_GetProperties(cpr)
-if (NOT cpr_POPULATED)
-    FetchContent_Populate(cpr)
-    add_subdirectory(${cpr_SOURCE_DIR} ${cpr_BINARY_DIR} EXCLUDE_FROM_ALL)
-endif()
+FetchContent_MakeAvailable(pcre)
+FetchContent_MakeAvailable(sql)
+FetchContent_MakeAvailable(cpr)
 
 option(ASIO_USE_CPM "Download Asio with CPM instead of FetchContent" OFF)
 option(

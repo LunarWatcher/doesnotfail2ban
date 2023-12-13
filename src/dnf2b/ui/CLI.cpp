@@ -42,9 +42,8 @@ int CLI::parse(int argc, const char* argv[]) {
         std::cout 
             << format("help", "Shows this helpful message")
             << format("daemon", "Starts the dnf2b daemon")
-            << format("delete-lockfile", "Deletes the daemon lockfile. DO NOT RUN unless there's no daemon already running. This can and will break stuff.");
-
-        std::cout << std::endl;
+            << format("delete-lockfile", "Deletes the daemon lockfile. DO NOT RUN unless there's no daemon already running. This can and will break stuff.")
+            << std::endl;
         std::cout << "Manual management:" << std::endl;
         std::cout
             << format("ban", "Manually ban one or more IPs")
