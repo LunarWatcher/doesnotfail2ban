@@ -1,5 +1,6 @@
 #include "CLI.hpp"
 
+#include <cstdlib>
 #include <iostream>
 
 #include "dnf2b/core/Daemon.hpp"
@@ -7,6 +8,7 @@
 #include "stc/FileLock.hpp"
 #include "fmt/format.h"
 
+#include <random>
 #include <thread>
 #include <unistd.h>
 
@@ -39,13 +41,15 @@ int CLI::parse(int argc, const char* argv[]) {
         std::cout << "General:" << std::endl;
         std::cout 
             << format("help", "Shows this helpful message")
-            << format("health", "Runs a health check on the server")
             << format("daemon", "Starts the dnf2b daemon")
             << format("delete-lockfile", "Deletes the daemon lockfile. DO NOT RUN unless there's no daemon already running. This can and will break stuff.");
+
+        std::cout << std::endl;
         std::cout << "Manual management:" << std::endl;
         std::cout
             << format("ban", "Manually ban one or more IPs")
-            << format("unban", "Manually unban one or more IPs");
+            << format("unban", "Manually unban one or more IPs")
+            << std::endl;
 
         return 0;
     } else if (command == "version") {
