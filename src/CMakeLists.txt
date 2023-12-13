@@ -54,7 +54,7 @@ target_link_libraries(dnf2b PUBLIC dnf2b_src)
 # Installation {{{
 install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
 install(TARGETS dnf2b)
-install(TARGETS fmt::fmt cpr::cpr SQLiteCpp spdlog)
+install(TARGETS fmt cpr SQLiteCpp spdlog)
 
 #install(TARGETS dnf2b)
 #install(IMPORTED_RUNTIME_ARTIFACTS cpr::cpr fmt::fmt spdlog::spdlog SQLiteCpp)
