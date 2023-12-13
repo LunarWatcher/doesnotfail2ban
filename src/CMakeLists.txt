@@ -53,7 +53,7 @@ target_link_libraries(dnf2b PUBLIC dnf2b_src)
 
 # Installation {{{
 install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
-install(FILES $<TARGET_FILE:dnf2b>
+install(PROGRAMS $<TARGET_FILE:dnf2b>
     DESTINATION bin)
 install(FILES $<TARGET_FILE:fmt::fmt> $<TARGET_FILE:cpr::cpr> $<TARGET_FILE:SQLiteCpp> $<TARGET_FILE:spdlog>
     DESTINATION lib)
