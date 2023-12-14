@@ -67,7 +67,11 @@ FetchContent_Declare(sql
 FetchContent_Declare(pcre
     GIT_REPOSITORY https://github.com/PCRE2Project/pcre2
     GIT_TAG pcre2-10.42)
+FetchContent_Declare(cli11
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11
+    GIT_TAG v2.3.2)
 
+FetchContent_MakeAvailable(cli11)
 FetchContent_MakeAvailable(fmt)
 FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(nlohmann)

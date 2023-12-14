@@ -20,11 +20,7 @@ private:
 
     std::map<std::string, std::shared_ptr<Parser>> parsers;
 public:
-
-    // Top-level command arguments
-    const std::vector<std::string> arguments;
-
-    Context(const std::vector<std::string>& arguments);
+    Context();
 
     const nlohmann::json& getConfig() { return config; }
     const nlohmann::json& getConfig() const { return config; }

@@ -6,7 +6,7 @@
 
 namespace dnf2b {
 
-Context::Context(const std::vector<std::string>& arguments) :  arguments(arguments) {
+Context::Context() {
     std::ifstream stream(Constants::DNF2B_ROOT / "config.local.json");
     if (!stream) {
         std::cerr << "Failed to find config.local.json" << std::endl;

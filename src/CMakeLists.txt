@@ -18,7 +18,6 @@ set (SOURCE_FILES
 
     dnf2b/filters/Filter.cpp
 
-    dnf2b/ui/CLI.cpp
     dnf2b/util/Parsing.cpp
     dnf2b/util/PCRE.cpp
 )
@@ -44,6 +43,7 @@ target_link_libraries(dnf2b_src PUBLIC
     pcre2-posix-static
 
     asio::asio
+    CLI11
 
     ${SYSTEMD_LIBRARIES}
 )
