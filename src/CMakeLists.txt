@@ -62,9 +62,10 @@ install(
         SQLiteCpp 
         spdlog
     DESTINATION lib
-    PATTERN *.h EXCLUDE
-    PATTERN *.hpp EXCLUDE
-    PATTERN *.a EXCLUDE
+    FILES_MATCHING
+        PATTERN *.h EXCLUDE
+        PATTERN *.hpp EXCLUDE
+        PATTERN *.a EXCLUDE
 )
 
 #install(TARGETS dnf2b)
