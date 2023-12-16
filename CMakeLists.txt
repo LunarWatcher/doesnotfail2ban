@@ -73,7 +73,7 @@ FetchContent_Declare(cli11
 
 FetchContent_MakeAvailable(cli11)
 #FetchContent_MakeAvailable(fmt)
-FetchContent_MakeAvailable(spdlog)
+#FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(nlohmann)
 FetchContent_MakeAvailable(stc)
 
@@ -81,6 +81,12 @@ FetchContent_GetProperties(fmt)
 if (NOT fmt_POPULATED)
     FetchContent_Populate(fmt)
     add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
+
+FetchContent_GetProperties(spdlog)
+if (NOT spdlog_POPULATED)
+    FetchContent_Populate(spdlog)
+    add_subdirectory(${spdlog_SOURCE_DIR} ${spdlog_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
 FetchContent_GetProperties(pcre)
