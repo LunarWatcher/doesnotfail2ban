@@ -72,10 +72,16 @@ FetchContent_Declare(cli11
     GIT_TAG v2.3.2)
 
 FetchContent_MakeAvailable(cli11)
-FetchContent_MakeAvailable(fmt)
+#FetchContent_MakeAvailable(fmt)
 FetchContent_MakeAvailable(spdlog)
 FetchContent_MakeAvailable(nlohmann)
 FetchContent_MakeAvailable(stc)
+
+FetchContent_GetProperties(fmt)
+if (NOT fmt_POPULATED)
+    FetchContent_Populate(fmt)
+    add_subdirectory(${fmt_SOURCE_DIR} ${fmt_BINARY_DIR} EXCLUDE_FROM_ALL)
+endif()
 
 FetchContent_GetProperties(pcre)
 if (NOT pcre_POPULATED)
