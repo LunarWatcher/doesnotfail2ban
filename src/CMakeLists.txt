@@ -57,7 +57,7 @@ install(TARGETS dnf2b
     DESTINATION bin)
 install(
     DIRECTORY ${CMAKE_BINARY_DIR}/lib
-    DESTINATION lib
+    DESTINATION .
     FILES_MATCHING
         PATTERN *.a EXCLUDE
 )
