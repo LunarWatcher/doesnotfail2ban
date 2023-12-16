@@ -53,9 +53,9 @@ target_link_libraries(dnf2b PUBLIC dnf2b_src)
 
 # Installation {{{
 install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
-install(TARGET dnf2b
+install(TARGETS dnf2b
     DESTINATION bin)
-install(TARGET fmt cpr SQLiteCpp spdlog
+install(TARGETS fmt cpr SQLiteCpp spdlog
     DESTINATION lib)
 
 #install(TARGETS dnf2b)
