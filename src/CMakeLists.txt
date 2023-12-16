@@ -56,15 +56,9 @@ install(DIRECTORY ../etc/dnf2b ../etc/systemd DESTINATION /etc)
 install(TARGETS dnf2b
     DESTINATION bin)
 install(
-    TARGETS 
-        fmt 
-        cpr 
-        SQLiteCpp 
-        spdlog
+    DIRECTORY ${CMAKE_BINARY_DIR}/lib
     DESTINATION lib
     FILES_MATCHING
-        PATTERN *.h EXCLUDE
-        PATTERN *.hpp EXCLUDE
         PATTERN *.a EXCLUDE
 )
 
