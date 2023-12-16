@@ -59,6 +59,7 @@ install(
     DIRECTORY ${CMAKE_BINARY_DIR}/lib
     DESTINATION .
     FILES_MATCHING
+        PATTERN *.so*
         PATTERN *.a EXCLUDE
 )
 
