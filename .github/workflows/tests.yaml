@@ -45,5 +45,25 @@ jobs:
         env:
           CXX: ${{matrix.cxx}}
           CC: ${{matrix.cc}}
+  valgrind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Install deps
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install -y libsystemd-dev valgrind 
+      - name: Build tests
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+          make -j $(nproc) tests
+      - name: Run tests
+        run: |
+          valgrind ./bin/tests
+
 
 
