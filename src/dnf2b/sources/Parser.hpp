@@ -5,7 +5,6 @@
 #include <vector>
 #include <optional>
 
-#include "dnf2b/infrastructure/HealthCheck.hpp"
 #include "nlohmann/json.hpp"
 
 namespace dnf2b {

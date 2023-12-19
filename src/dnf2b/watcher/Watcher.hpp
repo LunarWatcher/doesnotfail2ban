@@ -1,7 +1,6 @@
 #pragma once
 
 #include "dnf2b/filters/Filter.hpp"
-#include "dnf2b/infrastructure/HealthCheck.hpp"
 #include "dnf2b/sources/Parser.hpp"
 #include <cstdint>
 #include <string>

@@ -26,12 +26,6 @@ public:
     const nlohmann::json& getConfig() const { return config; }
     int getMaxAttempts();
 
-    /**
-     * Entry point for this class' health check, as well as all classes contained by it.
-     * The Context class contains and manages all the core classes.
-     */
-    void checkHealth();
-
 };
 
 }

@@ -19,11 +19,6 @@ Context::Context() {
     config.update(custom, true);
 }
 
-// WTF is this even for? Most things cannot be health checked
-void Context::checkHealth() {
-    // TODO
-}
-
 int Context::getMaxAttempts() {
     return config.at("core").at("control").at("maxAttempts").get<int>();
 }
