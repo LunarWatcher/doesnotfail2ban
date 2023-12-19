@@ -64,6 +64,7 @@ jobs:
       - name: Run tests
         run: |
           valgrind ./bin/tests
+        working-directory: build
 
 
 
