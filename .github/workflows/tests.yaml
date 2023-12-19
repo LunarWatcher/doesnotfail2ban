@@ -63,7 +63,7 @@ jobs:
           make -j $(nproc) tests
       - name: Run tests
         run: |
-          valgrind ./bin/tests
+          valgrind --leak-check=yes ./bin/tests
         working-directory: build
 
 
