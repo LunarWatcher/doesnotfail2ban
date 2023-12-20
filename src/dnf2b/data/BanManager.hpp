@@ -3,7 +3,6 @@
 #include "Structs.hpp"
 
 #include "dnf2b/bouncers/Bouncer.hpp"
-#include "dnf2b/core/Context.hpp"
 #include <variant>
 /**
  * This is _complete_ overkill; importing the entirety of asio
@@ -16,6 +15,7 @@
  */
 #include <asio.hpp>
 #include "dnf2b/data/BanDB.hpp"
+#include "dnf2b/json/Config.hpp"
 #include "dnf2b/watcher/Watcher.hpp"
 #include "nlohmann/json.hpp"
 
@@ -32,7 +32,6 @@ private:
     bool hasReloadedBans = false;
 
     BanDB db;
-    long long banDuration, banIncrement, forgetAfter;
 
     std::map<std::string, IPInfo> failCache;
 
@@ -44,19 +43,16 @@ private:
     } 
     void loadBouncerRules();
     void loadRebans();
+    ConfigRoot& conf;
 
 public:
-    BanManager(const nlohmann::json& config);
+    BanManager(ConfigRoot& config);
 
     void log(Watcher* source, std::map<std::string, int> ipFailMap);
     void checkUnbansAndCleanup();
      
     bool isWhitelisted(const std::string& ip);
     
-    long long getBanDuration() { return banDuration; }
-    long long getBanIncrement() { return banIncrement; }
-    long long getForgetAfter() { return forgetAfter; }
-
     friend class Daemon;
 };
 

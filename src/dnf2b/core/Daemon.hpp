@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Context.hpp"
 #include "dnf2b/data/BanManager.hpp"
+#include "dnf2b/json/Config.hpp"
 #include "dnf2b/sources/FileParser.hpp"
 #include "dnf2b/watcher/Watcher.hpp"
 #include <map>
@@ -20,14 +20,14 @@ class Daemon {
 private:
     std::map<std::string, MessagePipeline> messagePipelines;
     std::thread ipc, unban;
+    ConfigRoot conf;
     BanManager man;
 
     void startUnbanMonitoring();
 
-public:
-    Context ctx;
 
-    Daemon(const Context& ctx);
+public:
+    Daemon(const ConfigRoot& conf);
 
     void reload();
 

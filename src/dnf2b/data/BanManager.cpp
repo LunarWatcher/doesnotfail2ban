@@ -10,33 +10,13 @@
 #include <limits>
 #include <variant>
 #include "dnf2b/bouncers/BouncerLoader.hpp"
+#include "dnf2b/json/Config.hpp"
 
 namespace dnf2b {
 
-BanManager::BanManager(const nlohmann::json& ctx) : db(Constants::DNF2B_ROOT / "db.sqlite3"){
-    auto rawWhitelist = ctx.at("core").value("whitelist", std::vector<std::string>{});
-    auto& core = ctx.at("core");
-    auto& control = core.at("control");
-    if (control.contains("forgetAfter")) {
-        if (control.at("forgetAfter").is_number_integer()) {
-            this->forgetAfter = Parsing::parseConfigToSeconds(control.at("forgetAfter").get<long long>());
-        } else {
-            this->forgetAfter = Parsing::parseConfigToSeconds(control.at("forgetAfter").get<std::string>());
-        }
-    } else {
-        this->forgetAfter = Parsing::parseConfigToSeconds("2w");
-    }
-    if (control.contains("banPeriod")) {
-        if (control.at("banPeriod").is_number_integer()) {
-            this->banDuration = Parsing::parseConfigToSeconds(control.at("banPeriod").get<long long>());
-        } else {
-            this->banDuration = Parsing::parseConfigToSeconds(control.at("banPeriod").get<std::string>());
-        }
-    } else {
-        this->banDuration = Parsing::parseConfigToSeconds("2w");
-    }
-    banIncrement = control.value("banIncrement", 2);
-    
+BanManager::BanManager(ConfigRoot& ctx) : db(Constants::DNF2B_ROOT / "db.sqlite3"), conf(ctx) {
+    auto rawWhitelist = ctx.core.whitelist;
+
     for (auto& entry : rawWhitelist) {
         spdlog::info("Whitelisting {}", entry);
         if (entry.find('/') == std::string::npos) {
@@ -60,11 +40,11 @@ BanManager::BanManager(const nlohmann::json& ctx) : db(Constants::DNF2B_ROOT / "
         }
     }
 
-    if (!ctx.contains("bouncers") || ctx.at("bouncers").size() == 0) {
+    if (conf.bouncers.size() == 0) {
         spdlog::error("No bouncers configured. Shutting down");
         throw std::runtime_error("There's no point in running dnf2b without bouncers. Fix your config");
     }
-    for (auto& [bouncer, config] : ctx.at("bouncers").items()) {
+    for (auto& [bouncer, config] : conf.bouncers.items()) {
         spdlog::info("Loading bouncer {}", bouncer);
         auto bouncerPtr = BouncerLoader::loadBouncer(bouncer, config);
         this->bouncers[bouncer] = bouncerPtr;
@@ -111,10 +91,11 @@ void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
                 continue;
             } else {
                 std::optional<int64_t> duration =
-                    banDuration < 0 ?
+                    conf.core.control.banPeriod < 0 ?
                         std::nullopt
                         : std::optional(
-                            banDuration * static_cast<int64_t>(std::pow(banIncrement, info.banCount))
+                            conf.core.control.banPeriod
+                                * static_cast<int64_t>(std::pow(conf.core.control.banIncrement, info.banCount))
                         );
                 // Overflow protection
                 if (duration.has_value() && *duration < 0) {

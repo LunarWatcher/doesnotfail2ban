@@ -1,5 +1,4 @@
 set (SOURCE_FILES
-    dnf2b/core/Context.cpp
     dnf2b/core/Daemon.cpp
 
     dnf2b/data/BanManager.cpp
@@ -20,6 +19,8 @@ set (SOURCE_FILES
 
     dnf2b/util/Parsing.cpp
     dnf2b/util/PCRE.cpp
+
+    dnf2b/json/JsonImpl.cpp
 )
 list(APPEND CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
 

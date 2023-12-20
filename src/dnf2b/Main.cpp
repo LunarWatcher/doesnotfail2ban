@@ -1,8 +1,10 @@
+#include <fstream>
 #include <iostream>
 #include <stdexcept>
 
 #include <CLI/CLI.hpp>
-#include "dnf2b/core/Context.hpp"
+#include "nlohmann/json.hpp"
+#include "dnf2b/json/Config.hpp"
 #include "dnf2b/static/Constants.hpp"
 #include "spdlog/cfg/helpers.h"
 #include "spdlog/spdlog.h"
@@ -43,8 +45,20 @@ int main(int argc, const char* argv[]) {
                     spdlog::error("Failed to acquire daemon lock. Is dnf2b running already? If this is a mistake, run dnf2b delete-lockfile");
                 } 
                 
-                // TODO: This use of Context is stupid. Probably need to rethink the entire class
-                dnf2b::Context c;
+                dnf2b::ConfigRoot c;
+                {
+                    std::ifstream f("/etc/dnf2b/config.local.json");
+                    if (!f) {
+                        spdlog::error("Please create config.local.json before starting the client. See the docs for more info,"
+                                      "and /etc/dnf2b/config.json for a template.");
+                        throw std::runtime_error("Config load error");
+                    }
+
+                    nlohmann::json cfg;
+                    f >> cfg;
+                    c = cfg;
+                }
+
                 dnf2b::Daemon{c}.run();
             })
             ->parse_complete_callback(checkRoot);

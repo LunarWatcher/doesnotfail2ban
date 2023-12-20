@@ -2,7 +2,6 @@
 
 #include <filesystem>
 
-#include "dnf2b/core/Context.hpp"
 #include <spdlog/spdlog.h>
 #include <iostream>
 

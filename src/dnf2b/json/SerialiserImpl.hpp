@@ -1,5 +1,7 @@
 #include "nlohmann/adl_serializer.hpp"
 #include <nlohmann/json.hpp>
+#include <optional>
+#include <variant>
 
 namespace nlohmann {
 template <class T>
@@ -15,4 +17,3 @@ struct adl_serializer<std::optional<T>> {
         }
     }
 };
-}

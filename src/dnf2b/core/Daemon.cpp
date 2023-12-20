@@ -15,13 +15,13 @@ using namespace std::literals;
 namespace dnf2b {
 
 
-Daemon::Daemon(const Context& ctx) : man(ctx.getConfig()), ctx(ctx) {
+Daemon::Daemon(const ConfigRoot& conf) : conf(conf), man(this->conf) {
     reload();
 }
 
 void Daemon::reload() {
 
-    for (auto& watcher : ctx.getConfig().at("watchers")) {
+    for (auto& watcher : conf.watchers) {
         auto enabled = watcher.value("enabled", true);
         std::string file;
         if (watcher.contains("file")) {
@@ -54,7 +54,7 @@ void Daemon::reload() {
 
         auto port = watcher.contains("port") ? std::optional(watcher.at("port").get<uint16_t>()) : std::nullopt;
         auto multiProcessId = watcher.contains("process") ? std::optional(watcher.at("process").get<std::string>()) : std::nullopt;
-        auto limit = watcher.value("limit", ctx.getMaxAttempts());
+        auto limit = watcher.value("limit", conf.core.control.maxAttempts);
         auto jsonFilters = watcher.at("filters").get<std::vector<std::string>>();
         auto bouncerName = watcher.at("banaction");
 
@@ -81,7 +81,7 @@ void Daemon::reload() {
         pipeline.watchers.push_back(ptrWatcher);
     }
 
-    spdlog::info("Watching {} files for changes", messagePipelines.size());
+    spdlog::info("Watching {} file{} for changes", messagePipelines.size(), messagePipelines.size() != 1 ? "s": "");
 }
 
 

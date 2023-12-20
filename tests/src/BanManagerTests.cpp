@@ -1,5 +1,7 @@
 #include "dnf2b/bouncers/NoopBouncer.hpp"
 #include "dnf2b/data/BanManager.hpp"
+#include "dnf2b/json/Config.hpp"
+#include "dnf2b/util/Parsing.hpp"
 #include "util/DBWrapper.hpp"
 #include <catch2/catch_test_macros.hpp>
 
@@ -8,16 +10,15 @@
 #include <thread>
 
 TEST_CASE("Verify whitelist logic", "[BanManager]")  {
-    auto conf = 
-#include <dnf2b/static/ConfDefault.hpp>
+    dnf2b::ConfigRoot conf;
 
-    conf["core"]["whitelist"] = {
+    conf.core.whitelist = {
         "192.168.0.1",
         "10.0.0.0/8",
         "12.34.56.78/16",
         "12.35.56.78"
     };
-    conf["bouncers"]["noop"] = {
+    conf.bouncers["noop"] = {
         {"stfu", ""},
     };
 
@@ -59,11 +60,9 @@ TEST_CASE("Verify unban logic") {
     auto currTime = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
     tests::util::DBWrapper db;
 
-    // TODO: find a better way to do this 
-    auto conf = 
-#include <dnf2b/static/ConfDefault.hpp>
+    dnf2b::ConfigRoot conf;
 
-    conf["bouncers"]["noop"] = {
+    conf.bouncers["noop"] = {
         {"stfu", ""},
     };
 
@@ -120,18 +119,14 @@ TEST_CASE("Verify ban period") {
     auto currTime = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
     tests::util::DBWrapper db;
 
-    // TODO: find a better way to do this 
-    auto conf = 
-#include <dnf2b/static/ConfDefault.hpp>
+    dnf2b::ConfigRoot conf;
 
-    conf["bouncers"]["noop"] = {
+    conf.bouncers["noop"] = {
         {"stfu", ""},
     };
 
-    conf["core"]["control"].merge_patch({
-        {"banPeriod", "1w"},
-        {"forgetAfter", "1w"}
-    });
+    conf.core.control.banPeriod = dnf2b::Parsing::parseConfigToSeconds("1w");
+    conf.core.control.forgetAfter = dnf2b::Parsing::parseConfigToSeconds("1w");
 
     dnf2b::BanManager man(conf);
 
@@ -171,7 +166,7 @@ TEST_CASE("Verify ban period") {
     auto& currBans = info.currBans;
     REQUIRE(currBans.contains("noop"));
     REQUIRE(currBans.at("noop").banDuration == std::chrono::duration_cast<std::chrono::seconds>(std::chrono::weeks(1)).count());
-    REQUIRE(currBans.at("noop").banDuration == man.getBanDuration());
+    REQUIRE(currBans.at("noop").banDuration == conf.core.control.banPeriod);
 
     for (int i = 2; i < 10; ++i) {
         db->unban(info.ip, "noop");
@@ -192,21 +187,19 @@ TEST_CASE("Verify perma-bans") {
     auto currTime = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
     tests::util::DBWrapper db;
 
-    // TODO: find a better way to do this 
-    auto conf = 
-#include <dnf2b/static/ConfDefault.hpp>
+    dnf2b::ConfigRoot conf;
 
-    conf["bouncers"]["noop"] = {
+    conf.bouncers["noop"] = {
         {"stfu", ""},
     };
 
-    conf["core"]["control"].merge_patch({
-        {"banPeriod", -1},
-        {"forgetAfter", "1w"}
-    });
+
+    conf.core.control.banPeriod = dnf2b::Parsing::parseConfigToSeconds(-1);
+    conf.core.control.forgetAfter = dnf2b::Parsing::parseConfigToSeconds("1w");
+
 
     dnf2b::BanManager man(conf);
-    REQUIRE(man.getBanDuration() == -1);
+    REQUIRE(conf.core.control.banPeriod == -1);
 
     dnf2b::Watcher watcher(
         "demo",

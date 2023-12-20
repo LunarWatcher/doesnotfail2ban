@@ -1,6 +1,5 @@
 #include "Parser.hpp"
 
-#include "dnf2b/core/Context.hpp"
 #include "dnf2b/static/Constants.hpp"
 
 #include <sstream>

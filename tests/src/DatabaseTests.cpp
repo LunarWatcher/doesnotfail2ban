@@ -1,6 +1,7 @@
 #include "dnf2b/data/BanDB.hpp"
 #include "dnf2b/data/BanManager.hpp"
 #include "dnf2b/data/Structs.hpp"
+#include "dnf2b/json/Config.hpp"
 #include "dnf2b/static/Constants.hpp"
 #include "dnf2b/watcher/Watcher.hpp"
 #include "util/DBWrapper.hpp"
@@ -133,10 +134,9 @@ TEST_CASE("Re-ban core logic should work") {
 
 TEST_CASE("BanDB should integrate with BanManager", "[Database][BanManager]") {
     tests::util::DBWrapper db;
-    auto conf = 
-#include <dnf2b/static/ConfDefault.hpp>
+    dnf2b::ConfigRoot conf;
 
-    conf["bouncers"]["noop"] = {
+    conf.bouncers["noop"] = {
         {"stfu", ""},
     };
     dnf2b::BanManager man(conf);
