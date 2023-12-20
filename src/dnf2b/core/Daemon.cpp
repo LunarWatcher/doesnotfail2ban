@@ -96,6 +96,8 @@ void Daemon::startUnbanMonitoring() {
         man.checkUnbansAndCleanup();
 
         // Heavily rate limited, because it doesn't need to run faster
+        // Close to real-time bans are far more important than close to real-time
+        // unbans
         std::this_thread::sleep_for(std::chrono::minutes(10));
     }
 }
@@ -104,41 +106,54 @@ void Daemon::run() {
     unban = std::thread(&Daemon::startUnbanMonitoring, this);
 
     spdlog::info("Daemon is live and watching for evil shit");
-    while (true) {
-        for (auto& [_file, pipeline] : messagePipelines) {
-            auto& [parser, watchers] = pipeline;
+    std::vector<std::thread> threads;
 
-            auto messages = parser->poll();
+    for (auto v : messagePipelines) {
+        auto _file = v.first;
+        auto pipeline = v.second;
+        auto thread = std::thread([_file, pipeline, this]() -> void {
+            while (true) {
+                auto& [parser, watchers] = pipeline;
 
-            if (messages.size() != 0) {
-                spdlog::debug("{} has new entries", _file);
-                for (auto& watcher : watchers) {
-                    decltype(messages) filteredMessages;
-                    if (parser->multiprocess && watcher->getProcessID().has_value()) {
-                        for (auto& message : messages) {
-                            if (message.process == watcher->getProcessID()) {
-                                filteredMessages.push_back(message);
+                auto messages = parser->poll();
+
+                if (messages.size() != 0) {
+                    spdlog::debug("{} has new entries", _file);
+                    for (auto& watcher : watchers) {
+                        decltype(messages) filteredMessages;
+                        if (parser->multiprocess && watcher->getProcessID().has_value()) {
+                            for (auto& message : messages) {
+                                if (message.process == watcher->getProcessID()) {
+                                    filteredMessages.push_back(message);
+                                }
+                            }
+                        } else {
+                            filteredMessages = messages;
+                        }
+
+                        {
+                            auto result = watcher->process(filteredMessages);
+                            if (result.size() > 0) {
+                                man.log(watcher.get(), result);
                             }
                         }
-                    } else {
-                        filteredMessages = messages;
                     }
 
-                    {
-                        auto result = watcher->process(filteredMessages);
-                        if (result.size() > 0) {
-                            man.log(watcher.get(), result);
-                        }
-                    }
+                } else {
+                    ReadStateDB::getInstance().commit();
+                    spdlog::debug("{} has nothing new", _file);
                 }
-
-            } else {
-                spdlog::debug("{} has nothing new", _file);
+                std::this_thread::sleep_for(30s);
             }
-        }
+        });
 
-        ReadStateDB::getInstance().commit();
-        std::this_thread::sleep_for(30s);
+        threads.push_back(std::move(thread));
+    }
+
+    for (auto& thread : threads) {
+        thread.join();
+        spdlog::warn("A parser thread has shut down. If you're seeing this without the program being about to shut down (i.e. it's expected that the threads get killed, "
+                     "something has gone terribly wrong, and you should be concerned. Consult the logs to see what went sideways.");
     }
 }
 
