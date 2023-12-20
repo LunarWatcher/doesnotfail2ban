@@ -17,10 +17,10 @@ At this time, dnf2b is considered barely deployable, and barely functional. It h
 * [x] Unbanning
 * [x] Incremental ban durations
 * [ ] Date tracking to avoid excessive rescanning of files (and to better deal with logfile cycling)
-* [ ] Thread safety stuff
+* [x] Thread safety stuff
 * [ ] Fully usable CLI
     * [ ] Config and filter validation
-* [ ] External rule repositories
+* [x] External rule repositories
 * [ ] Proper documentation
 * [ ] Base rules for supported services
     * [ ] sshd
