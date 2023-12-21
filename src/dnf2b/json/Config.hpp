@@ -47,7 +47,8 @@ struct CoreConfig {
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         CoreConfig,
         control,
-        stats
+        stats,
+        whitelist
     );
 };
 

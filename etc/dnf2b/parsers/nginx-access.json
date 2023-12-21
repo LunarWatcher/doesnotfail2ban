@@ -1,8 +1,9 @@
 {
     "type": "file",
     "multiprocess": false,
+    "_comment": "WARNING: For the reasons mentioned in the FileParser documentation, the date format is unreliable and may result in parsing errors. Validate the time format before enabling",
     "pattern": {
-        "full": "(?<IP>\\S+) - [^ ]+ \\[(?<Time>[^\\]]+) +\\d+\\] (?<Msg>.*)",
+        "full": "(?<IP>\\S+) - [^ ]+ \\[(?<Time>[^ ]+) +\\d+\\] (?<Msg>.*)",
         "time": "%d/%b/%Y:%T"
     }
 }
