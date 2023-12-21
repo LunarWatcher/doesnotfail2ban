@@ -9,6 +9,8 @@ add_executable(tests src/TestRunner.cpp
     src/ParsingUtilTests.cpp
     src/PCRETests.cpp
     src/FilterTests.cpp
+
+    src/regression/ConfigRegressionTests.cpp
     # }}}
 )
 

@@ -30,7 +30,8 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
 
     REQUIRE(message);
 
-    std::time_t raw = std::chrono::system_clock::to_time_t(message->entryDate);
+    //Optimally, this would be tested, but doing so is a fucking pain in the ass
+    //std::time_t raw = std::chrono::system_clock::to_time_t(message->entryDate);
 
     REQUIRE(message->message == "message");
 
