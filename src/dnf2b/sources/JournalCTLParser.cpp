@@ -1,4 +1,5 @@
 #include "JournalCTLParser.hpp"
+#include "dnf2b/util/PCRE.hpp"
 #include "spdlog/spdlog.h"
 #include <cstring>
 #include <stdexcept>
@@ -133,7 +134,7 @@ std::vector<Message> JournalCTLParser::poll() {
 
     std::vector<Message> out;
 
-    j->read([&](const auto& message, auto time, const auto& host) -> void {
+    j->read([&](auto message, auto time, const auto& host) -> void {
         // I'm sure this won't come back to haunt me.
         // I'm definitely sure this won't have any problems with DST, and that journalctl timestamps are, in fact, monotonous.
         // Tbf, DST is probably going to fuck over the FileParser when I get around to beefing it up
@@ -142,11 +143,25 @@ std::vector<Message> JournalCTLParser::poll() {
             return;
         }
         auto normalisedTimeSecs = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::microseconds(time));
+        std::string ip;
+        if (this->pattern.has_value()) {
+            PCREMatcher m(*pattern, message);
+
+            if (!m.next()) {
+                spdlog::debug("Failed to pattern-match {} against {}'s regex. Using raw message instead",
+                    message, this->parserName);
+                return;
+            } else {
+                message = m.get("Msg").value();
+                ip = m.get("IP").value_or("");
+            }
+        }
 
         out.push_back(Message {
             .entryDate = std::chrono::system_clock::time_point(normalisedTimeSecs),
             .host = host,
             .message = message,
+            .ip = ip
         });
         this->lastAccessedDate = std::max(this->lastAccessedDate, time);
     });

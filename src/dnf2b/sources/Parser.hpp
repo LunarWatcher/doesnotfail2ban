@@ -46,6 +46,9 @@ class Context;
  * It's also up to each parser to sort out caching.
  */
 class Parser {
+protected:
+    std::optional<Pattern> pattern;
+    std::string timeFormat;
 public:
     nlohmann::json config;
     /**
@@ -56,8 +59,6 @@ public:
     const std::string resourceName;
     const bool multiprocess;
     const std::string id;
-    std::optional<Pattern> pattern;
-    std::string timeFormat;
 
 
     Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName);
