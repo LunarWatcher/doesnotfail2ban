@@ -105,7 +105,6 @@ void Daemon::startUnbanMonitoring() {
 void Daemon::run() {
     unban = std::thread(&Daemon::startUnbanMonitoring, this);
 
-    spdlog::info("Daemon is live and watching for evil shit");
     std::vector<std::thread> threads;
 
     for (auto v : messagePipelines) {
@@ -146,9 +145,10 @@ void Daemon::run() {
                 std::this_thread::sleep_for(30s);
             }
         });
-
         threads.push_back(std::move(thread));
     }
+
+    spdlog::info("Daemon is live and watching for evil shit. Running {} threads", threads.size());
 
     for (auto& thread : threads) {
         thread.join();

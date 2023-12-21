@@ -1,7 +1,12 @@
 #include "Parser.hpp"
 
 #include "dnf2b/static/Constants.hpp"
+#include "dnf2b/util/PCRE.hpp"
+#include "pcre2.h"
+#include "spdlog/spdlog.h"
 
+#include <chrono>
+#include <cstdlib>
 #include <sstream>
 #include <fstream>
 #include <iostream>
@@ -15,33 +20,46 @@ Parser::Parser(const std::string& parserName, const nlohmann::json& config, cons
         parserName(parserName),
         resourceName(resourceName),
         multiprocess(config.value("multiprocess", false))
-{}
+{
+
+    if (config.contains("pattern")) {
+        auto p = config.at("pattern");
+        if (p.is_object()) {
+            //config.at("pattern").at("full");
+            pattern.emplace(
+                Pattern(
+                    p.at("full").get<std::string>(),
+                    PCRE2_CASELESS | PCRE2_UTF
+                )
+            );
+            timeFormat = config.value("time", "");
+        } else {
+            pattern.emplace(
+                Pattern(
+                    p.get<std::string>(),
+                    PCRE2_CASELESS | PCRE2_UTF
+                )
+            );
+        }
+    }
+}
 
 std::optional<Message> Parser::parse(const std::string& line) {
-    std::smatch match;
-    auto& pattern = config.at("pattern");
-
-    // TODO: sort out flags
-    // TODO: figure out what the fuck past me meant by flags in this context
-    auto regex = std::regex{pattern["full"].get<std::string>()};
-
-    auto timePattern = pattern["time"].get<std::string>();
-
-    auto& groups = pattern["groups"];
-
-    if (!groups.contains("time")) {
-        throw std::runtime_error("Required field \"time\" missing from " + parserName);
-    } else if (!groups.contains("message")) {
-        throw std::runtime_error("Required field \"message\" missing from " + parserName);
-    } else if (!config.contains("multiprocess")) {
-        throw std::runtime_error("Required field \"multiprocess\" missing from " + parserName);
-    } else if (config["multiprocess"].get<bool>() && !groups.contains("process")) {
-        throw std::runtime_error("Required field \"process\" in multiprocess parser missing from " + parserName);
+    if (!pattern) {
+        spdlog::error("Parser invoked parse() without pattern.full defined.");
+        throw 255;
     }
 
-    if (std::regex_match(line, match, regex)) {
+    PCREMatcher m(*pattern, line);
 
-        auto timeString = match[groups["time"].get<int>() + 1].str();
+    if (!m.next()) {
+        return std::nullopt;
+    }
+
+
+    // If a timestamp isn't part of the parsed output, assume current timestamp
+    auto now = std::chrono::system_clock::now();
+    if (auto timeString = m.get("Time"); timeString.has_value()) {
 
         // This is messy. Stay with me
         // First of all, fuck time in C++. It's garbage. HowardHinnant/date, which is now
@@ -65,8 +83,8 @@ std::optional<Message> Parser::parse(const std::string& line) {
         // we now have a tm struct prepopulated with all the necessary
         // dates for the current time
         // What we then do is shove the parsed time on top of the predefined values:
-        std::stringstream ss(timeString);
-        ss >> std::get_time(&tm, timePattern.c_str());
+        std::stringstream ss(timeString.value());
+        ss >> std::get_time(&tm, this->timeFormat.c_str());
         // The struct isn't wiped, fortunately, so any data in there not overridden, such as
         // where the time specifiers are missing, is preserved
 
@@ -88,22 +106,26 @@ std::optional<Message> Parser::parse(const std::string& line) {
         // my debugger and poking around the internals of chrono.
         //
         // TODO: deserialize the config, so lookups aren't necessary
-        return Message {
-            // entryDate
-            std::chrono::system_clock::from_time_t(std::mktime(&tm)),
-            // process
-            config["multiprocess"] ? match[groups["process"].get<int>() + 1].str() : "",
-            // host
-            groups.contains("host") ? match[groups["host"].get<int>() + 1].str() : "",
-            // message
-            match[groups["message"].get<int>() + 1].str(),
-            // IP
-            groups.contains("ip") ? match[groups["ip"].get<int>() + 1].str() : ""
-        };
+
+        now = std::chrono::system_clock::from_time_t(std::mktime(&tm));
 
     }
 
-    return std::nullopt;
+    auto message = m.get("Msg");
+    auto host = m.get("Host");
+    auto ip = m.get("IP");
+
+    if (!message.has_value()) {
+        spdlog::error("{} has a misconfigured parser format. Msg is missing", this->parserName);
+        return std::nullopt;
+    }
+
+    return Message {
+        .entryDate = now,
+        .host = host.value_or(""),
+        .message = *message,
+        .ip = ip.value_or(""),
+    };
 }
 
 // TODO: reconsider this function

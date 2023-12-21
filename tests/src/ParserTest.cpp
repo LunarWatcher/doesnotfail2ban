@@ -14,14 +14,8 @@ TEST_CASE("Non-multiprocess parsing", "[parser]") {
         {"multiprocess", false},
         {"pattern",
             {
-                {"full", "^[^ ]+ ((?:[^ ]+ ?){3}): (.*)$"},
-                {"time", "%b %d %T"},
-                {"groups",
-                    {
-                        {"time", 0},
-                        {"message", 1}
-                    }
-                }
+                {"full", "^[^ ]+ (?<Time>(?:[^ ]+ ?){3}): (?<Msg>.*)$"},
+                {"time", "%b %d %T"}
             }
         }
     };

@@ -37,12 +37,8 @@ int main(int argc, const char* argv[]) {
             "type": "file",
             "multiprocess": false,
             "pattern": {
-                "full": "^\\[([^\\]]+)\\]: (.*)$",
-                "time": "%T",
-                "groups": {
-                    "time": 0,
-                    "message": 1
-                }
+                "full": "^\\[(?<Time>[^\\]]+)\\]: (?<Msg>.*)$",
+                "time": "%T"
             }
         }
         )" << std::endl;

@@ -5,6 +5,7 @@
 #include <vector>
 #include <optional>
 
+#include "dnf2b/util/PCRE.hpp"
 #include "nlohmann/json.hpp"
 
 namespace dnf2b {
@@ -55,6 +56,8 @@ public:
     const std::string resourceName;
     const bool multiprocess;
     const std::string id;
+    std::optional<Pattern> pattern;
+    std::string timeFormat;
 
 
     Parser(const std::string& parserName, const nlohmann::json& config, const std::string& resourceName);

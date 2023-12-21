@@ -40,7 +40,9 @@ std::vector<Message> FileParser::poll() {
         if (mess.has_value()) {
             messages.push_back(*mess);
         } else {
+#ifdef DNF2B_VERY_VERBOSE
             spdlog::debug("Pattern-matching failed: {}", line);
+#endif
         }
     }
 

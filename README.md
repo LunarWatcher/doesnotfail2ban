@@ -12,6 +12,8 @@ Because fail2ban does often fail to ban.
 
 At this time, dnf2b is considered barely deployable, and barely functional. It has the bare minimum features required to function, but lacks many important features, and has a very thin ruleset. See also the Caveats section, which will be true even when features catch up and dnf2b becomes stable, and this notice disappears.
 
+**WARNING:** Due to dnf2b being in an early development phase and subject to lots of refactoring, there's information that's out of date, information that is written in advance and not yet true, and things that are going to change breakingly. 
+
 * [x] Core setup
 * [x] Data storage
 * [x] Unbanning

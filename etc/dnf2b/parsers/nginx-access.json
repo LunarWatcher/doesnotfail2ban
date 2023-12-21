@@ -2,12 +2,7 @@
     "type": "file",
     "multiprocess": false,
     "pattern": {
-        "full": "([^ ]+) - [^ ]+ \\[([^\\]]+) +\\d+\\] (.*)",
-        "time": "%d/%b/%Y:%T",
-        "groups": {
-            "ip": 0,
-            "time": 1,
-            "message": 2
-        }
+        "full": "(?<IP>\\S+) - [^ ]+ \\[(?<Time>[^\\]]+) +\\d+\\] (?<Msg>.*)",
+        "time": "%d/%b/%Y:%T"
     }
 }
