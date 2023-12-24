@@ -1,4 +1,5 @@
 #include "Daemon.hpp"
+#include "dnf2b/data/MessageBuffer.hpp"
 #include "dnf2b/data/ReadStateDB.hpp"
 #include "dnf2b/filters/Filter.hpp"
 #include "dnf2b/sources/ParserLoader.hpp"
@@ -45,6 +46,7 @@ void Daemon::reload() {
             spdlog::info("Parser not found for {}; initialising...", file);
 
             pipeline.parser = ParserLoader::loadParser(parserName, file);
+            pipeline.buff = std::make_shared<MessageBuffer>(pipeline.parser->enableBuffer());
         } else if (pipeline.parser->parserName != parserName) {
             spdlog::error("Error: file {} used by watcher ID {} was attempted loaded with parser {}, while it already uses the {} parser");
             throw std::runtime_error("Config error");
