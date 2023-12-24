@@ -53,6 +53,10 @@ public:
     void tryLoadIP(Message& msg);
 
     void done();
+
+    const decltype(hold)& getHold() { return hold; }
+    const decltype(buff)& getBuff() { return buff; }
+    const decltype(out)& getOut() { return out; }
 };
 
 }

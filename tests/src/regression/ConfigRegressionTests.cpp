@@ -2,7 +2,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <nlohmann/json.hpp>
 
-TEST_CASE("Validate feature loading") {
+TEST_CASE("Validate feature loading", "[Regression]") {
     const std::string in = R"(
 {
     "_comment": "This is a dummy field to work around the lack of comments in JSON. Both the watcher and bouncer fields will eventually be cleared. Do not rely on the defaults to never change",
