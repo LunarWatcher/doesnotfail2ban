@@ -112,7 +112,11 @@ void Daemon::run() {
         auto pipeline = v.second;
         auto thread = std::thread([_file, pipeline, this]() -> void {
             while (true) {
-                auto& [parser, watchers] = pipeline;
+                auto& [
+                    parser,
+                    watchers,
+                    buff
+                ] = pipeline;
 
                 auto messages = parser->poll();
 
@@ -130,11 +134,9 @@ void Daemon::run() {
                             filteredMessages = messages;
                         }
 
-                        {
-                            auto result = watcher->process(filteredMessages);
-                            if (result.size() > 0) {
-                                man.log(watcher.get(), result);
-                            }
+                        auto result = watcher->process(filteredMessages, buff);
+                        if (result.size() > 0) {
+                            man.log(watcher.get(), result);
                         }
                     }
 

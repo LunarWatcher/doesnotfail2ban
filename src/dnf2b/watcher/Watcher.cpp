@@ -2,7 +2,6 @@
 #include "dnf2b/filters/Filter.hpp"
 #include "spdlog/spdlog.h"
 
-#include <arpa/inet.h>
 #include <iostream>
 
 namespace dnf2b {
@@ -19,33 +18,29 @@ Watcher::Watcher(
 
 }
 
-std::map<std::string, int> Watcher::process(const std::vector<Message>& messages) {
-    std::map<std::string, int> resultIps;
-    for (const auto& message : messages) {
-        for (auto& filter : filters) {
-            auto res = filter.checkMessage(message);
-            if (res.has_value()) {
-                // IPv6 is guaranteed to contain :, IPv4 is not. We use this to identify which to use
-                int domain = res->ip.find(":") == std::string::npos ? AF_INET : AF_INET6;
+std::map<std::string, std::vector<Message>> Watcher::process(
+    const std::vector<Message>& messages,
+    std::shared_ptr<MessageBuffer> buff
+) {
+    buff->load(messages);
+    std::map<std::string, std::vector<Message>> out;
 
-                auto str = res->ip.c_str();
-                // Unused
-                unsigned char buf[sizeof(struct in6_addr)];
-                int isValid = inet_pton(domain, str, buf);
-
-                if (isValid == 0) {
-                    spdlog::error("{} failed to parse as {} (see inet_pton(3))", res->ip, domain);
-                } else if (isValid == -1) {
-                    spdlog::error("Programmer error: Domain isn't valid (found {}, must be AF_INET or AF_INET6)", domain);
-                } else {
-                    spdlog::info("{} failed and will be logged.", res->ip);
-                    resultIps[res->ip] += 1;
-                }
+    for (auto& filter : filters) {
+        auto intermediateRes = buff->forward(filter);
+        for (auto& [k, v] : intermediateRes) {
+            if (out.contains(k)) {
+                auto& vec = out.at(k);
+                vec.insert(vec.end(), v.begin(), v.end());
+            } else {
+                out[k] = v;
             }
         }
     }
 
-    return resultIps;
+    // Required to clean up the buffer's `load`ed memory, and clean up the stale caches
+    buff->done();
+
+    return out;
 }
 
 

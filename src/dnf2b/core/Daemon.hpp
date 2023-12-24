@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dnf2b/data/BanManager.hpp"
+#include "dnf2b/data/MessageBuffer.hpp"
 #include "dnf2b/json/Config.hpp"
 #include "dnf2b/sources/FileParser.hpp"
 #include "dnf2b/watcher/Watcher.hpp"
@@ -13,7 +14,7 @@ namespace dnf2b {
 struct MessagePipeline {
     std::shared_ptr<Parser> parser;
     std::vector<std::shared_ptr<Watcher>> watchers;
-
+    std::shared_ptr<MessageBuffer> buff;
 };
 
 class Daemon {

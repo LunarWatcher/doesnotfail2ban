@@ -1,0 +1,8 @@
+{
+    "type": "journalctl",
+    "idMethod": "syslog",
+    "ipFallbackSearch": {
+        "regex": "^Connection closed by ${dnf2b.ip} port \\d+$",
+        "identifier": "PROCESS_ID"
+    }
+}

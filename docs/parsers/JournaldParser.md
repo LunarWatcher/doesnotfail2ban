@@ -14,12 +14,18 @@ Using the systemd API ensures that whatever format the files may be in, dnf2b ge
 * **pattern** [regex, optional]: A regex used to extract a message from within the message. This is only required if the message stored in journald contains logger-specific information that should be disregarded. **Note:** The parser is fairly lax, and if the regex doesn't match, the raw message is forwarded directly. This means that this is a supplemental extraction aid, and not a log filter. The regex supports the following case-senstiive named groups (syntax: `(?<GroupName>regex1234)`):
     * **Msg** [required]: Used to capture the actual log message
     * **IP** [optional]: Used to capture the IP. Should only be used if the IP is not part of the message itself
+* **ipFallbackSearch** [object]: Defines regex rules used for multiline fallbacks for identifying the current IP[^1]. Note that while this object only has one option, it's kept as an object to allow for additional options in the future.
+    * **pattern** [regex]: The pattern to use to identify alternate messages containing an IP. Note that these matches do not contribute to any  failures, and are used purely analytically. Similarly to the filter patterns, `${dnf2b.ip}` can be used to denote the search. Using a named group named `IP` (example: `(?<IP>some regex here)`) also works, but cannot be combined with the shorthand form.
+
 
 ### Example
 ```
 {
     "type": "journalctl",
-    "idMethod": "syslog"
+    "idMethod": "syslog",
+    "ipFallbackSearch": {
+        "regex": "^Connection closed by ${dnf2b.ip} port \\d+$"
+    }
 }
 ```
 
@@ -71,3 +77,4 @@ Does not match this regex. It'll be forwarded as-is to the filters instead. Unli
 
 **Note:** Unlike the file parser, the subset groups are much more limited. You can only extract the IP and the actual message content, as everything else is retrieved with much more accuracy from journald itself, without pesky parsing-related difficulties.
 
+[^1]: Multiline matching is incredibly complicated for a number of reasons. Order isn't necessarily guaranteed in multithreaded/multiprocess environments, which means that in the log, two sequential messages could come from two different processes. Usually, there's going to be a way to differentiate them. For sshd, that's process IDs, as a new SSH process is started for every connection. Other software may have other grouping methods

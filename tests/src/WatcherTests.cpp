@@ -11,7 +11,7 @@ TEST_CASE("Validate processing logic", "[Watcher]") {
         69,
         0,
         {
-            dnf2b::Filter("dummy-filter")
+            dnf2b::Filter((std::string) "dummy-filter")
         },
         ""
     );
@@ -29,8 +29,8 @@ TEST_CASE("Validate processing logic", "[Watcher]") {
         },
     };
 
-    auto res = watcher.process(messages);
+    auto res = watcher.process(messages, std::make_shared<dnf2b::MessageBuffer>(false));
     REQUIRE(res.size() == 1);
     REQUIRE(res.contains("12.34.56.78"));
-    REQUIRE(res.at("12.34.56.78") == 1);
+    REQUIRE(res.at("12.34.56.78").size() == 1);
 }

@@ -40,10 +40,11 @@ TEST_CASE("The filter class should load @scope/filter-name filters", "[Filters]"
         f << testJson;
     }
 
-    REQUIRE_NOTHROW(dnf2b::Filter("@filtertests-1/dummy-filter"));
+    REQUIRE_NOTHROW(dnf2b::Filter((std::string) "@filtertests-1/dummy-filter"));
 
-    auto dummyA = dnf2b::Filter("dummy-filter");
-    auto dummyB = dnf2b::Filter("@filtertests-1/dummy-filter");
+    auto dummyA = dnf2b::Filter((std::string) "dummy-filter");
+    auto dummyB = dnf2b::Filter((std::string) "@filtertests-1/dummy-filter");
+    REQUIRE(dummyA.filterName == "dummy-filter");
 
     const auto& p1 = dummyA.getPatterns();
     const auto& p2 = dummyB.getPatterns();
@@ -65,11 +66,11 @@ TEST_CASE("Validate passthrough behaviour for non-scoped filters", "[Filters]") 
         };
         f << testJson;
     }
-    REQUIRE_NOTHROW(dnf2b::Filter("@filtertests-2/i-like-trains"));
-    REQUIRE_NOTHROW(dnf2b::Filter("i-like-trains"));
+    REQUIRE_NOTHROW(dnf2b::Filter((std::string) "@filtertests-2/i-like-trains"));
+    REQUIRE_NOTHROW(dnf2b::Filter((std::string) "i-like-trains"));
 }
 
 TEST_CASE("Error handling for non-existent filters", "[Filters]") {
-    REQUIRE_THROWS(dnf2b::Filter("this-will-never-exist-aaaaaaaaaaaaaaaa"));
-    REQUIRE_THROWS(dnf2b::Filter("@50-fucking-potatoes/this-will-never-exist-aaaaaaaaaaaaaaaa"));
+    REQUIRE_THROWS(dnf2b::Filter((std::string) "this-will-never-exist-aaaaaaaaaaaaaaaa"));
+    REQUIRE_THROWS(dnf2b::Filter((std::string) "@50-fucking-potatoes/this-will-never-exist-aaaaaaaaaaaaaaaa"));
 }

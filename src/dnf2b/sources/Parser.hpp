@@ -15,7 +15,6 @@ namespace dnf2b {
  */
 struct Message {
     std::chrono::system_clock::time_point entryDate;
-    std::string process;
     /**
      * Not entirely sure if this has any practical use.
      */
@@ -27,9 +26,23 @@ struct Message {
      * populated if the IP is not part of the message.
      */
     std::string ip;
+
+    std::string process;
 };
 
-class Context;
+
+/**
+ * Currently only contains the regex pattern used by the fallback search.
+ */
+struct IPFallbackSearch {
+    /**
+     * The regex pattern used to match messages.
+     */
+    Pattern p;
+
+    std::optional<std::string> search(const Message& m);
+
+};
 
 /**
  * Superclass for all parsers.
@@ -49,6 +62,8 @@ class Parser {
 protected:
     std::optional<Pattern> pattern;
     std::string timeFormat;
+
+    std::optional<IPFallbackSearch> fallbackSearch;
 public:
     nlohmann::json config;
     /**
@@ -75,6 +90,7 @@ public:
      * Closes a resource, if applicable.
      */
     virtual void close(const std::string& resourceName) = 0;
+    virtual bool enableBuffer() { return fallbackSearch.has_value(); }
 };
 
 }

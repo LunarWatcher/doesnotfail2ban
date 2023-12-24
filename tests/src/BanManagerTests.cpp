@@ -1,5 +1,6 @@
 #include "dnf2b/bouncers/NoopBouncer.hpp"
 #include "dnf2b/data/BanManager.hpp"
+#include "dnf2b/data/MessageBuffer.hpp"
 #include "dnf2b/json/Config.hpp"
 #include "dnf2b/util/Parsing.hpp"
 #include "util/DBWrapper.hpp"
@@ -136,7 +137,7 @@ TEST_CASE("Verify ban period") {
         69,
         0,
         {
-            dnf2b::Filter("dummy-filter")
+            dnf2b::Filter((std::string) "dummy-filter")
         },
         "noop"
     );
@@ -154,7 +155,7 @@ TEST_CASE("Verify ban period") {
         },
     };
 
-    auto res = watcher.process(messages);
+    auto res = watcher.process(messages, std::make_shared<dnf2b::MessageBuffer>(false));
     man.log(&watcher, res);
 
     REQUIRE(db->isBanned("12.34.56.78", "noop"));
@@ -172,7 +173,7 @@ TEST_CASE("Verify ban period") {
         db->unban(info.ip, "noop");
         REQUIRE_FALSE(db->isBanned(info.ip, "noop"));
 
-        res = watcher.process(messages);
+        res = watcher.process(messages, std::make_shared<dnf2b::MessageBuffer>(false));
         man.log(&watcher, res);
         REQUIRE(db->isBanned(info.ip, "noop"));
 
@@ -207,7 +208,7 @@ TEST_CASE("Verify perma-bans") {
         69,
         0,
         {
-            dnf2b::Filter("dummy-filter")
+            dnf2b::Filter((std::string) "dummy-filter")
         },
         "noop"
     );
@@ -220,7 +221,7 @@ TEST_CASE("Verify perma-bans") {
         }
     };
 
-    auto res = watcher.process(messages);
+    auto res = watcher.process(messages, std::make_shared<dnf2b::MessageBuffer>(false));
     man.log(&watcher, res);
 
     REQUIRE(db->isBanned("12.34.56.78", "noop"));

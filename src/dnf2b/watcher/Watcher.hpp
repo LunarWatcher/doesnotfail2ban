@@ -1,5 +1,6 @@
 #pragma once
 
+#include "dnf2b/data/MessageBuffer.hpp"
 #include "dnf2b/filters/Filter.hpp"
 #include "dnf2b/sources/Parser.hpp"
 #include <cstdint>
@@ -36,7 +37,10 @@ public:
     );
     virtual ~Watcher() = default;
 
-    virtual std::map<std::string, int> process(const std::vector<Message>& filteredMessages);
+    virtual std::map<std::string, std::vector<Message>> process(
+        const std::vector<Message>& filteredMessages,
+        std::shared_ptr<MessageBuffer> buff
+    );
 
     const std::string& getId() { return id; }
     const std::string& getBouncerName() { return bouncer; }

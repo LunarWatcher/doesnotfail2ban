@@ -16,6 +16,7 @@
 #include <asio.hpp>
 #include "dnf2b/data/BanDB.hpp"
 #include "dnf2b/json/Config.hpp"
+#include "dnf2b/sources/Parser.hpp"
 #include "dnf2b/watcher/Watcher.hpp"
 #include "nlohmann/json.hpp"
 
@@ -48,7 +49,7 @@ private:
 public:
     BanManager(ConfigRoot& config);
 
-    void log(Watcher* source, std::map<std::string, int> ipFailMap);
+    void log(Watcher* source, std::map<std::string, std::vector<Message>> ipFailMap);
     void checkUnbansAndCleanup();
      
     bool isWhitelisted(const std::string& ip);

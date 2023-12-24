@@ -2,7 +2,7 @@ add_executable(tests src/TestRunner.cpp
 
     src/util/MockHelper.cpp
     # Tests {{{
-    src/ParserTest.cpp
+    src/ParserTests.cpp
     src/WatcherTests.cpp
     src/BanManagerTests.cpp
     src/DatabaseTests.cpp

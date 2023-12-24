@@ -52,8 +52,13 @@ BanManager::BanManager(ConfigRoot& ctx) : db(Constants::DNF2B_ROOT / "db.sqlite3
 
 }
 
-void BanManager::log(Watcher* source, std::map<std::string, int> ipFailMap) {
-    for (auto& [ip, timesCaught] : ipFailMap) {
+void BanManager::log(Watcher* source, std::map<std::string, std::vector<Message>> ipFailMap) {
+    for (auto& [ip, failedMessages] : ipFailMap) {
+        auto timesCaught = failedMessages.size();
+        if (timesCaught == 0) {
+            spdlog::warn("Programmer error: {} was registered in the map, but has zero fails.", ip);
+            continue;
+        }
         if (isWhitelisted(ip)) {
             spdlog::info(
                 "{} was caught, but is whitelisted. Skipping...",

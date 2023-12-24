@@ -35,7 +35,7 @@ JournalCTL::~JournalCTL() {
     }
 }
 
-void JournalCTL::read(std::function<void(const std::string& message, uint64_t microsecTime, const std::string& hostname)> callback) {
+void JournalCTL::read(ReadCallback callback) {
     if (!callback) {
         spdlog::warn("Programmer error: callback to journalctl::read is null");
         return;
@@ -56,6 +56,7 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
         std::string message = "";
         uint64_t messageDate = 0;
         std::string hostname = "";
+        std::string pid = "";
 
         if (sd_journal_get_data(journal, "__REALTIME_TIMESTAMP", &data, &length) >= 0
             || sd_journal_get_data(journal, "_SOURCE_REALTIME_TIMESTAMP", &data, &length) >= 0) {
@@ -74,7 +75,12 @@ void JournalCTL::read(std::function<void(const std::string& message, uint64_t mi
             hostname = parseValue(data, length);
         }
 
-        callback(message, messageDate, hostname);
+        if (sd_journal_get_data(journal, "_PID", &data, &length) >= 0
+            || sd_journal_get_data(journal, "SYSLOG_PID", &data, &length) >= 0) {
+            pid = parseValue(data, length);
+        }
+
+        callback(message, messageDate, hostname, pid);
     }
 }
 
@@ -134,7 +140,7 @@ std::vector<Message> JournalCTLParser::poll() {
 
     std::vector<Message> out;
 
-    j->read([&](auto message, auto time, const auto& host) -> void {
+    j->read([&](auto message, auto time, const auto& host, const auto& pid) -> void {
         // I'm sure this won't come back to haunt me.
         // I'm definitely sure this won't have any problems with DST, and that journalctl timestamps are, in fact, monotonous.
         // Tbf, DST is probably going to fuck over the FileParser when I get around to beefing it up
@@ -143,7 +149,7 @@ std::vector<Message> JournalCTLParser::poll() {
             return;
         }
         auto normalisedTimeSecs = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::microseconds(time));
-        std::string ip;
+        std::string ip = "";
         if (this->pattern.has_value()) {
             PCREMatcher m(*pattern, message);
 
@@ -157,12 +163,20 @@ std::vector<Message> JournalCTLParser::poll() {
             }
         }
 
-        out.push_back(Message {
+        auto msg = Message {
             .entryDate = std::chrono::system_clock::time_point(normalisedTimeSecs),
             .host = host,
             .message = message,
-            .ip = ip
-        });
+            .ip = ip,
+            .process = pid
+        };
+        if (fallbackSearch && msg.ip.size() == 0) {
+            msg.ip = fallbackSearch->search(msg)
+                .value_or(msg.ip);
+        }
+
+        out.push_back(std::move(msg));
+
         this->lastAccessedDate = std::max(this->lastAccessedDate, time);
     });
 

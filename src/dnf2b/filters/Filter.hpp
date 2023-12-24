@@ -3,6 +3,7 @@
 
 #include "dnf2b/sources/Parser.hpp"
 #include "dnf2b/util/PCRE.hpp"
+#include <filesystem>
 
 namespace dnf2b {
 
@@ -11,6 +12,8 @@ namespace dnf2b {
  */
 struct MatchResult {
     std::string ip;
+    std::string groupId;
+    bool error = false;
 };
 
 class Filter {
@@ -21,7 +24,8 @@ private:
 public:
     const std::string filterName;
 
-    Filter(const std::string& filterName);
+    explicit Filter(const std::string& filterName);
+    explicit Filter(const std::filesystem::path& path);
 
     std::optional<MatchResult> checkMessage(const Message& message);
     static std::filesystem::path getPathFromFilterName(const std::string& filterName);

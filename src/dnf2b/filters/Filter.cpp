@@ -12,9 +12,16 @@
 
 namespace dnf2b {
 
-Filter::Filter(const std::string& filterName) : filterName(filterName) {
+Filter::Filter(const std::string& filterName)
+    : Filter(
+        getPathFromFilterName(filterName)
+    )
+{
+    //this->filterName = filterName;
     //auto path = Constants::DNF2B_ROOT / "filters" / (filterName + ".json");
-    auto path = getPathFromFilterName(filterName);
+}
+
+Filter::Filter(const std::filesystem::path& path) : filterName(path.filename().replace_extension()) {
     std::ifstream in(path);
     if (!in) {
         spdlog::error("Failed to load filter {} ({})", filterName, path.string());
@@ -37,6 +44,7 @@ Filter::Filter(const std::string& filterName) : filterName(filterName) {
         }
     );
     insensitive = config.value("insensitive", false);
+
 }
 
 std::optional<MatchResult> Filter::checkMessage(const Message& message) {
@@ -50,8 +58,12 @@ std::optional<MatchResult> Filter::checkMessage(const Message& message) {
 
         std::string ip = matcher.get("IP").value_or(message.ip);
         if (ip == "") {
-            spdlog::error("Filter {} lacks ${{dnf2b.ip}}, but was used with a parser that doesn't find an IP outside the message", this->filterName);
-            throw std::runtime_error("Filter syntax error");
+            spdlog::warn("Message matched without an IP returned by the parser or filter.");
+            return MatchResult {
+                .ip = "",
+                .groupId = message.process,
+                .error = true
+            };
         }
 
         return MatchResult {

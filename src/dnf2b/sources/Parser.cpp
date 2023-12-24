@@ -5,12 +5,14 @@
 #include "pcre2.h"
 #include "spdlog/spdlog.h"
 
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <sstream>
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <string>
 
 namespace dnf2b {
 
@@ -144,6 +146,18 @@ std::vector<Message> Parser::filterMessages(const std::string&, const std::vecto
     
 
     return out;
+}
+
+std::optional<std::string> IPFallbackSearch::search(const Message& m) {
+    PCREMatcher matcher(p, m.message);
+
+    if (matcher.next()) {
+        // If a match is found, return the IP group
+        // If it doesn't exist, .get returns std::nullopt,
+        // so no further validation is needed
+        return matcher.get("IP");
+    }
+    return std::nullopt;
 }
 
 }

@@ -147,11 +147,11 @@ TEST_CASE("BanDB should integrate with BanManager", "[Database][BanManager]") {
         69,
         0,
         {
-            dnf2b::Filter("dummy-filter")
+            dnf2b::Filter((std::string) "dummy-filter")
         },
         "noop"
     );
-    
+
     auto watcherRes = watcher.process({
         {
             .entryDate = std::chrono::system_clock::now(),
@@ -168,10 +168,10 @@ TEST_CASE("BanDB should integrate with BanManager", "[Database][BanManager]") {
             .message = "Foxxos <3",
             .ip = "87.65.43.21"
         },
-    });
+    }, std::make_shared<dnf2b::MessageBuffer>(false));
 
     REQUIRE(watcherRes.size() == 1);
-    REQUIRE(watcherRes.at("12.34.56.78") == 2);
+    REQUIRE(watcherRes.at("12.34.56.78").size() == 2);
 
     REQUIRE_FALSE(db->isBanned("12.34.56.78", "noop"));
     man.log(&watcher, watcherRes);
