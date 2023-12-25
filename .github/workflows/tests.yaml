@@ -39,7 +39,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.variant }}
+          cmake .. -DCMAKE_BUILD_TYPE=${{ matrix.variant }} -DINTEGRATION=ON
           # Not entirely sure how much the GitHub runners support
           make -j $(nproc) test
         env:

@@ -11,13 +11,15 @@
 namespace dnf2b {
 
 JournalCTL::JournalCTL(const std::string& syslogID, uint64_t since, IDMethod method) {
-    if (int r = sd_journal_open(&journal, SD_JOURNAL_SYSTEM | SD_JOURNAL_LOCAL_ONLY); r < 0) {
+    if (int r = sd_journal_open(&journal, SD_JOURNAL_LOCAL_ONLY); r < 0) {
         spdlog::error("Failed to open journald journal: {}", strerror(-r));
         return;
     }
 
+    // TODO: add filtering for additional fields, at least for test purposes. Might be worth moving such filter
+    // calls out of the constructor?
     if (sd_journal_add_match(journal, fmt::format("{}={}", getField(method), syslogID).c_str(), 0) < 0) {
-        spdlog::error("Failed to add _SYSTEMD_UNIT={} as a match", syslogID);
+        spdlog::error("Failed to add field type as a match", syslogID);
         throw std::runtime_error("Failed to subscribe to systemd unit");
     }
 
@@ -42,10 +44,13 @@ void JournalCTL::read(ReadCallback callback) {
     }
 
     // Poll for updates with a timeout of 0
-    if (sd_journal_wait(journal, 0) != SD_JOURNAL_APPEND) {
-        // IF nothing new, return
+    // Note that hasRead is present to ensure this isn't blocked until there's a new update
+    // That would prevent anything caught on the first sweep from being processed until later
+    if (hasRead && sd_journal_wait(journal, 0) != SD_JOURNAL_APPEND) {
+        // If nothing new, return
         return;
     }
+    hasRead = true;
 
     // https://github.com/systemd/systemd/issues/1752
     //SD_JOURNAL_FOREACH(journal) {
@@ -173,6 +178,7 @@ std::vector<Message> JournalCTLParser::poll() {
         if (fallbackSearch && msg.ip.size() == 0) {
             msg.ip = fallbackSearch->search(msg)
                 .value_or(msg.ip);
+            //spdlog::debug("Fallback search found IP: {}", msg.ip);
         }
 
         out.push_back(std::move(msg));

@@ -9,6 +9,7 @@
 #include <chrono>
 #include <cstdint>
 #include <iterator>
+#include <shared_mutex>
 #include <thread>
 
 using namespace std::literals;
@@ -47,6 +48,7 @@ void Daemon::reload() {
 
             pipeline.parser = ParserLoader::loadParser(parserName, file);
             pipeline.buff = std::make_shared<MessageBuffer>(pipeline.parser->enableBuffer());
+            spdlog::info("Parser {}'s buffer is {}", parserName, pipeline.parser->enableBuffer() ? "enabled" : "disabled");
         } else if (pipeline.parser->parserName != parserName) {
             spdlog::error("Error: file {} used by watcher ID {} was attempted loaded with parser {}, while it already uses the {} parser");
             throw std::runtime_error("Config error");
@@ -86,6 +88,10 @@ void Daemon::reload() {
     spdlog::info("Watching {} file{} for changes", messagePipelines.size(), messagePipelines.size() != 1 ? "s": "");
 }
 
+void Daemon::wait(std::chrono::seconds duration) {
+    std::shared_lock<std::shared_mutex> l(cvLock);
+    runFlag.wait_for(l, duration, [&]() { return this->isRunning != true; });
+}
 
 void Daemon::startUnbanMonitoring() {
     spdlog::info("Unban monitor live. Loading rebans...");
@@ -93,14 +99,15 @@ void Daemon::startUnbanMonitoring() {
     man.loadRebans();
     spdlog::info("Rebans issued");
 
-    while (true) {
+    while (isRunning) {
         spdlog::debug("Unban monitor woken up");
         man.checkUnbansAndCleanup();
 
         // Heavily rate limited, because it doesn't need to run faster
         // Close to real-time bans are far more important than close to real-time
         // unbans
-        std::this_thread::sleep_for(std::chrono::minutes(10));
+        //std::this_thread::sleep_for(std::chrono::minutes(10));
+        wait(10min);
     }
 }
 
@@ -113,7 +120,7 @@ void Daemon::run() {
         auto _file = v.first;
         auto pipeline = v.second;
         auto thread = std::thread([_file, pipeline, this]() -> void {
-            while (true) {
+            while (isRunning) {
                 auto& [
                     parser,
                     watchers,
@@ -146,7 +153,7 @@ void Daemon::run() {
                     ReadStateDB::getInstance().commit();
                     spdlog::debug("{} has nothing new", _file);
                 }
-                std::this_thread::sleep_for(30s);
+                wait(30s);
             }
         });
         threads.push_back(std::move(thread));

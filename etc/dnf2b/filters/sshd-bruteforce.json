@@ -1,7 +1,8 @@
 {
     "patterns": [
         "^Did not receive identification string from ${dnf2b.ip}$",
-        "^Unable to negotiate with ${dnf2b.ip} port \\d+: no matching host key type found. Their offer: \\S* [preauth]"
+        "^Unable to negotiate with ${dnf2b.ip} port \\d+: no matching host key type found. Their offer: \\S* [preauth]",
+        "^error: kex_exchange_identification: Connection closed by remote host$"
     ],
     "insensitive": true
 }

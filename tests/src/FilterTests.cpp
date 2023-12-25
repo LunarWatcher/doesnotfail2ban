@@ -1,9 +1,11 @@
+#include "dnf2b/data/MessageBuffer.hpp"
 #include "dnf2b/filters/Filter.hpp"
 #include "dnf2b/static/Constants.hpp"
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <memory>
 
 TEST_CASE("All the stock filters should compile", "[Filters]") {
     for (auto& file : std::filesystem::directory_iterator(dnf2b::Constants::DNF2B_ROOT / "filters")) {
@@ -74,3 +76,4 @@ TEST_CASE("Error handling for non-existent filters", "[Filters]") {
     REQUIRE_THROWS(dnf2b::Filter((std::string) "this-will-never-exist-aaaaaaaaaaaaaaaa"));
     REQUIRE_THROWS(dnf2b::Filter((std::string) "@50-fucking-potatoes/this-will-never-exist-aaaaaaaaaaaaaaaa"));
 }
+

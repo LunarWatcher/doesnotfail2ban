@@ -9,8 +9,14 @@ namespace dnf2b {
 class JournalCTL {
 private:
     std::string parseValue(const void* raw, size_t length);
+    bool hasRead = false;
 public:
-    using ReadCallback = std::function<void(const std::string& message, uint64_t microsecTime, const std::string& hostname, const std::string& pid)>;
+    using ReadCallback = std::function<void(
+        const std::string& message,
+        uint64_t microsecTime,
+        const std::string& hostname,
+        const std::string& pid
+    )>;
     enum class IDMethod {
         SYSLOG_IDENTIFIER,
         SYSTEMD_UNIT
@@ -21,6 +27,8 @@ public:
     ~JournalCTL();
 
     void read(ReadCallback callback);
+
+    sd_journal* ptr() { return journal; }
 
     static std::string getField(IDMethod method);
 };

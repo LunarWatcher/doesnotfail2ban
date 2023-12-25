@@ -44,6 +44,15 @@ Parser::Parser(const std::string& parserName, const nlohmann::json& config, cons
             );
         }
     }
+
+    if (config.contains("ipFallbackSearch")) {
+        auto obj = config.at("ipFallbackSearch");
+        auto pattern = obj.at("regex");
+
+        this->fallbackSearch.emplace(IPFallbackSearch {
+            .p = pattern.get<std::string>()
+        });
+    }
 }
 
 std::optional<Message> Parser::parse(const std::string& line) {

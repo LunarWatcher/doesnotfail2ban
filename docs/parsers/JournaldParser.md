@@ -15,7 +15,7 @@ Using the systemd API ensures that whatever format the files may be in, dnf2b ge
     * **Msg** [required]: Used to capture the actual log message
     * **IP** [optional]: Used to capture the IP. Should only be used if the IP is not part of the message itself
 * **ipFallbackSearch** [object]: Defines regex rules used for multiline fallbacks for identifying the current IP[^1]. Note that while this object only has one option, it's kept as an object to allow for additional options in the future.
-    * **pattern** [regex]: The pattern to use to identify alternate messages containing an IP. Note that these matches do not contribute to any  failures, and are used purely analytically. Similarly to the filter patterns, `${dnf2b.ip}` can be used to denote the search. Using a named group named `IP` (example: `(?<IP>some regex here)`) also works, but cannot be combined with the shorthand form.
+    * **pattern** [regex]: The pattern to use to identify alternate messages containing an IP. Note that these matches do not contribute to any  failures, and are used purely analytically. Unlike the filter patterns, `${dnf2b.ip}` **cannot** be used to denote the search. Using a named group named `IP` (example: `(?<IP>some regex here)`) must be used instead.
 
 
 ### Example
@@ -24,7 +24,7 @@ Using the systemd API ensures that whatever format the files may be in, dnf2b ge
     "type": "journalctl",
     "idMethod": "syslog",
     "ipFallbackSearch": {
-        "regex": "^Connection closed by ${dnf2b.ip} port \\d+$"
+        "regex": "^Connection closed by (?<IP>\\S+) port \\d+$"
     }
 }
 ```
