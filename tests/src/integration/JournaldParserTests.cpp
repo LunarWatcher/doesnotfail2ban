@@ -63,6 +63,9 @@ TEST_CASE("Verify buffer integration", "[Integration]") {
 
     SECTION("Validate raw reads") {
         {
+            // Not sure why this is necessary in release mode.
+            // I guess the test outperforms the write??
+            std::this_thread::sleep_for(1s);
             dnf2b::JournalCTL throwaway(
                 "dnf2b_test",
                 startMicrosecs,
