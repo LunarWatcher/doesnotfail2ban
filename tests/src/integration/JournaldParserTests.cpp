@@ -65,7 +65,7 @@ TEST_CASE("Verify buffer integration", "[Integration]") {
         {
             dnf2b::JournalCTL throwaway(
                 "dnf2b_test",
-                0,
+                startMicrosecs,
                 dnf2b::JournalCTL::IDMethod::SYSLOG_IDENTIFIER
             );
 
@@ -76,9 +76,7 @@ TEST_CASE("Verify buffer integration", "[Integration]") {
 
         dnf2b::JournalCTL journal(
             "dnf2b_test",
-            std::chrono::duration_cast<std::chrono::microseconds>(
-                start.time_since_epoch()
-            ).count(),
+            startMicrosecs,
             dnf2b::JournalCTL::IDMethod::SYSLOG_IDENTIFIER
         );
         REQUIRE(journal.journal != nullptr);
