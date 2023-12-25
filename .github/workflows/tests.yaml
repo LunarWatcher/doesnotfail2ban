@@ -31,6 +31,10 @@ jobs:
         run: |
           sudo apt update && sudo apt upgrade -y
           sudo apt install -y libsystemd-dev
+      - name: Check systemd shit
+        run: |
+          sudo logger -t iliketrains Leeeeeeeeeeeeeeeeeeeeeeeroy jenkins
+          sudo journalctl -t iliketrains
       - name: Print versions
         run: |
           ${{ matrix.cxx }} --version
