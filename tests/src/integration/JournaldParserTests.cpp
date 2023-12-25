@@ -36,11 +36,6 @@ TEST_CASE("Verify buffer integration", "[Integration]") {
         {"filters", std::vector<std::string>{"sshd-bruteforce"}},
         {"banaction", "noop"}
     });
-    dnf2b::Daemon d(conf);
-    const auto& pipeline = d.getMessagePipelines();
-    REQUIRE(pipeline.size() == 1);
-    REQUIRE(pipeline.contains("dnf2b_test"));
-    REQUIRE(pipeline.at("dnf2b_test").parser->enableBuffer());
 
     std::vector<std::string> messages{
         "error: kex_exchange_identification: Connection closed by remote host",
@@ -55,6 +50,15 @@ TEST_CASE("Verify buffer integration", "[Integration]") {
             NULL
         ) == 0);
     }
+
+    // The daemon needs to be initialised after the write to make sure it doesn't need to wait
+    // a full cycle to read the messages.
+    // This isn't really a problem in practice
+    dnf2b::Daemon d(conf);
+    const auto& pipeline = d.getMessagePipelines();
+    REQUIRE(pipeline.size() == 1);
+    REQUIRE(pipeline.contains("dnf2b_test"));
+    REQUIRE(pipeline.at("dnf2b_test").parser->enableBuffer());
 
 
     SECTION("Validate raw reads") {
