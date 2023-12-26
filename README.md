@@ -18,15 +18,17 @@ At this time, dnf2b is considered barely deployable, and barely functional. It h
 * [x] Data storage
 * [x] Unbanning
 * [x] Incremental ban durations
-* [ ] Date tracking to avoid excessive rescanning of files (and to better deal with logfile cycling)
 * [x] Thread safety stuff
 * [ ] Fully usable CLI
     * [ ] Config and filter validation
-* [x] External rule repositories
+    * [ ] Filter wizard
+    * [ ] Filter debugger
+* [x] External rule repository support
 * [ ] Proper documentation
 * [ ] Base rules for supported services
-    * [ ] sshd
+    * [x] sshd
     * [ ] nginx
+* [x] Journald API integration
 
 
 ## Caveats
@@ -51,7 +53,6 @@ Alternatively, you can also fuck around with iptables and hope you manage to get
 
 It is theoretically possible to fix this by adding a rule to the `DOCKER-USER` chain, but it involves a bunch of crap that I have no clue how work, and the alternatives to figuring out how to apply a firewall to docker traffic (i.e. reverse proxy and not using docker) are significantly easier.
 
-[^1]: Docker prepends its rules to iptables. I can't tell if ufw does too (though I half doubt it), but I did try prepending the dnf2b rules in FORWARD and INPUT, and Docker happily placed itself in front of them when it (re)started. This would be a lot easier to work around if Docker didn't try to put itself in front of other firewall rules, but here we are.
 
 ### Docker and dnf2b
 
@@ -74,17 +75,25 @@ To automatically download and run the script. This will download the source, com
 
 Note that before the service can be started, `config.local.json` needs to be created. This is documented in docs/Config.md.
 
-After you're done, you can delete the source directory, unless you want to keep it for quicker builds or something thin like that.
+After you're done, you can delete the source directory, unless you want to keep it for possibly quicker builds.
 
 After configuring, you can run dnf2b with:
-```
+```bash
 sudo systemctl start dnf2b 
 ```
+
+### Optional: running tests
+
+Dnf2b comes with several tests that can be run as well. To run them, run `make test`. 
+
+Note that, by default, integration tests are not included. To get integration tests, `-DINTEGRATION=ON` has to be passsed to CMake. These are disabled by default, as the tests involve writing to, among other things, journald[^2]. Due to journald quirks, the written logs cannot be trivially erased without also erasing other logs, which is so nuclear  that this is not automatically performed.
+
+If you don't want stuff written to your logs, do not run integration tests.
 
 ### Adding to the PATH
 
 Due to the install folder being in `/opt/dnf2b/` by default, dnf2b's binary won't be added to the PATH automatically. If you don't want to type `/opt/dnf2b/bin/dnf2b` as the command if you want to access the CLI interface, you can run
-```
+```bash
 sudo ln -s /opt/dnf2b/bin/dnf2b /usr/local/bin
 ```
 
@@ -106,3 +115,6 @@ If you've made changes to default files, you get to back up everything you've do
 ## License?
 
 MIT; see the LICENSE file.
+
+[^1]: Docker prepends its rules to iptables. I can't tell if ufw does too (though I half doubt it), but I did try prepending the dnf2b rules in FORWARD and INPUT, and Docker happily placed itself in front of them when it (re)started. This would be a lot easier to work around if Docker didn't try to put itself in front of other firewall rules, but here we are.
+[^2]: This might not matter for you in practice, as a couple lines of logs being written usually isn't going to mean shit, but it's disabled by default to avoid problems in small and hypothetical scenarios.

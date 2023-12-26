@@ -4,6 +4,8 @@ The configuration file for dnf2b is `/etc/dnf2b/config.local.json`. This file do
 
 This document contains general information about the configuration system, and how-tos. If you just want to see the available configuration options and their permitted values, see docs/spec/Config.md.
 
+If you don't care about the details and just want to find some copypasta to get started with and take the rest from there, see `docs/Service-config-examples.md`. However, having some understanding of how the watchers are configured is still strongly recommended, to avoid configuration mistakes.
+
 ## Configuration ideology
 
 For (former?) f2b users, it's worth noting that dnf2b has a much more global config and handling system. For example, failing a watcher with the iptables bouncer results in an iptables ban on all ports. Additionally, the pool of failures is shared across all watchers. 
@@ -30,15 +32,20 @@ After this, you need to configure your services and bouncers.
 
 ### Configuring watchers
 
-Watchers, as the name indicates, watch logs for problems. Sshd is included as an example of this in the template you just copied from. There are a few valid options:
+Watchers, as the name indicates, watch logs for problems. Sshd is included as an example of this in the template you just copied from.
+
+**Note:** Some parsers have additional configuration options.
 
 * **id** [string]: required, must be unique. Does not need to correspond to the name of the process
 * **process** [string]: optional, except for certain parsers (such as journald). Used to identify the process in logfiles used by multiple processes
 * **enabled** [bool]: true/false, self-explanatory. Defaults to true, doesn't need to be present
-* **parser** [string]: required, defines what parser to use. For ssh, and many other systems, journald is used. Others, such as nginx, use different formats, and therefore have different parsers. Parsers are documented elsewhere.
+* **parser** [string]: required, defines what parser to use. Note that this doesn't refer to the type of parser, but to the name of a file in the `parsers/` directory. Also note that the extension should not be included.
 * **filters** [string]: An array of filters to use. Corresponds to filenames in /etc/dnf2b/filters.
 * **limit** [number]: optional number, defaults to core.control.maxAttempts if not provided. Like the global limit, if set to 0 or less, offending IPs are instantly banned.
 * **banaction** [string]: Which bouncer to use when the limit has been exceeded (note that, as previosuly mentioned, the counter is global even if the limit is local)
+
+**Additional options**:
+* **file** [string]: Describes what file to load. Only used when using a file parser.
 
 #### Configuring filters
 

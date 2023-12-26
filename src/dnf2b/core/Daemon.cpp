@@ -25,6 +25,7 @@ void Daemon::reload() {
 
     for (auto& watcher : conf.watchers) {
         auto enabled = watcher.value("enabled", true);
+        // TODO: in retrospect, this is fucking stupid.
         std::string file;
         if (watcher.contains("file")) {
             file = watcher.at("file");
