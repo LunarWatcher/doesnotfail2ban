@@ -40,6 +40,6 @@ The exact side-effect of a NDuration will usually be disabling a feature, or mak
 
 ## Regex
 
-Regex fields are strings that contain regex patterns. Note that dnf2b uses [PCRE2](https://www.pcre.org/current/doc/html/). [Regex101](https://regex101.com/) supports this syntax, and can be used to preview or test patterns.
+Regex fields are strings that contain regex patterns. Note that dnf2b uses [PCRE2](https://www.pcre.org/current/doc/html/pcre2syntax.html). [Regex101](https://regex101.com/) supports this syntax, and can be used to preview or test patterns.
 
 **Warning:** Because the patterns are stored in JSON, which interprets characters with a backslash in front of it as a special character, all backspaces have to be properly escaped. If you're unsure how to do this, it's recommended to use `dnf2b filter-wizard`
