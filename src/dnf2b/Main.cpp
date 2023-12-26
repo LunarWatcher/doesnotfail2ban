@@ -10,6 +10,7 @@
 #include "spdlog/spdlog.h"
 #include "stc/Environment.hpp"
 #include "dnf2b/core/Daemon.hpp"
+#include <dnf2b/cli/FilterWizard.hpp>
 
 std::filesystem::path dnf2b::Constants::DNF2B_ROOT = "/etc/dnf2b";
 
@@ -26,7 +27,7 @@ int main(int argc, const char* argv[]) {
 
     try {
 
-        CLI::App app{"Log monitoring and IP ban system"};
+        CLI::App app{"Intrusion detection and blocking system"};
         app.set_help_all_flag("--help-all", "Expand all help");
 
         app.add_subcommand("version", "Shows the current version")
@@ -98,6 +99,20 @@ int main(int argc, const char* argv[]) {
                 std::filesystem::remove("/var/run/lock/dnf2b.daemon.lock");
             })
             ->parse_complete_callback(checkRoot);
+        { 
+            bool caseInsensitive;
+
+            auto command = app.add_subcommand("filter-wizard", "Utility for creating filters")
+                ->group("Utility")
+                ->callback([&]() {
+                    dnf2b::CLI::filterWizard(caseInsensitive);
+                });
+            command->add_option("insensitive", caseInsensitive, "Whether or not the filters should be case-insensitive")
+                ->default_val(true);
+
+        }
+
+
         CLI11_PARSE(app, argc, argv);
 
     } catch (const int& x) {

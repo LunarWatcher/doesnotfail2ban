@@ -21,7 +21,7 @@ At this time, dnf2b is considered barely deployable, and barely functional. It h
 * [x] Thread safety stuff
 * [ ] Fully usable CLI
     * [ ] Config and filter validation
-    * [ ] Filter wizard
+    * [x] Filter wizard
     * [ ] Filter debugger
 * [x] External rule repository support
 * [ ] Proper documentation

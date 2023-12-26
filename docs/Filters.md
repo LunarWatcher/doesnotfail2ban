@@ -91,3 +91,8 @@ If you wanted to match this particular line, you could write a filter file conta
 | --- | ----- | --- |
 | `${dnf2b.ip}` | Used to signal an IP in the log output that should be used for ban purposes. This key is only required if the parser doesn't extract an IP from outside the message. | This key under the hood is just a `\S+` search, so the IP must be properly delimited by the rest of the regex. |
 
+## The filter wizard
+
+If you're familiar with regex already, you can run `dnf2b filter-wizard` to access a filter creation utility that includes a message matching preview. It also generates the filter JSON for you, and if run as root, the file can be automatically saved to `/etc/dnf2b/filters/`. Note that it isn't as fancy as, for example, regex101's matching feature, but it automatically handles pattern escaping and outputs a valid JSON file that's ready for use.
+
+The wizard covers each step of the process, so it will not be documented here.
