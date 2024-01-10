@@ -2,6 +2,8 @@
     "patterns": [
         "^banner exchange: Connection from ${dnf2b.ip} port \\d+: (?:invalid (?:format|characters)|could not read protocol version)",
         "^Invalid user \\S+ from ${dnf2b.ip} port \\d+",
+        "Disconnected from invalid user \\S+ ${dnf2b.ip} port \\d+",
+        "User \\S+ from ${dnf2b.ip} not allowed because not listed in AllowUsers",
         "^banner exchange: Connection from ${dnf2b.ip} port \\d+: could not read protocol version"
     ],
     "insensitive": true
