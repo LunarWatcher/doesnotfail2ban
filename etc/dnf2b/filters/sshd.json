@@ -5,7 +5,8 @@
         "Disconnected from invalid user \\S+ ${dnf2b.ip} port \\d+",
         "User \\S+ from ${dnf2b.ip} not allowed because not listed in AllowUsers",
         "^banner exchange: Connection from ${dnf2b.ip} port \\d+: could not read protocol version",
-        "^fatal: Timeout before authentication for ${dnf2b.ip} port \\d+"
+        "^fatal: Timeout before authentication for ${dnf2b.ip} port \\d+",
+        "drop connection #\\d+ from \\[(?<IP>[^\\]])\\]:\\d+ on \\S+:\\d+ past MaxStartups"
     ],
     "insensitive": true
 }
