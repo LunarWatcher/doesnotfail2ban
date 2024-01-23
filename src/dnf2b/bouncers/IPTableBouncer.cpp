@@ -39,7 +39,7 @@ IPTableBouncer::IPTableBouncer(const nlohmann::json& config) {
         for (auto& chain : std::vector<std::string> { "INPUT", "FORWARD" }) {
             if (std::system(fmt::format("{} -C {} -j dnf2b", command, chain).c_str()) == 0) {
                 spdlog::info("{} -> dnf2b already exists in {}. Wiping", chain, command);
-                std::system(fmt::format("{} -D -I {} -j dnf2b", command, chain).c_str());
+                std::system(fmt::format("{} -D {} -j dnf2b", command, chain).c_str());
                 continue;
             } 
             if (std::system(fmt::format("{} -I {} -j dnf2b", command, chain).c_str()) != 0) {
