@@ -17,4 +17,13 @@ Note that the watchers in this file use all available stock filters. This includ
 ```
 ## Nginx
 
-TBA
+```json
+{
+    "id": "nginx-access",
+    "file": "/var/log/nginx/access.log",
+    "parser": "nginx-access",
+    "enabled": "true",
+    "filters": ["nginx-auth", "nginx-badactors", "nginx-nmap"],
+    "banaction": "iptables"
+}
+```

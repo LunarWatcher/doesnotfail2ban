@@ -11,8 +11,15 @@
 #include "stc/Environment.hpp"
 #include "dnf2b/core/Daemon.hpp"
 #include <dnf2b/cli/FilterWizard.hpp>
+#include <dnf2b/cli/Tester.hpp>
 
+#ifdef DNF2B_DEBUG_PATH
+#warning "Building with a relative path to dnf2b's config dir. THIS WILL NOT WORK IN PRODUCTION!"
+#warning "Disable DNF2B_DEBUG_PATH for production use"
+std::filesystem::path dnf2b::Constants::DNF2B_ROOT = "../etc/dnf2b";
+#else
 std::filesystem::path dnf2b::Constants::DNF2B_ROOT = "/etc/dnf2b";
+#endif
 
 int main(int argc, const char* argv[]) {
     std::string envVal = stc::getEnv("SPDLOG_LEVEL", "info");
@@ -109,7 +116,22 @@ int main(int argc, const char* argv[]) {
                 });
             command->add_option("insensitive", caseInsensitive, "Whether or not the filters should be case-insensitive")
                 ->default_val(true);
+        }
 
+        {
+            std::string testString;
+            std::string parser;
+            auto command = app.add_subcommand("test", "Utility for testing filters and parsers at once. The parser must "
+                                              "be supplied, but the resulting message is tested against all filters in "
+                                              "existence")
+                ->group("Utility")
+                ->callback([&]() {
+                    dnf2b::CLI::testLineMatches(testString, parser);
+                });
+            command->add_option("--parser", parser, "The parser to use")
+                ->required(true);
+            command->add_option("test_string", testString, "The full message string to test against.")
+                ->required(true);
         }
 
 

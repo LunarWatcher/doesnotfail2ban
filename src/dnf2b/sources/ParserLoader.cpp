@@ -9,7 +9,12 @@
 
 namespace dnf2b {
 
-std::shared_ptr<Parser> ParserLoader::loadParser(const std::string &parserName, const std::string& resourceName) {
+std::shared_ptr<Parser> ParserLoader::loadParser(
+    const std::string &parserName,
+    const std::string& resourceName
+) {
+    // TODO: this currently doesn't respect the weird @ notation used for custom filters. The same setup should be
+    // supported for parsers as well
     auto path = Constants::DNF2B_ROOT / "parsers" / (parserName + ".json");
     std::ifstream in(path);
     if (!in) {

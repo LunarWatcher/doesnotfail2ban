@@ -5,14 +5,12 @@
 #include "pcre2.h"
 #include "spdlog/spdlog.h"
 
-#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <sstream>
-#include <fstream>
 #include <iostream>
-#include <regex>
 #include <string>
+#include <iostream>
 
 namespace dnf2b {
 
@@ -34,7 +32,7 @@ Parser::Parser(const std::string& parserName, const nlohmann::json& config, cons
                     PCRE2_CASELESS | PCRE2_UTF
                 )
             );
-            timeFormat = config.value("time", "");
+            timeFormat = p.value("time", "");
         } else {
             pattern.emplace(
                 Pattern(
@@ -71,7 +69,6 @@ std::optional<Message> Parser::parse(const std::string& line) {
     // If a timestamp isn't part of the parsed output, assume current timestamp
     auto now = std::chrono::system_clock::now();
     if (auto timeString = m.get("Time"); timeString.has_value()) {
-
         // This is messy. Stay with me
         // First of all, fuck time in C++. It's garbage. HowardHinnant/date, which is now
         // C++20, is still crap. 

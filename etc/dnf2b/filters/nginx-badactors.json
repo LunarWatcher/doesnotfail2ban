@@ -1,0 +1,6 @@
+{
+    "patterns": [
+        "paloaltonetworks.com",
+        "CensysInspect|censys.io"
+    ]
+}

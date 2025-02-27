@@ -104,6 +104,10 @@ std::string JournalCTL::getField(IDMethod method) {
     case IDMethod::SYSTEMD_UNIT:
         return "_SYSTEMD_UNIT";
     }
+
+    // Don't have unreachable yet
+    [[unlikely]]
+    throw std::runtime_error("Unreachable");
 }
 
 JournalCTLParser::JournalCTLParser(const std::string& parserName, const nlohmann::json& config, const std::string& fileName)

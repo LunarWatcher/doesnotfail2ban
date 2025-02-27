@@ -2,6 +2,7 @@ set (SOURCE_FILES
     dnf2b/core/Daemon.cpp
 
     dnf2b/cli/FilterWizard.cpp
+    dnf2b/cli/Tester.cpp
 
     dnf2b/data/BanManager.cpp
     dnf2b/data/BanDB.cpp

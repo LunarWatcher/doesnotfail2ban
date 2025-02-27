@@ -3,11 +3,9 @@
 #include "dnf2b/sources/FileParser.hpp"
 #include "dnf2b/sources/Parser.hpp"
 #include "dnf2b/sources/ParserLoader.hpp"
-#include <chrono>
 #include <filesystem>
 #include <iostream>
-
-#include <time.h>
+#include <fstream>
 
 TEST_CASE("Non-multiprocess parsing", "[parser]") {
     nlohmann::json config = {

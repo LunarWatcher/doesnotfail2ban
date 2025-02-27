@@ -47,9 +47,11 @@ Filter::Filter(const std::filesystem::path& path) : filterName(path.filename().r
 
 }
 
-std::optional<MatchResult> Filter::checkMessage(const Message& message) {
+std::optional<MatchResult> Filter::checkMessage(const Message& message, size_t* matchIdx) {
 
-    for (const auto& pattern : patterns) {
+    for (size_t i = (matchIdx == nullptr ? 0 : *matchIdx); i < patterns.size(); ++i) {
+        const auto& pattern = patterns.at(i);
+
         PCREMatcher matcher(pattern, message.message);
         if (!matcher.next()) {
             // No match found.
@@ -64,6 +66,10 @@ std::optional<MatchResult> Filter::checkMessage(const Message& message) {
                 .groupId = message.process,
                 .error = true
             };
+        }
+
+        if (matchIdx != nullptr) {
+            *matchIdx = i;
         }
 
         return MatchResult {

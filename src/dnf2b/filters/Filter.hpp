@@ -27,7 +27,7 @@ public:
     explicit Filter(const std::string& filterName);
     explicit Filter(const std::filesystem::path& path);
 
-    std::optional<MatchResult> checkMessage(const Message& message);
+    std::optional<MatchResult> checkMessage(const Message& message, size_t* matchIdx = 0);
     static std::filesystem::path getPathFromFilterName(const std::string& filterName);
 
     const std::vector<Pattern>& getPatterns() { return patterns; }

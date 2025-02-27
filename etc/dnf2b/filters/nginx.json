@@ -1,0 +1,6 @@
+{
+    "patterns": [
+        "^\"\\\\x",
+        "\\\\x00Cookie: mstshash=Administr"
+    ]
+}

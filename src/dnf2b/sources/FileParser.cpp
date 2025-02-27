@@ -1,8 +1,7 @@
 #include "FileParser.hpp"
 
-#include <filesystem>
-
 #include <spdlog/spdlog.h>
+#include <fstream>
 #include <iostream>
 
 namespace dnf2b {
@@ -24,13 +23,14 @@ std::vector<Message> FileParser::poll() {
     stream.seekg(lastAccessedByte, std::ios::cur);
 
     if (stream.fail() || stream.eof()) {
-        // If we fail or hit eof and size == 0, the  file has been wiped and is empty. Ignore
+        // If we fail or hit eof and size == 0, the  file has been wiped and is empty, and has not been populated since
+        // the wipe. Ignore
         if (lastAccessedByte == 0) {
             return {};
         }
 
+        // Otherwise, seek back to 0. The logfile has been wiped since last time, and there's a need to reset 
         lastAccessedByte = 0;
-        // Otherwise, seek back to 0. The logfile has been wiped since last time
         stream.seekg(0, std::ios::cur);
     }
 

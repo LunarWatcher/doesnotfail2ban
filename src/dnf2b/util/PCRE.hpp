@@ -58,9 +58,9 @@ public:
         }
     }
     Pattern(const Pattern& s)
-        : pattern(pcre2_code_copy(s.pattern)) {}
+        : pattern(pcre2_code_copy(s.pattern)), rawPattern(s.rawPattern) {}
     Pattern(Pattern&& m)
-        : pattern(std::move(m.pattern)) {
+        : pattern(std::move(m.pattern)), rawPattern(std::move(m.rawPattern)) {
         m.pattern = nullptr;
     }
 
@@ -71,7 +71,7 @@ public:
         return pattern;
     }
 
-    const std::string& getRawPattern() {
+    const std::string& getRawPattern() const {
         return rawPattern;
     }
 };
