@@ -62,6 +62,4 @@ TEST_CASE("Validate file update tracking", "[parser]") {
     res = parser.poll();
     REQUIRE(res.size() == 1);
     REQUIRE(res.at(0).message == "No, _I_ like trains");
-
-
 }

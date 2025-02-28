@@ -1,0 +1,5 @@
+{
+    "patterns": [
+        "\\*\\d+ access forbidden by rule"
+    ]
+}
